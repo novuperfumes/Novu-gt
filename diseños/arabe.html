@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novu - Perfumería Árabe Exclusiva</title>
+    <meta name="description" content="Descubre nuestra selecta colección de perfumes árabes. Lattafa, Armaf, Rasasi y más. Fragancias exclusivas con envíos a todo el país.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Syne:wght@400..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="arabe.css">
+</head>
+<body>
+    <!-- Encabezado Fetiche-Style (Sin navegación de categorías, con buscador y barra superior minimalista) -->
+    <header class="arabe-header">
+        <div class="header-container">
+            <a href="index.html" class="brand-logo" id="logo-link">NOVU</a>
+            
+            <!-- Barra de búsqueda centrada -->
+            <div class="search-bar-container">
+                <form action="#" class="search-form" id="search-form-el">
+                    <input type="text" placeholder="BUSCAR PERFUME..." aria-label="Buscar perfumes" class="search-input" id="search-input-el">
+                    <button type="submit" class="search-submit-btn" aria-label="Buscar">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Iconos de usuario y carrito -->
+            <div class="header-actions">
+                <a href="#" class="action-icon-link" aria-label="Mi Perfil">
+                    <svg class="header-svg-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="action-label">Samuel</span>
+                </a>
+                <a href="#" class="action-icon-link cart-link" aria-label="Carrito de compras">
+                    <div class="cart-icon-wrapper">
+                        <svg class="header-svg-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span class="cart-badge">1</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="arabe-main">
+        <!-- 1. Carrusel de Banners Hero (Fondo completo, fotos de perfume árabe, transiciones suaves) -->
+        <section class="hero-carousel-section" id="hero-carousel">
+            <div class="carousel-track-container">
+                <div class="carousel-track">
+                    <!-- Slide 1 -->
+                    <div class="carousel-slide active" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('imagenes/banner1.png');">
+                        <div class="slide-content">
+                            <span class="slide-tag">NUEVA EXCLUSIVIDAD</span>
+                            <h1 class="slide-title">EL ARTE DEL OUD</h1>
+                            <p class="slide-description">Fragancias místicas y opulentas diseñadas para perdurar en el tiempo.</p>
+                            <a href="#novedades-section" class="slide-btn">DESCUBRE LA COLECCIÓN</a>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="carousel-slide" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('imagenes/banner2.png');">
+                        <div class="slide-content">
+                            <span class="slide-tag">BEST SELLER</span>
+                            <h1 class="slide-title">NOUR AL SAHRA</h1>
+                            <p class="slide-description">El equilibrio perfecto entre notas especiadas orientales y maderas preciosas.</p>
+                            <a href="#grid-section" class="slide-btn">COMPRA AHORA</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controles del Carrusel Hero -->
+            <button class="carousel-arrow prev" aria-label="Slide anterior" id="hero-prev">
+                <svg class="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button class="carousel-arrow next" aria-label="Siguiente slide" id="hero-next">
+                <svg class="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+            
+            <!-- Indicadores -->
+            <div class="carousel-nav" id="hero-nav">
+                <button class="carousel-indicator active" aria-label="Slide 1"></button>
+                <button class="carousel-indicator" aria-label="Slide 2"></button>
+            </div>
+        </section>
+
+        <!-- 2. Sección de Destacados con Pestañas (Novedades, Indispensables...) -->
+        <section class="featured-tabs-section" id="novedades-section">
+            <div class="section-container">
+                <!-- Pestañas interactivas -->
+                <div class="tabs-container">
+                    <button class="tab-btn active" data-tab="novedades" id="tab-nov">NOVEDADES</button>
+                    <button class="tab-btn" data-tab="indispensables" id="tab-ind">INDISPENSABLES</button>
+                    <button class="tab-btn" data-tab="esenciales" id="tab-ese">ESENCIALES</button>
+                    <button class="tab-btn" data-tab="favoritas" id="tab-fav">FAVORITAS</button>
+                </div>
+
+                <!-- Deslizador de Productos del Carrusel de Pestañas -->
+                <div class="products-slider-wrapper">
+                    <button class="slider-nav-btn prev" id="prod-slider-prev" aria-label="Anterior producto">
+                        <svg class="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    
+                    <div class="products-slider-container">
+                        <div class="products-slider" id="featured-products-container">
+                            <!-- Producto 1: Yara -->
+                            <div class="product-card-slide" data-category="novedades favoritas">
+                                <div class="card-image-wrapper">
+                                    <img src="imagenes/yara.png" alt="Perfume Lattafa Yara" class="product-card-image">
+                                </div>
+                                <div class="card-details">
+                                    <h3 class="product-brand">LATTAFA</h3>
+                                    <p class="product-name">Yara</p>
+                                    <p class="product-type">EAU DE PARFUM</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Producto 2: Khamrah -->
+                            <div class="product-card-slide" data-category="novedades indispensables">
+                                <div class="card-image-wrapper">
+                                    <img src="imagenes/khamrah.png" alt="Perfume Lattafa Khamrah" class="product-card-image">
+                                </div>
+                                <div class="card-details">
+                                    <h3 class="product-brand">LATTAFA</h3>
+                                    <p class="product-name">Khamrah</p>
+                                    <p class="product-type">EAU DE PARFUM</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Producto 3: Club de Nuit -->
+                            <div class="product-card-slide" data-category="indispensables esenciales">
+                                <div class="card-image-wrapper">
+                                    <img src="imagenes/clubdenuit.png" alt="Perfume Armaf Club de Nuit" class="product-card-image">
+                                </div>
+                                <div class="card-details">
+                                    <h3 class="product-brand">ARMAF</h3>
+                                    <p class="product-name">Club de Nuit Intense</p>
+                                    <p class="product-type">EAU DE TOILETTE</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Producto 4: Hawas -->
+                            <div class="product-card-slide" data-category="esenciales favoritas">
+                                <div class="card-image-wrapper">
+                                    <img src="imagenes/hawas.png" alt="Perfume Rasasi Hawas" class="product-card-image">
+                                </div>
+                                <div class="card-details">
+                                    <h3 class="product-brand">RASASI</h3>
+                                    <p class="product-name">Hawas For Him</p>
+                                    <p class="product-type">EAU DE PARFUM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="slider-nav-btn next" id="prod-slider-next" aria-label="Siguiente producto">
+                        <svg class="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Sección de Cuadrícula/Grid de Productos Completa -->
+        <section class="products-grid-section" id="grid-section">
+            <div class="section-container">
+                <h2 class="grid-section-title">COLECCIÓN DE PERFUMES ÁRABES</h2>
+                
+                <div class="products-grid">
+                    <!-- Producto 1: Yara -->
+                    <div class="grid-product-card" id="grid-yara">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/yara.png" alt="Yara de Lattafa" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">LATTAFA</h3>
+                            <p class="grid-product-name">Yara (Pink Edition)</p>
+                            <p class="grid-product-type">EAU DE PARFUM</p>
+                            <p class="grid-product-price">Q 299.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-yara">VER MÁS</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Producto 2: Khamrah -->
+                    <div class="grid-product-card" id="grid-khamrah">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/khamrah.png" alt="Khamrah de Lattafa" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">LATTAFA</h3>
+                            <p class="grid-product-name">Khamrah (Unisex)</p>
+                            <p class="grid-product-type">EAU DE PARFUM</p>
+                            <p class="grid-product-price">Q 389.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-khamrah">VER MÁS</button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3: Club de Nuit -->
+                    <div class="grid-product-card" id="grid-cdn">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/clubdenuit.png" alt="Club de Nuit Intense" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">ARMAF</h3>
+                            <p class="grid-product-name">Club de Nuit Intense Man</p>
+                            <p class="grid-product-type">EAU DE TOILETTE</p>
+                            <p class="grid-product-price">Q 329.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-cdn">VER MÁS</button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 4: Hawas -->
+                    <div class="grid-product-card" id="grid-hawas">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/hawas.png" alt="Hawas For Him" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">RASASI</h3>
+                            <p class="grid-product-name">Hawas For Him (Oud Edition)</p>
+                            <p class="grid-product-type">EAU DE PARFUM</p>
+                            <p class="grid-product-price">Q 499.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-hawas">VER MÁS</button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 5: Asad -->
+                    <div class="grid-product-card" id="grid-asad">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/asad.png" alt="Asad de Lattafa" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">LATTAFA</h3>
+                            <p class="grid-product-name">Asad (Eau de Parfum)</p>
+                            <p class="grid-product-type">EAU DE PARFUM</p>
+                            <p class="grid-product-price">Q 289.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-asad">VER MÁS</button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 6: Amber Oud -->
+                    <div class="grid-product-card" id="grid-amberoud">
+                        <div class="grid-card-image-wrapper">
+                            <img src="imagenes/amberoud.png" alt="Amber Oud Gold Edition" class="grid-product-image">
+                        </div>
+                        <div class="grid-card-details">
+                            <h3 class="grid-product-brand">AL HARAMAIN</h3>
+                            <p class="grid-product-name">Amber Oud Gold Edition</p>
+                            <p class="grid-product-type">EAU DE PARFUM</p>
+                            <p class="grid-product-price">Q 549.00</p>
+                            <button class="ver-mas-btn" id="btn-ver-amberoud">VER MÁS</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="arabe-footer">
+        <p>&copy; 2026 NOVU Colecciones Exclusivas. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="arabe.js"></script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+/* -------------------------------------------------------------
+   VARIABLES & GLOBAL FOR ARABIAN SECTION
+------------------------------------------------------------- */
+:root {
+    --color-brand-red: #d11e24; /* Color de la pestaña activa de fetiche */
+    --color-border-light: #e5e5e5;
+    --color-bg-light: #f9f9f9;
+    --color-text-dark: #121212;
+    --color-text-muted: #666666;
+    
+    --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+body {
+    background-color: #ffffff;
+    color: var(--color-text-dark);
+}
+
+/* Override header global styles if any conflicts, or style locally */
+.arabe-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-border-light);
+    z-index: 100;
+    padding: 15px 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.arabe-header .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.arabe-header .brand-logo {
+    color: var(--color-text-dark);
+    font-family: var(--font-accent);
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+}
+
+/* -------------------------------------------------------------
+   SEARCH BAR (Fetiche Style)
+------------------------------------------------------------- */
+.search-bar-container {
+    flex: 1;
+    max-width: 600px;
+    margin: 0 40px;
+}
+
+.search-form {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 50px 12px 25px;
+    border: 1px solid #c0c0c0;
+    border-radius: 30px; /* Redondeado idéntico al fetiche */
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dark);
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.search-input:focus {
+    border-color: var(--color-text-dark);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-submit-btn {
+    position: absolute;
+    right: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+}
+
+.search-submit-btn:hover .search-icon {
+    color: var(--color-text-dark);
+}
+
+/* -------------------------------------------------------------
+   HEADER ACTIONS (User Profile & Cart)
+------------------------------------------------------------- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.action-icon-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text-dark);
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: opacity var(--transition-fast);
+}
+
+.action-icon-link:hover {
+    opacity: 0.7;
+}
+
+.header-svg-icon {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.5;
+}
+
+/* Carrito y Badge */
+.cart-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* -------------------------------------------------------------
+   HERO CAROUSEL SECTION
+------------------------------------------------------------- */
+.hero-carousel-section {
+    position: relative;
+    width: 100%;
+    height: 70vh; /* Altura ideal del banner de perfumes */
+    overflow: hidden;
+}
+
+.carousel-track-container {
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-track {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), visibility 1s;
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    z-index: 1;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+
+/* Contenido dentro del Slide */
+.slide-content {
+    max-width: 600px;
+    color: #ffffff;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 1s var(--transition-slow), opacity 1s var(--transition-slow);
+}
+
+.carousel-slide.active .slide-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.slide-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 5px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.slide-title {
+    font-family: var(--font-accent);
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.slide-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 35px;
+    opacity: 0.9;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.slide-btn {
+    display: inline-block;
+    padding: 16px 40px;
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    border: 1px solid #ffffff;
+    transition: background-color var(--transition-medium), color var(--transition-medium), transform var(--transition-medium);
+}
+
+.slide-btn:hover {
+    background-color: transparent;
+    color: #ffffff;
+    transform: scale(1.03);
+}
+
+/* Flechas y Controles del Hero */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(25, 25, 25, 0.2);
+    border: none;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.carousel-arrow:hover {
+    background-color: rgba(25, 25, 25, 0.6);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-arrow.prev {
+    left: 30px;
+}
+
+.carousel-arrow.next {
+    right: 30px;
+}
+
+.arrow-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Indicadores de Banner */
+.carousel-nav {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+}
+
+.carousel-indicator {
+    width: 35px;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--transition-medium);
+}
+
+.carousel-indicator.active {
+    background-color: #ffffff;
+}
+
+/* -------------------------------------------------------------
+   FEATURED TABS SECTION
+------------------------------------------------------------- */
+.featured-tabs-section {
+    padding: 80px 0;
+    background-color: var(--color-bg-light);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.section-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* Contenedor de Pestañas Redondeadas (Fetiche Style) */
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: #eaeaea;
+    padding: 6px;
+    border-radius: 40px;
+    max-width: 650px;
+    margin: 0 auto 50px auto;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-radius: 30px;
+    transition: background-color var(--transition-medium), color var(--transition-medium);
+}
+
+/* Activa color rojo */
+.tab-btn.active {
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+}
+
+/* Slider de Productos con Flechas */
+.products-slider-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.products-slider-container {
+    width: 100%;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+}
+
+.products-slider-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.products-slider {
+    display: flex;
+    gap: 30px;
+    padding: 10px 0;
+}
+
+/* Flechas del Slider de Productos */
+.slider-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-light);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-text-dark);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    z-index: 5;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.slider-nav-btn:hover {
+    background-color: var(--color-text-dark);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.slider-nav-btn.prev {
+    left: -20px;
+}
+
+.slider-nav-btn.next {
+    right: -20px;
+}
+
+/* Tarjeta de Producto en el Slider */
+.product-card-slide {
+    flex: 0 0 calc(25% - 22.5px); /* 4 columnas en desktop */
+    min-width: 250px;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-light);
+    padding: 30px 20px;
+    text-align: center;
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium), opacity var(--transition-medium);
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .product-card-slide {
+        flex: 0 0 calc(33.33% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-card-slide {
+        flex: 0 0 calc(50% - 15px);
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card-slide {
+        flex: 0 0 100%;
+    }
+}
+
+.product-card-slide:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card);
+}
+
+.card-image-wrapper {
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.product-card-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform var(--transition-medium);
+}
+
+.product-card-slide:hover .product-card-image {
+    transform: scale(1.05);
+}
+
+.card-details {
+    padding-top: 10px;
+}
+
+.product-brand {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-text-dark);
+    margin-bottom: 8px;
+}
+
+.product-name {
+    font-family: var(--font-accent);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    margin-bottom: 5px;
+}
+
+.product-type {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #999999;
+}
+
+/* Ocultar tarjetas filtradas */
+.product-card-slide.hidden {
+    display: none;
+}
+
+/* -------------------------------------------------------------
+   PRODUCTS GRID SECTION
+------------------------------------------------------------- */
+.products-grid-section {
+    padding: 100px 0;
+}
+
+.grid-section-title {
+    font-family: var(--font-primary);
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+    margin-bottom: 60px;
+    text-transform: uppercase;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas en desktop */
+    gap: 40px 30px;
+}
+
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Fetiche Grid Product Card */
+.grid-product-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-light);
+    padding: 30px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow var(--transition-medium);
+}
+
+.grid-product-card:hover {
+    box-shadow: var(--shadow-card);
+}
+
+.grid-card-image-wrapper {
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.grid-product-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.grid-card-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.grid-product-brand {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-text-dark);
+    margin-bottom: 6px;
+}
+
+.grid-product-name {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 5px;
+    font-family: var(--font-primary);
+}
+
+.grid-product-type {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #aaaaaa;
+    margin-bottom: 12px;
+}
+
+.grid-product-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 20px;
+}
+
+/* Botón VER MÁS en Gris de Fetiche */
+.ver-mas-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #eaeaea;
+    border: none;
+    color: var(--color-text-dark);
+    font-family: var(--font-primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.ver-mas-btn:hover {
+    background-color: var(--color-text-dark);
+    color: #ffffff;
+}
+
+/* Footer */
+.arabe-footer {
+    border-top: 1px solid var(--color-border-light);
+    padding: 40px 20px;
+    text-align: center;
+    background-color: var(--color-bg-light);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}

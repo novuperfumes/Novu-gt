@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novu - Colecciones Exclusivas</title>
+    <meta name="description"
+        content="Explora nuestras colecciones exclusivas: Árabe, Diseñador y Nicho. Diseños premium adaptados a tu estilo de vida.">
+    <!-- Google Fonts: Montserrat para un look geométrico y elegante; Syne para toques modernos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Syne:wght@400..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Encabezado Minimalista Premium -->
+    <header class="site-header">
+        <a href="#" class="brand-logo" id="logo-link">NOVU</a>
+        <button class="menu-toggle" aria-label="Abrir menú" id="menu-btn">
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+        </button>
+    </header>
+
+    <!-- Contenedor Principal de Columnas -->
+    <main class="collections-container">
+        <!-- Sección 1: Árabe -->
+        <section class="collection-column" id="col-arabe"
+            style="--bg-image: url('imagenes/arabe.jpg'); --fallback-gradient: linear-gradient(135deg, #1f1c18 0%, #3a3025 100%);">
+            <div class="column-overlay"></div>
+            <div class="column-content">
+                <h2 class="collection-title">ÁRABE</h2>
+                <a href="arabe.html" class="cta-button" id="btn-arabe">
+                    <span class="cta-text">CONOCE MÁS</span>
+                    <span class="cta-hover-bg"></span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Sección 2: Diseñador -->
+        <section class="collection-column" id="col-disenador"
+            style="--bg-image: url('imagenes/diseñador.jpg'); --fallback-gradient: linear-gradient(135deg, #141b29 0%, #0c101b 100%);">
+            <div class="column-overlay"></div>
+            <div class="column-content">
+                <h2 class="collection-title">DISEÑADOR</h2>
+                <a href="disenador.html" class="cta-button" id="btn-disenador">
+                    <span class="cta-text">CONOCE MÁS</span>
+                    <span class="cta-hover-bg"></span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Sección 3: Nicho -->
+        <section class="collection-column" id="col-nicho"
+            style="--bg-image: url('imagenes/nicho.jpg'); --fallback-gradient: linear-gradient(135deg, #1e2522 0%, #0f1412 100%);">
+            <div class="column-overlay"></div>
+            <div class="column-content">
+                <h2 class="collection-title">NICHO</h2>
+                <a href="nicho.html" class="cta-button" id="btn-nicho">
+                    <span class="cta-text">CONOCE MÁS</span>
+                    <span class="cta-hover-bg"></span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Menú de Navegación Overlay (Funcional e Interactivo) -->
+    <div class="navigation-overlay" id="nav-overlay">
+        <nav class="overlay-nav">
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link">Inicio</a></li>
+                <li><a href="arabe.html" class="nav-link">Árabe</a></li>
+                <li><a href="disenador.html" class="nav-link">Diseñador</a></li>
+                <li><a href="nicho.html" class="nav-link">Nicho</a></li>
+                <li><a href="#" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,320 @@
+/* -------------------------------------------------------------
+   RESET & VARIABLES
+------------------------------------------------------------- */
+:root {
+    --font-primary: 'Montserrat', sans-serif;
+    --font-accent: 'Syne', sans-serif;
+    
+    --color-bg-fallback: #121212;
+    --color-text-light: #ffffff;
+    --color-text-dark: #121212;
+    
+    --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Out-Expo */
+    --transition-medium: 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Out-Quart */
+    --transition-fast: 0.2s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-bg-fallback);
+    color: var(--color-text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* -------------------------------------------------------------
+   SITE HEADER (Minimalist & Premium)
+------------------------------------------------------------- */
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    mix-blend-mode: difference; /* Da un look ultra-premium al cambiar de color según el fondo */
+}
+
+.brand-logo {
+    font-family: var(--font-accent);
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--color-text-light);
+    text-decoration: none;
+    transition: letter-spacing var(--transition-medium);
+}
+
+.brand-logo:hover {
+    letter-spacing: 0.25em;
+}
+
+/* Botón de Menú Hamburguesa */
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.menu-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-text-light);
+    transition: transform var(--transition-medium), opacity var(--transition-medium);
+}
+
+/* Estado Activo del Menú */
+.menu-toggle.active .menu-line:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.active .menu-line:nth-child(2) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* -------------------------------------------------------------
+   COLLECTIONS CONTAINER (Three Split Columns)
+------------------------------------------------------------- */
+.collections-container {
+    display: flex;
+    flex-direction: column; /* Apilado por defecto en móvil */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .collections-container {
+        flex-direction: row; /* Fila en escritorio */
+    }
+}
+
+/* -------------------------------------------------------------
+   COLUMNS STYLE & TRANSITIONS
+------------------------------------------------------------- */
+.collection-column {
+    position: relative;
+    flex: 1;
+    height: 33.33vh; /* Divide equitativamente en móvil */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    
+    /* Configuración de background para soportar imagen e imagen fallback elegante */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75)), var(--bg-image), var(--fallback-gradient);
+    
+    /* Transición suave de expansión de columna */
+    transition: flex var(--transition-slow), height var(--transition-slow);
+}
+
+@media (min-width: 768px) {
+    .collection-column {
+        height: 100vh; /* Ocupa todo el alto en escritorio */
+    }
+}
+
+/* Oscurecimiento de capa por defecto para resaltar texto */
+.column-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    transition: background-color var(--transition-medium);
+    z-index: 1;
+}
+
+/* -------------------------------------------------------------
+   COLUMN HOVER EFFECTS (Desktop)
+------------------------------------------------------------- */
+@media (min-width: 768px) {
+    /* Expande la columna que se apunta */
+    .collections-container:hover .collection-column:hover {
+        flex: 1.5;
+    }
+    
+    /* Encoge las columnas no apuntadas */
+    .collections-container:hover .collection-column:not(:hover) {
+        flex: 0.75;
+    }
+    
+    /* Aclara la imagen hover y oscurece las otras */
+    .collections-container:hover .collection-column:hover .column-overlay {
+        background-color: rgba(0, 0, 0, 0.15);
+    }
+    
+    .collections-container:hover .collection-column:not(:hover) .column-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* -------------------------------------------------------------
+   COLUMN CONTENT
+------------------------------------------------------------- */
+.column-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 80%;
+    max-width: 400px;
+}
+
+/* Títulos */
+.collection-title {
+    font-family: var(--font-primary);
+    font-size: 2.2rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    
+    /* Pequeña animación sutil en el título */
+    transition: transform var(--transition-medium), letter-spacing var(--transition-medium);
+}
+
+@media (min-width: 1024px) {
+    .collection-title {
+        font-size: 3rem;
+        letter-spacing: 0.35em;
+    }
+}
+
+.collection-column:hover .collection-title {
+    transform: translateY(-5px);
+    letter-spacing: 0.4em;
+}
+
+/* -------------------------------------------------------------
+   CTA BUTTONS (Sleek Land Rover Style)
+------------------------------------------------------------- */
+.cta-button {
+    position: relative;
+    display: inline-block;
+    padding: 18px 45px;
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--color-text-dark);
+    text-decoration: none;
+    background-color: var(--color-text-light);
+    border: 1px solid var(--color-text-light);
+    overflow: hidden;
+    transition: color var(--transition-medium), transform var(--transition-medium), box-shadow var(--transition-medium);
+    z-index: 5;
+}
+
+/* Texto del botón */
+.cta-text {
+    position: relative;
+    z-index: 2;
+    display: block;
+    transition: letter-spacing var(--transition-medium);
+}
+
+/* Capa de fondo que desliza en hover */
+.cta-hover-bg {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    transition: left var(--transition-medium);
+    z-index: 1;
+}
+
+/* Efecto Hover del Botón */
+.cta-button:hover {
+    color: var(--color-text-light);
+    background-color: transparent;
+    border-color: var(--color-text-light);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.cta-button:hover .cta-text {
+    letter-spacing: 0.25em;
+}
+
+/* -------------------------------------------------------------
+   NAVIGATION OVERLAY
+------------------------------------------------------------- */
+.navigation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(18, 18, 18, 0.98);
+    backdrop-filter: blur(15px);
+    z-index: 90;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-medium), visibility var(--transition-medium);
+}
+
+.navigation-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-nav {
+    text-align: center;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.nav-link {
+    font-family: var(--font-accent);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    transition: opacity var(--transition-medium), letter-spacing var(--transition-medium);
+}
+
+.nav-link:hover {
+    opacity: 1;
+    letter-spacing: 0.3em;
+}
