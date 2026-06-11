@@ -2,11 +2,12 @@
    VARIABLES & GLOBAL FOR ARABIAN SECTION
 ------------------------------------------------------------- */
 :root {
-    --color-brand-red: #d11e24; /* Color de la pestaña activa de fetiche */
-    --color-border-light: #e5e5e5;
-    --color-bg-light: #f9f9f9;
-    --color-text-dark: #121212;
-    --color-text-muted: #666666;
+    --color-brand-red: #C5A059; /* Color de la pestaña activa de fetiche */
+    --color-accent-hover: #ab8845; /* Color de hover del acento */
+    --color-border-light: #eae5dc;
+    --color-bg-light: #FAF7F2;
+    --color-text-dark: #1c1a17;
+    --color-text-muted: #5e5a54;
     
     --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.05);
     --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -39,12 +40,16 @@ body {
     width: 100%;
 }
 
-.arabe-header .brand-logo {
-    color: var(--color-text-dark);
-    font-family: var(--font-accent);
-    font-weight: 800;
-    font-size: 1.8rem;
-    letter-spacing: 0.1em;
+.brand-logo-img-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 45px;
+}
+
+.brand-logo-img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
 }
 
 /* -------------------------------------------------------------
@@ -360,7 +365,7 @@ body {
     padding: 12px 20px;
     border: none;
     background: none;
-    font-family: var(--font-primary);
+    font-family: var(--font-accent);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -530,7 +535,7 @@ body {
 }
 
 .grid-section-title {
-    font-family: var(--font-primary);
+    font-family: var(--font-accent);
     font-weight: 400;
     font-size: 1.6rem;
     letter-spacing: 0.2em;
@@ -637,7 +642,7 @@ body {
     background-color: #eaeaea;
     border: none;
     color: var(--color-text-dark);
-    font-family: var(--font-primary);
+    font-family: var(--font-accent);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -646,7 +651,7 @@ body {
 }
 
 .ver-mas-btn:hover {
-    background-color: var(--color-text-dark);
+    background-color: var(--color-brand-red);
     color: #ffffff;
 }
 
@@ -658,4 +663,39 @@ body {
     background-color: var(--color-bg-light);
     font-size: 0.75rem;
     color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------
+   GENDER FILTER (Para Él / Para Ella)
+------------------------------------------------------------- */
+.gender-filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.gender-btn {
+    background: none;
+    border: 1px solid var(--color-border-light);
+    padding: 10px 24px;
+    font-family: var(--font-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--color-text-dark);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-transform: uppercase;
+}
+
+.gender-btn:hover {
+    border-color: var(--color-brand-red);
+    color: var(--color-brand-red);
+}
+
+.gender-btn.active {
+    background-color: var(--color-brand-red);
+    border-color: var(--color-brand-red);
+    color: #ffffff;
 }

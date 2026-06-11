@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novu - Panel de Administración BI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="cart-modal.css">
+</head>
+<body class="admin-page-body" style="margin: 0; padding: 0; background-color: #ffffff; overflow: hidden; font-family: 'Montserrat', sans-serif;">
+    <div class="admin-page-container" style="display: flex; width: 100vw; height: 100vh; overflow: hidden;">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" style="height: 100%; display: flex; flex-direction: column; width: 260px; background-color: #1c1a17; color: #ffffff; border-right: 1.5px solid #C5A059; flex-shrink: 0; box-sizing: border-box;">
+            <div class="admin-sidebar-header" style="padding: 30px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                <span class="admin-logo" style="display: block; font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 800; color: #C5A059; letter-spacing: 0.15em; margin-bottom: 5px;">NOVU ADMIN</span>
+                <span class="admin-role" style="display: block; font-family: 'Montserrat', sans-serif; font-size: 0.6rem; font-weight: 600; color: #a8a297; letter-spacing: 0.1em; text-transform: uppercase;">BUSINESS INTELLIGENCE</span>
+            </div>
+            <nav class="admin-nav" style="flex: 1; padding: 20px 15px; display: flex; flex-direction: column; gap: 8px;">
+                <button class="admin-nav-item active" data-tab="metrics">
+                    <svg class="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/>
+                    </svg>
+                    Métricas de BI
+                </button>
+                <button class="admin-nav-item" data-tab="history">
+                    <svg class="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    Historial de Pedidos
+                </button>
+                <button class="admin-nav-item" data-tab="catalog">
+                    <svg class="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Administrar Catálogo
+                </button>
+            </nav>
+            <div class="admin-sidebar-footer" style="padding: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center;">
+                <a href="index.html" class="admin-logout-btn" style="text-align: center; text-decoration: none; display: block; box-sizing: border-box;">VOLVER A LA TIENDA</a>
+            </div>
+        </aside>
+        
+        <!-- Content Area -->
+        <main class="admin-content-area" id="admin-tab-content-container" style="flex: 1; padding: 35px 40px; overflow-y: auto; background-color: #ffffff; box-sizing: border-box;">
+            <!-- Loaded dynamically via script -->
+        </main>
+    </div>
+
+    <!-- Script imports -->
+    <script src="cart-modal.js"></script>
+    <script>
+        // Check if user is logged in as admin
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('novu_user'));
+            if (!user || user.role !== 'admin') {
+                // If not logged in as admin, show an elegant access denied screen or redirect
+                const container = document.getElementById('admin-tab-content-container');
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 20px; box-sizing: border-box;">
+                        <div style="width: 80px; height: 80px; background-color: #ffebee; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <svg style="width: 40px; height: 40px; stroke: #c62828;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h2 style="font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: #1c1a17; margin-bottom: 10px; letter-spacing: 0.05em;">ACCESO DENEGADO</h2>
+                        <p style="font-size: 0.9rem; color: #5e5a54; max-width: 400px; margin-bottom: 25px; line-height: 1.5;">Debes iniciar sesión con una cuenta de administrador para acceder al panel de Business Intelligence.</p>
+                        <a href="index.html" style="padding: 14px 35px; background-color: #1c1a17; color: white; text-decoration: none; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; font-family: 'Cinzel', serif; transition: background-color 0.2s;">VOLVER A LA TIENDA</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Bind tab buttons
+            const tabButtons = document.querySelectorAll('.admin-nav-item');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderAdminDashboardTab(btn.getAttribute('data-tab'));
+                });
+            });
+
+            // Initial render
+            renderAdminDashboardTab('metrics');
+        });
+    </script>
+</body>
+</html>

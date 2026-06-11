@@ -3,7 +3,8 @@
 ------------------------------------------------------------- */
 :root {
     --font-primary: 'Montserrat', sans-serif;
-    --font-accent: 'Syne', sans-serif;
+    --font-accent: 'Cinzel', serif;
+    --font-body: 'Montserrat', sans-serif;
     
     --color-bg-fallback: #121212;
     --color-text-light: #ffffff;
@@ -23,7 +24,7 @@
 }
 
 body {
-    font-family: var(--font-primary);
+    font-family: var(--font-body);
     background-color: var(--color-bg-fallback);
     color: var(--color-text-light);
     min-height: 100vh;
@@ -189,7 +190,7 @@ body {
 
 /* Títulos */
 .collection-title {
-    font-family: var(--font-primary);
+    font-family: var(--font-accent);
     font-size: 2.2rem;
     font-weight: 400;
     letter-spacing: 0.25em;
@@ -220,7 +221,7 @@ body {
     position: relative;
     display: inline-block;
     padding: 18px 45px;
-    font-family: var(--font-primary);
+    font-family: var(--font-accent);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.2em;

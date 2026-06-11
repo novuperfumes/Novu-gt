@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,10 @@
     <!-- Google Fonts (Se descargarán cuando tengas conexión WiFi, mientras tanto usará hermosas fuentes del sistema como fallbacks) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Syne:wght@700;800&family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@400;600&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Syne:wght@700;800&family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@400;600&family=Space+Grotesk:wght@400;600&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             /* Paleta activa por defecto: Imperial Rouge */
@@ -118,7 +121,7 @@
 
         .palette-row:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         .palette-header {
@@ -161,14 +164,14 @@
             height: 40px;
             border-radius: 8px;
             margin-bottom: 5px;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
             font-size: 0.65rem;
             font-weight: 700;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: transform 0.15s;
         }
@@ -200,7 +203,7 @@
 
         .font-row:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         .font-header {
@@ -329,9 +332,17 @@
             background-color: #d1d5db;
         }
 
-        .browser-dot.red { background-color: #ef4444; }
-        .browser-dot.yellow { background-color: #f59e0b; }
-        .browser-dot.green { background-color: #10b981; }
+        .browser-dot.red {
+            background-color: #ef4444;
+        }
+
+        .browser-dot.yellow {
+            background-color: #f59e0b;
+        }
+
+        .browser-dot.green {
+            background-color: #10b981;
+        }
 
         .browser-address {
             background-color: #ffffff;
@@ -362,12 +373,16 @@
             padding-bottom: 15px;
         }
 
-        .preview-logo {
-            font-family: var(--font-headings);
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: var(--color-text-title);
-            letter-spacing: 0.05em;
+        .preview-logo-img-wrapper {
+            display: inline-flex;
+            align-items: center;
+            height: 65px;
+        }
+
+        .preview-logo-img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
         }
 
         .preview-search {
@@ -430,7 +445,7 @@
         .preview-banner {
             background-size: cover;
             background-position: center;
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('imagenes/banner1.png');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url('imagenes/banner1.png');
             background-color: #121212;
             height: 140px;
             border-radius: 8px;
@@ -583,7 +598,7 @@
             border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(100px);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -596,6 +611,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -607,11 +623,11 @@
         <div class="workspace">
             <!-- Paneles Izquierdos -->
             <div class="left-panels">
-                
+
                 <!-- Selector de Paletas -->
                 <div class="panel-card">
                     <h2>1. Paletas de Colores (Fondo Blanco)</h2>
-                    
+
                     <!-- Paleta 1 -->
                     <div class="palette-row active" data-index="0" onclick="selectPalette(0)">
                         <div class="palette-header">
@@ -620,19 +636,23 @@
                         </div>
                         <div class="palette-swatches">
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #D11E24;" onclick="copyHex('#D11E24', event)">#D11E24</div>
+                                <div class="swatch-color" style="background-color: #D11E24;"
+                                    onclick="copyHex('#D11E24', event)">#D11E24</div>
                                 <span class="swatch-label">Acento</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #F7ECEE; color: #121212;" onclick="copyHex('#F7ECEE', event)">#F7ECEE</div>
+                                <div class="swatch-color" style="background-color: #F7ECEE; color: #121212;"
+                                    onclick="copyHex('#F7ECEE', event)">#F7ECEE</div>
                                 <span class="swatch-label">Secundario</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #121212;" onclick="copyHex('#121212', event)">#121212</div>
+                                <div class="swatch-color" style="background-color: #121212;"
+                                    onclick="copyHex('#121212', event)">#121212</div>
                                 <span class="swatch-label">Texto</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;" onclick="copyHex('#ffffff', event)">#FFFFFF</div>
+                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;"
+                                    onclick="copyHex('#ffffff', event)">#FFFFFF</div>
                                 <span class="swatch-label">Fondo</span>
                             </div>
                         </div>
@@ -646,19 +666,23 @@
                         </div>
                         <div class="palette-swatches">
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #C5A059;" onclick="copyHex('#C5A059', event)">#C5A059</div>
+                                <div class="swatch-color" style="background-color: #C5A059;"
+                                    onclick="copyHex('#C5A059', event)">#C5A059</div>
                                 <span class="swatch-label">Acento</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #FAF7F2; color: #121212;" onclick="copyHex('#FAF7F2', event)">#FAF7F2</div>
+                                <div class="swatch-color" style="background-color: #FAF7F2; color: #121212;"
+                                    onclick="copyHex('#FAF7F2', event)">#FAF7F2</div>
                                 <span class="swatch-label">Secundario</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #1c1a17;" onclick="copyHex('#1c1a17', event)">#1C1A17</div>
+                                <div class="swatch-color" style="background-color: #1c1a17;"
+                                    onclick="copyHex('#1c1a17', event)">#1C1A17</div>
                                 <span class="swatch-label">Texto</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;" onclick="copyHex('#ffffff', event)">#FFFFFF</div>
+                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;"
+                                    onclick="copyHex('#ffffff', event)">#FFFFFF</div>
                                 <span class="swatch-label">Fondo</span>
                             </div>
                         </div>
@@ -672,19 +696,23 @@
                         </div>
                         <div class="palette-swatches">
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #0D3B2E;" onclick="copyHex('#0D3B2E', event)">#0D3B2E</div>
+                                <div class="swatch-color" style="background-color: #0D3B2E;"
+                                    onclick="copyHex('#0D3B2E', event)">#0D3B2E</div>
                                 <span class="swatch-label">Acento</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #F2F6F4; color: #121212;" onclick="copyHex('#F2F6F4', event)">#F2F6F4</div>
+                                <div class="swatch-color" style="background-color: #F2F6F4; color: #121212;"
+                                    onclick="copyHex('#F2F6F4', event)">#F2F6F4</div>
                                 <span class="swatch-label">Secundario</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #051C16;" onclick="copyHex('#051C16', event)">#051C16</div>
+                                <div class="swatch-color" style="background-color: #051C16;"
+                                    onclick="copyHex('#051C16', event)">#051C16</div>
                                 <span class="swatch-label">Texto</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;" onclick="copyHex('#ffffff', event)">#FFFFFF</div>
+                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;"
+                                    onclick="copyHex('#ffffff', event)">#FFFFFF</div>
                                 <span class="swatch-label">Fondo</span>
                             </div>
                         </div>
@@ -698,19 +726,23 @@
                         </div>
                         <div class="palette-swatches">
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #0F2C59;" onclick="copyHex('#0F2C59', event)">#0F2C59</div>
+                                <div class="swatch-color" style="background-color: #0F2C59;"
+                                    onclick="copyHex('#0F2C59', event)">#0F2C59</div>
                                 <span class="swatch-label">Acento</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #F0F4F8; color: #121212;" onclick="copyHex('#F0F4F8', event)">#F0F4F8</div>
+                                <div class="swatch-color" style="background-color: #F0F4F8; color: #121212;"
+                                    onclick="copyHex('#F0F4F8', event)">#F0F4F8</div>
                                 <span class="swatch-label">Secundario</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #051020;" onclick="copyHex('#051020', event)">#051020</div>
+                                <div class="swatch-color" style="background-color: #051020;"
+                                    onclick="copyHex('#051020', event)">#051020</div>
                                 <span class="swatch-label">Texto</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;" onclick="copyHex('#ffffff', event)">#FFFFFF</div>
+                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;"
+                                    onclick="copyHex('#ffffff', event)">#FFFFFF</div>
                                 <span class="swatch-label">Fondo</span>
                             </div>
                         </div>
@@ -724,19 +756,23 @@
                         </div>
                         <div class="palette-swatches">
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #B86B69;" onclick="copyHex('#B86B69', event)">#B86B69</div>
+                                <div class="swatch-color" style="background-color: #B86B69;"
+                                    onclick="copyHex('#B86B69', event)">#B86B69</div>
                                 <span class="swatch-label">Acento</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #F9F5F0; color: #121212;" onclick="copyHex('#F9F5F0', event)">#F9F5F0</div>
+                                <div class="swatch-color" style="background-color: #F9F5F0; color: #121212;"
+                                    onclick="copyHex('#F9F5F0', event)">#F9F5F0</div>
                                 <span class="swatch-label">Secundario</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #2B1E1C;" onclick="copyHex('#2B1E1C', event)">#2B1E1C</div>
+                                <div class="swatch-color" style="background-color: #2B1E1C;"
+                                    onclick="copyHex('#2B1E1C', event)">#2B1E1C</div>
                                 <span class="swatch-label">Texto</span>
                             </div>
                             <div class="swatch-group">
-                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;" onclick="copyHex('#ffffff', event)">#FFFFFF</div>
+                                <div class="swatch-color" style="background-color: #ffffff; color: #121212;"
+                                    onclick="copyHex('#ffffff', event)">#FFFFFF</div>
                                 <span class="swatch-label">Fondo</span>
                             </div>
                         </div>
@@ -756,7 +792,8 @@
                         <div class="font-demo-box" style="font-family: 'Montserrat', sans-serif;">
                             <div class="demo-title">Muestra de Título</div>
                             <div class="demo-subtitle" style="font-family: 'Inter', sans-serif;">SUBTÍTULO MARCA</div>
-                            <p class="demo-paragraph" style="font-family: 'Inter', sans-serif;">Párrafo: Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
+                            <p class="demo-paragraph" style="font-family: 'Inter', sans-serif;">Párrafo: Fragancia de la
+                                familia olfativa amaderada oriental para hombres y mujeres.</p>
                             <button class="demo-button">BOTÓN ACCIÓN</button>
                         </div>
                     </div>
@@ -769,8 +806,10 @@
                         </div>
                         <div class="font-demo-box" style="font-family: 'Syne', sans-serif;">
                             <div class="demo-title" style="font-weight: 800;">Muestra de Título</div>
-                            <div class="demo-subtitle" style="font-family: 'Space Grotesk', sans-serif;">SUBTÍTULO MARCA</div>
-                            <p class="demo-paragraph" style="font-family: 'Space Grotesk', sans-serif;">Párrafo: Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
+                            <div class="demo-subtitle" style="font-family: 'Space Grotesk', sans-serif;">SUBTÍTULO MARCA
+                            </div>
+                            <p class="demo-paragraph" style="font-family: 'Space Grotesk', sans-serif;">Párrafo:
+                                Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
                             <button class="demo-button" style="font-family: 'Syne', sans-serif;">BOTÓN ACCIÓN</button>
                         </div>
                     </div>
@@ -783,8 +822,10 @@
                         </div>
                         <div class="font-demo-box" style="font-family: 'Cinzel', serif;">
                             <div class="demo-title">Muestra de Título</div>
-                            <div class="demo-subtitle" style="font-family: 'Montserrat', sans-serif;">SUBTÍTULO MARCA</div>
-                            <p class="demo-paragraph" style="font-family: 'Montserrat', sans-serif;">Párrafo: Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
+                            <div class="demo-subtitle" style="font-family: 'Montserrat', sans-serif;">SUBTÍTULO MARCA
+                            </div>
+                            <p class="demo-paragraph" style="font-family: 'Montserrat', sans-serif;">Párrafo: Fragancia
+                                de la familia olfativa amaderada oriental para hombres y mujeres.</p>
                             <button class="demo-button" style="font-family: 'Cinzel', serif;">BOTÓN ACCIÓN</button>
                         </div>
                     </div>
@@ -796,10 +837,14 @@
                             <span class="font-badge">Playfair Display + Georgia</span>
                         </div>
                         <div class="font-demo-box" style="font-family: 'Playfair Display', serif; font-style: italic;">
-                            <div class="demo-title" style="font-style: normal; font-weight: 600;">Muestra de Título</div>
+                            <div class="demo-title" style="font-style: normal; font-weight: 600;">Muestra de Título
+                            </div>
                             <div class="demo-subtitle" style="font-family: Georgia, serif;">SUBTÍTULO MARCA</div>
-                            <p class="demo-paragraph" style="font-family: Georgia, serif; font-style: normal;">Párrafo: Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
-                            <button class="demo-button" style="font-family: 'Playfair Display', serif; font-style: normal;">BOTÓN ACCIÓN</button>
+                            <p class="demo-paragraph" style="font-family: Georgia, serif; font-style: normal;">Párrafo:
+                                Fragancia de la familia olfativa amaderada oriental para hombres y mujeres.</p>
+                            <button class="demo-button"
+                                style="font-family: 'Playfair Display', serif; font-style: normal;">BOTÓN
+                                ACCIÓN</button>
                         </div>
                     </div>
 
@@ -811,9 +856,13 @@
                         </div>
                         <div class="font-demo-box" style="font-family: Arial, sans-serif;">
                             <div class="demo-title">Muestra de Título</div>
-                            <div class="demo-subtitle" style="font-family: 'Times New Roman', serif;">SUBTÍTULO MARCA</div>
-                            <p class="demo-paragraph" style="font-family: 'Times New Roman', serif;">Párrafo: Fragancia de la familia olfativa amaderada oriental para hombres y mujeres (se ve muy básico y descuidado).</p>
-                            <button class="demo-button" style="font-family: Arial, sans-serif; letter-spacing: 0;">BOTÓN ACCIÓN</button>
+                            <div class="demo-subtitle" style="font-family: 'Times New Roman', serif;">SUBTÍTULO MARCA
+                            </div>
+                            <p class="demo-paragraph" style="font-family: 'Times New Roman', serif;">Párrafo: Fragancia
+                                de la familia olfativa amaderada oriental para hombres y mujeres (se ve muy básico y
+                                descuidado).</p>
+                            <button class="demo-button" style="font-family: Arial, sans-serif; letter-spacing: 0;">BOTÓN
+                                ACCIÓN</button>
                         </div>
                     </div>
                 </div>
@@ -824,7 +873,7 @@
             <div class="preview-side">
                 <div class="preview-card">
                     <h2>Vista Previa Combinada</h2>
-                    
+
                     <div class="browser-mockup">
                         <div class="browser-chrome">
                             <div class="browser-dots">
@@ -837,10 +886,11 @@
 
                         <!-- Mini Sitio Simulado -->
                         <div class="site-preview" id="site-preview-el">
-                            
+
                             <!-- Header -->
                             <div class="preview-header">
-                                <span class="preview-logo">NOVU</span>
+                                <a href="#" class="preview-logo-img-wrapper"><img src="imagenes/logonovu.jpeg"
+                                        alt="Logo Perfumes" class="preview-logo-img"></a>
                                 <div class="preview-search">BUSCAR PERFUME...</div>
                                 <div class="preview-actions">
                                     <div class="preview-cart">
@@ -877,7 +927,7 @@
                                     </div>
                                     <button class="preview-card-btn">VER MÁS</button>
                                 </div>
-                                
+
                                 <!-- Producto 2 -->
                                 <div class="preview-card-item">
                                     <div class="preview-img-placeholder"></div>
@@ -988,7 +1038,7 @@
             // Cargar paleta en variables CSS
             const palette = palettes[index];
             const root = document.documentElement;
-            
+
             root.style.setProperty('--color-accent', palette.accent);
             root.style.setProperty('--color-secondary-bg', palette.secondaryBg);
             root.style.setProperty('--color-text-title', palette.textTitle);
@@ -1038,4 +1088,5 @@
         }
     </script>
 </body>
+
 </html>

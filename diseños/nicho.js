@@ -81,14 +81,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedTab = btn.getAttribute('data-tab');
 
             // Filtrar productos
-            productSlides.forEach(slide => {
-                const categories = slide.getAttribute('data-category').split(' ');
-                if (categories.includes(selectedTab)) {
-                    slide.classList.remove('hidden');
-                } else {
-                    slide.classList.add('hidden');
-                }
-            });
+            if (window.applyAllFilters) {
+                window.applyAllFilters();
+            } else {
+                productSlides.forEach(slide => {
+                    const categories = (slide.getAttribute('data-category') || '').split(' ');
+                    if (categories.includes(selectedTab)) {
+                        slide.classList.remove('hidden');
+                    } else {
+                        slide.classList.add('hidden');
+                    }
+                });
+            }
 
             // Hacer scroll al inicio del slider
             if (sliderContainer) {
@@ -131,16 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. EVENTOS COMPRA / VER MÁS
     // ==========================================
-    const viewMoreButtons = document.querySelectorAll('.ver-mas-btn');
-    viewMoreButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const card = e.target.closest('.grid-product-card');
-            const name = card.querySelector('.grid-product-name').textContent;
-            const price = card.querySelector('.grid-product-price').textContent;
-            alert(`Has seleccionado ${name} (${price}). ¡Próximamente disponible para compra en línea!`);
-        });
-    });
-
     const ctaButtons = document.querySelectorAll('.slide-btn');
     ctaButtons.forEach(button => {
         button.addEventListener('click', (e) => {
