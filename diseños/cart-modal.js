@@ -378,6 +378,31 @@ let cart = JSON.parse(localStorage.getItem('novu_cart')) || [];
 let activeUser = JSON.parse(localStorage.getItem('novu_user')) || null;
 let currentViewingProduct = null;
 
+// Inicializar base de usuarios y fidelidad
+function initUsers() {
+    // 1. Inicializar usuarios si no existen
+    if (!localStorage.getItem('novu_users')) {
+        const defaultUsers = [
+            { name: 'Administrador', email: 'admin@novu.com', password: 'admin', role: 'admin' },
+            { name: 'Samuel', email: 'samuel@novu.com', password: '123', role: 'customer' }
+        ];
+        localStorage.setItem('novu_users', JSON.stringify(defaultUsers));
+    }
+
+    // 2. Inicializar tarjetas de fidelidad por defecto
+    if (!localStorage.getItem('novu_loyalty_cards')) {
+        const defaultLoyalty = {
+            'samuel@novu.com': {
+                stamps: 3,
+                giftCards: [
+                    { code: 'GIFT-BIENVENIDA-1234', amount: 50, active: true, isWelcome: true }
+                ]
+            }
+        };
+        localStorage.setItem('novu_loyalty_cards', JSON.stringify(defaultLoyalty));
+    }
+}
+
 // =============================================================
 // STATE FUNCTIONS
 // =============================================================
@@ -567,6 +592,13 @@ function toggleLoginModal(show) {
 
     if (modal && backdrop) {
         if (show) {
+            // Asegurar que inicia en la vista de login
+            const loginView = document.getElementById('login-view-el');
+            const registerView = document.getElementById('register-view-el');
+            if (loginView && registerView) {
+                loginView.classList.add('active');
+                registerView.classList.remove('active');
+            }
             modal.classList.add('active');
             backdrop.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -574,7 +606,31 @@ function toggleLoginModal(show) {
             modal.classList.remove('active');
             const cartActive = document.getElementById('cart-sidebar-el')?.classList.contains('active');
             const checkoutActive = document.getElementById('checkout-modal-el')?.classList.contains('active');
-            if (!cartActive && !checkoutActive) {
+            const profileActive = document.getElementById('profile-modal-el')?.classList.contains('active');
+            if (!cartActive && !checkoutActive && !profileActive) {
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    }
+}
+
+function toggleProfileModal(show) {
+    const modal = document.getElementById('profile-modal-el');
+    const backdrop = document.getElementById('backdrop-overlay-el');
+
+    if (modal && backdrop) {
+        if (show) {
+            renderProfileModal();
+            modal.classList.add('active');
+            backdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            modal.classList.remove('active');
+            const cartActive = document.getElementById('cart-sidebar-el')?.classList.contains('active');
+            const checkoutActive = document.getElementById('checkout-modal-el')?.classList.contains('active');
+            const loginActive = document.getElementById('login-modal-el')?.classList.contains('active');
+            if (!cartActive && !checkoutActive && !loginActive) {
                 backdrop.classList.remove('active');
                 document.body.style.overflow = '';
             }
@@ -788,6 +844,53 @@ function handleConfirmOrder(total) {
     };
     orders.unshift(newOrder);
     localStorage.setItem('novu_orders', JSON.stringify(orders));
+
+    // Procesar Tarjeta de Fidelidad si hay usuario activo
+    let loyaltyPromoHtml = '';
+    if (activeUser) {
+        const loyaltyCards = JSON.parse(localStorage.getItem('novu_loyalty_cards')) || {};
+        let card = loyaltyCards[activeUser.email] || { stamps: 0, giftCards: [] };
+        
+        // Sumar 1 sello por la compra
+        card.stamps += 1;
+        
+        let earnedGiftCard = null;
+        if (card.stamps >= 8) {
+            const giftCardCode = 'GIFT-150-' + Math.floor(100000 + Math.random() * 900000);
+            earnedGiftCard = { code: giftCardCode, amount: 150.00, active: true, isWelcome: false };
+            card.giftCards.push(earnedGiftCard);
+            card.stamps -= 8;
+        }
+        
+        loyaltyCards[activeUser.email] = card;
+        localStorage.setItem('novu_loyalty_cards', JSON.stringify(loyaltyCards));
+        
+        if (earnedGiftCard) {
+            loyaltyPromoHtml = `
+                <div class="loyalty-success-banner" style="background-color: #FAF7F2; border: 1.5px solid #C5A059; border-radius: 8px; padding: 20px; margin: 25px auto; max-width: 600px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                    <span style="font-size: 1.5rem;">🎉 🎁</span>
+                    <h4 style="font-family: var(--font-primary); font-size: 0.9rem; font-weight: 700; color: #1c1a17; margin: 10px 0 5px 0; letter-spacing: 0.05em; text-transform: uppercase;">¡COMPLETASTE TU TARJETA!</h4>
+                    <p style="font-size: 0.75rem; color: #5e5a54; margin: 0 0 15px 0;">Has ganado una Gift Card de <strong>Q 150.00</strong> para tu próxima compra.</p>
+                    <div style="display: inline-flex; align-items: center; gap: 10px; background-color: #ffffff; border: 1px solid #eae5dc; padding: 10px 20px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                        <span style="font-family: monospace; font-size: 1rem; font-weight: 700; color: #C5A059;">${earnedGiftCard.code}</span>
+                    </div>
+                    <p style="font-size: 0.65rem; color: #888888; margin-top: 10px;">*Código guardado en tu perfil. Úsalo en tu próximo pedido por WhatsApp.</p>
+                </div>
+            `;
+        } else {
+            loyaltyPromoHtml = `
+                <div class="loyalty-success-banner" style="background: linear-gradient(135deg, #141311 0%, #2b2721 100%); border: 1.5px solid #C5A059; border-radius: 8px; padding: 15px 20px; margin: 25px auto; max-width: 600px; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 15px; color: #ffffff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);">
+                    <div>
+                        <h4 style="font-family: var(--font-primary); font-size: 0.8rem; font-weight: 700; color: #C5A059; margin: 0; letter-spacing: 0.05em; text-transform: uppercase;">TARJETA DE FIDELIDAD NOVU</h4>
+                        <p style="font-size: 0.75rem; color: #dfd8cb; margin: 3px 0 0 0;">¡Sumaste <strong>1 sello</strong>! Tienes un total de <strong>${card.stamps} / 8 sellos</strong>.</p>
+                    </div>
+                    <div style="background: radial-gradient(circle, #ffe1aa 0%, #C5A059 100%); color: #ffffff; font-family: var(--font-primary); font-size: 0.75rem; font-weight: 800; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(197, 160, 89, 0.4); border: 1.5px solid #ffffff;">
+                        ★ +1
+                    </div>
+                </div>
+            `;
+        }
+    }
     
     // Incrementar estadísticas de pedidos completados
     incrementStat('ordersCompleted');
@@ -879,6 +982,8 @@ _Espero la confirmación de la orden._`;
                 </div>
             </div>
             
+            ${loyaltyPromoHtml}
+            
             <p class="success-delivery-note" style="font-size: 0.8rem; color: #2e7d32; font-weight: 600; margin-bottom: 30px;">💬 La compra se procesará en cuanto envíes el detalle de WhatsApp.</p>
             
             <button class="finish-checkout-btn" id="close-success-btn" style="padding: 16px 45px; background-color: #121212; color: #ffffff; border: none; font-family: var(--font-primary); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; cursor: pointer; transition: background-color 0.2s;">VOLVER A LA TIENDA</button>
@@ -906,17 +1011,71 @@ function handleLogin(email, password) {
             email: email,
             role: 'admin'
         };
-    } else {
-        activeUser = {
-            name: 'Samuel',
-            email: email,
-            role: 'customer'
-        };
+        localStorage.setItem('novu_user', JSON.stringify(activeUser));
+        updateUserHeaderUI();
+        toggleLoginModal(false);
+        showToastNotification(`¡Sesión iniciada con éxito! Hola, ${activeUser.name}.`);
+        return true;
     }
+
+    const users = JSON.parse(localStorage.getItem('novu_users')) || [];
+    const user = users.find(u => u.email === email);
+
+    if (user && user.password === password) {
+        activeUser = {
+            name: user.name,
+            email: user.email,
+            role: user.role || 'customer'
+        };
+        localStorage.setItem('novu_user', JSON.stringify(activeUser));
+        updateUserHeaderUI();
+        toggleLoginModal(false);
+        showToastNotification(`¡Sesión iniciada con éxito! Hola, ${activeUser.name}.`);
+        return true;
+    } else {
+        showToastNotification('Correo o contraseña incorrectos.');
+        return false;
+    }
+}
+
+function handleRegister(name, email, password) {
+    const users = JSON.parse(localStorage.getItem('novu_users')) || [];
+    if (users.some(u => u.email === email) || email === 'admin@novu.com') {
+        showToastNotification('Este correo ya está registrado.');
+        return false;
+    }
+
+    const newUser = {
+        name: name,
+        email: email,
+        password: password,
+        role: 'customer'
+    };
+    users.push(newUser);
+    localStorage.setItem('novu_users', JSON.stringify(users));
+
+    // Inicializar tarjeta de fidelidad del nuevo usuario con 1 sello de regalo y la Gift Card de bienvenida de Q50
+    const loyaltyCards = JSON.parse(localStorage.getItem('novu_loyalty_cards')) || {};
+    const welcomeCode = 'GIFT-WELCOME-' + Math.floor(1000 + Math.random() * 9000);
+    loyaltyCards[email] = {
+        stamps: 1,
+        giftCards: [
+            { code: welcomeCode, amount: 50.00, active: true, isWelcome: true }
+        ]
+    };
+    localStorage.setItem('novu_loyalty_cards', JSON.stringify(loyaltyCards));
+
+    // Autenticar automáticamente al nuevo usuario
+    activeUser = {
+        name: name,
+        email: email,
+        role: 'customer'
+    };
     localStorage.setItem('novu_user', JSON.stringify(activeUser));
     updateUserHeaderUI();
     toggleLoginModal(false);
-    showToastNotification(`¡Sesión iniciada con éxito! Hola, ${activeUser.name}.`);
+    showToastNotification(`¡Cuenta creada con éxito! Hola, ${name}. Recibiste 1 sello de bienvenida y una Gift Card de Q 50.`);
+    return true;
 }
 
 function handleLogout() {
@@ -925,6 +1084,155 @@ function handleLogout() {
     updateUserHeaderUI();
     showToastNotification('Sesión cerrada.');
 }
+
+// Renderizar contenido dinámico del Perfil y Tarjeta de Fidelidad
+function renderProfileModal() {
+    const container = document.getElementById('profile-content-container');
+    if (!container || !activeUser) return;
+
+    const loyaltyCards = JSON.parse(localStorage.getItem('novu_loyalty_cards')) || {};
+    const card = loyaltyCards[activeUser.email] || { stamps: 0, giftCards: [] };
+
+    // Grilla de 8 sellos
+    let stampsHtml = '';
+    const totalStamps = 8;
+    for (let i = 1; i <= totalStamps; i++) {
+        if (i <= card.stamps) {
+            stampsHtml += `
+                <div class="stamp-slot active" title="Sello ${i} obtenido">
+                    <span class="stamp-icon">★</span>
+                </div>
+            `;
+        } else {
+            stampsHtml += `
+                <div class="stamp-slot" title="Sello ${i} vacío">
+                    <span class="stamp-number">${i}</span>
+                </div>
+            `;
+        }
+    }
+
+    // Listado de Gift Cards
+    let giftCardsHtml = '';
+    const activeGiftCards = (card.giftCards || []).filter(g => g.active);
+
+    if (activeGiftCards.length === 0) {
+        giftCardsHtml = `
+            <div class="gift-card-empty">
+                No tienes tarjetas de regalo disponibles actualmente.
+            </div>
+        `;
+    } else {
+        giftCardsHtml = `
+            <div class="gift-cards-list">
+                ${activeGiftCards.map(g => `
+                    <div class="gift-card-item">
+                        <div class="gift-card-info">
+                            <span class="gift-card-title">${g.isWelcome ? 'Gift Card de Bienvenida' : 'Premio de Fidelidad'}</span>
+                            <div class="gift-card-code-wrapper">
+                                <span class="gift-card-code">${g.code}</span>
+                                <button class="copy-btn" onclick="copyGiftCardCode('${g.code}')">Copiar</button>
+                            </div>
+                        </div>
+                        <div class="gift-card-value">
+                            <span>Q ${g.amount.toFixed(2)}</span>
+                            <div class="gift-card-tag">ACTIVO</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    const stampsNeeded = totalStamps - card.stamps;
+    const progressMsg = stampsNeeded > 0 
+        ? `Te faltan <strong>${stampsNeeded} compra${stampsNeeded > 1 ? 's' : ''}</strong> para recibir una Gift Card de Q 150.`
+        : '¡Felicidades! Has completado tu tarjeta de fidelidad y tu Gift Card ha sido generada.';
+
+    container.innerHTML = `
+        <h2 class="profile-title">Mi Perfil Novu</h2>
+        
+        <div class="profile-user-info">
+            <div class="profile-user-name">${activeUser.name}</div>
+            <div class="profile-user-email">${activeUser.email}</div>
+        </div>
+        
+        <!-- Tarjeta de Fidelidad -->
+        <div class="loyalty-card-wrapper">
+            <div class="loyalty-card-section-title">Tarjeta de Fidelidad</div>
+            <div class="loyalty-card">
+                <div class="loyalty-card-header">
+                    <span class="loyalty-card-brand">NOVU</span>
+                    <span class="loyalty-card-label">Loyalty Club</span>
+                </div>
+                
+                <div class="loyalty-stamps-grid">
+                    ${stampsHtml}
+                </div>
+                
+                <div class="loyalty-card-footer">
+                    <div class="loyalty-cardholder">
+                        <span class="loyalty-cardholder-label">Titular</span>
+                        <span class="loyalty-cardholder-name">${activeUser.name.toUpperCase()}</span>
+                    </div>
+                    <div class="loyalty-progress-summary">
+                        ${card.stamps} / ${totalStamps} SELLOS
+                    </div>
+                </div>
+            </div>
+            <div class="loyalty-info-text">
+                ${progressMsg}<br>
+                <span style="font-size: 0.65rem; color: #888888;">*Obtén 1 sello por cada compra realizada.</span>
+            </div>
+        </div>
+        
+        <!-- Mis Gift Cards -->
+        <div class="gift-cards-section">
+            <div class="loyalty-card-section-title">Mis Tarjetas de Regalo (Gift Cards)</div>
+            ${giftCardsHtml}
+            <div class="loyalty-info-text" style="font-size: 0.7rem; color: #888888; text-align: left; margin-top: 15px;">
+                💡 Copia el código de tu Gift Card y envíalo junto a tu pedido por WhatsApp para aplicar tu descuento.
+            </div>
+        </div>
+        
+        <!-- Botones de Acción -->
+        <div class="profile-actions">
+            <button class="profile-close-btn" onclick="toggleProfileModal(false)">CERRAR</button>
+            <button class="profile-logout-btn" onclick="handleLogoutAndClose()">CERRAR SESIÓN</button>
+        </div>
+    `;
+}
+
+// Copiar código
+function copyGiftCardCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        showToastNotification(`Código ${code} copiado al portapapeles.`);
+        const buttons = document.querySelectorAll('.copy-btn');
+        buttons.forEach(btn => {
+            if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(code)) {
+                btn.textContent = 'Copiado!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copiar';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }
+        });
+    }).catch(err => {
+        console.error('Error al copiar', err);
+    });
+}
+
+function handleLogoutAndClose() {
+    handleLogout();
+    toggleProfileModal(false);
+}
+
+// Exponer globalmente
+window.copyGiftCardCode = copyGiftCardCode;
+window.handleLogoutAndClose = handleLogoutAndClose;
+window.toggleProfileModal = toggleProfileModal;
+window.handleRegister = handleRegister;
 
 // Actualizar cabecera de cuenta de usuario
 function updateUserHeaderUI() {
@@ -938,10 +1246,10 @@ function updateUserHeaderUI() {
         const labelSpan = link.querySelector('.action-label');
         if (labelSpan) {
             if (activeUser) {
-                labelSpan.textContent = `${activeUser.name} (Salir)`;
+                labelSpan.textContent = `Perfil: ${activeUser.name}`;
                 link.onclick = (e) => {
                     e.preventDefault();
-                    handleLogout();
+                    toggleProfileModal(true);
                 };
             } else {
                 labelSpan.textContent = `Iniciar Sesión`;
@@ -1016,8 +1324,9 @@ function showToastNotification(message) {
 // DOM EVENT LISTENERS
 // =============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar órdenes, estadísticas y catálogo en localStorage
+    // Inicializar órdenes, estadísticas, usuarios y catálogo en localStorage
     initOrdersAndStats();
+    initUsers();
     initCatalog();
     syncCatalogDOM();
 
@@ -1221,7 +1530,26 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
-            handleLogin(email, '••••••••');
+            const password = document.getElementById('login-password').value;
+            handleLogin(email, password);
+        });
+    }
+
+    // Formulario de registro
+    const registerForm = document.getElementById('register-form-el');
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showToastNotification('Las contraseñas no coinciden.');
+                return;
+            }
+            handleRegister(name, email, password);
         });
     }
 
@@ -1395,23 +1723,71 @@ function setupModalMarkups() {
             <div class="login-modal">
                 <button class="close-btn modal-close" id="close-login-btn" aria-label="Cerrar login">&times;</button>
                 <div class="login-modal-content">
-                    <h2>INICIAR SESIÓN</h2>
-                    <form id="login-form-el">
-                        <div class="form-group">
-                            <label for="login-email">Correo Electrónico</label>
-                            <input type="email" id="login-email" required placeholder="tu@correo.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="login-password">Contraseña</label>
-                            <input type="password" id="login-password" required placeholder="••••••••">
-                        </div>
-                        <button type="submit" class="login-submit-btn">INGRESAR</button>
-                    </form>
-                    <p class="login-modal-switch">¿No tienes cuenta? <a href="#">Regístrate aquí</a></p>
+                    <!-- Vista de Iniciar Sesión -->
+                    <div class="login-modal-view active" id="login-view-el">
+                        <h2>INICIAR SESIÓN</h2>
+                        <form id="login-form-el">
+                            <div class="form-group">
+                                <label for="login-email">Correo Electrónico</label>
+                                <input type="email" id="login-email" required placeholder="tu@correo.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Contraseña</label>
+                                <input type="password" id="login-password" required placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="login-submit-btn">INGRESAR</button>
+                        </form>
+                        <p class="login-modal-switch">¿No tienes cuenta? <a href="#" id="switch-to-register-btn">Regístrate aquí</a></p>
+                    </div>
+
+                    <!-- Vista de Registro -->
+                    <div class="register-modal-view" id="register-view-el">
+                        <h2>CREAR CUENTA</h2>
+                        <form id="register-form-el">
+                            <div class="form-group">
+                                <label for="register-name">Nombre Completo</label>
+                                <input type="text" id="register-name" required placeholder="Tu Nombre y Apellido">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email">Correo Electrónico</label>
+                                <input type="email" id="register-email" required placeholder="tu@correo.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password">Contraseña</label>
+                                <input type="password" id="register-password" required placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-confirm-password">Confirmar Contraseña</label>
+                                <input type="password" id="register-confirm-password" required placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="login-submit-btn" style="background-color: #C5A059;">CREAR CUENTA</button>
+                        </form>
+                        <p class="login-modal-switch">¿Ya tienes cuenta? <a href="#" id="switch-to-login-btn">Inicia sesión aquí</a></p>
+                    </div>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
+
+        // Eventos para alternar entre Login y Registro
+        const toRegisterBtn = modal.querySelector('#switch-to-register-btn');
+        const toLoginBtn = modal.querySelector('#switch-to-login-btn');
+        const loginView = modal.querySelector('#login-view-el');
+        const registerView = modal.querySelector('#register-view-el');
+
+        if (toRegisterBtn && toLoginBtn && loginView && registerView) {
+            toRegisterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginView.classList.remove('active');
+                registerView.classList.add('active');
+            });
+
+            toLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerView.classList.remove('active');
+                loginView.classList.add('active');
+            });
+        }
     }
 
     // 5. Modal Checkout
@@ -1428,6 +1804,27 @@ function setupModalMarkups() {
             </div>
         `;
         document.body.appendChild(modal);
+    }
+
+    // 6. Modal Perfil de Usuario
+    if (!document.getElementById('profile-modal-el')) {
+        const modal = document.createElement('div');
+        modal.id = 'profile-modal-el';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="profile-modal">
+                <button class="close-btn modal-close" id="close-profile-btn" aria-label="Cerrar perfil">&times;</button>
+                <div class="profile-modal-content" id="profile-content-container">
+                    <!-- Inyección dinámica -->
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const closeProfileBtn = modal.querySelector('#close-profile-btn');
+        if (closeProfileBtn) {
+            closeProfileBtn.addEventListener('click', () => toggleProfileModal(false));
+        }
     }
 }
 

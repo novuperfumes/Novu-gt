@@ -1509,3 +1509,442 @@
 .modal-overlay.active .product-edit-form-modal {
     transform: translateY(0);
 }
+
+/* -------------------------------------------------------------
+   NUEVOS ESTILOS: CATEGORY SUB-NAV & LOYALTY CARD SYSTEM
+   ------------------------------------------------------------- */
+
+/* Barra de subnavegación de categorías debajo del buscador */
+.category-nav-bar {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    padding: 15px 0 5px 0;
+    margin-top: 15px;
+    border-top: 1px solid var(--color-border-light);
+    width: 100%;
+}
+
+.category-nav-link {
+    font-family: var(--font-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 6px;
+    transition: color 0.3s ease;
+}
+
+.category-nav-link:hover {
+    color: var(--color-text-dark);
+}
+
+.category-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #C5A059;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.category-nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.category-nav-link.active {
+    color: var(--color-text-dark);
+}
+
+.category-nav-link.active::after {
+    transform: scaleX(1);
+}
+
+@media (max-width: 600px) {
+    .category-nav-bar {
+        gap: 20px;
+        padding-top: 10px;
+    }
+    .category-nav-link {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+    }
+}
+
+/* Soporte para ocultar/mostrar login y register en el mismo modal */
+.login-modal-view, .register-modal-view {
+    display: none;
+}
+
+.login-modal-view.active, .register-modal-view.active {
+    display: block;
+}
+
+/* -------------------------------------------------------------
+   MODAL DE PERFIL Y TARJETA DE FIDELIDAD
+   ------------------------------------------------------------- */
+.profile-modal {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    border-radius: 4px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow-y: auto;
+    transform: translateY(30px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .profile-modal {
+    transform: translateY(0);
+}
+
+.profile-modal .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    z-index: 10;
+}
+
+.profile-modal-content {
+    padding: 40px;
+}
+
+.profile-title {
+    font-family: var(--font-accent);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    letter-spacing: 0.1em;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    border-bottom: 1.5px solid var(--color-text-dark);
+    padding-bottom: 12px;
+    text-align: center;
+}
+
+.profile-user-info {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-user-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 4px;
+}
+
+.profile-user-email {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+/* Tarjeta física simulada (Premium) */
+.loyalty-card-wrapper {
+    margin-bottom: 35px;
+}
+
+.loyalty-card-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-text-dark);
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: 8px;
+}
+
+.loyalty-card {
+    background: linear-gradient(135deg, #141311 0%, #2b2721 100%);
+    border: 1.5px solid #C5A059;
+    border-radius: 12px;
+    padding: 25px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+/* Efecto metalizado */
+.loyalty-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.03) 30%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 70%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
+}
+
+.loyalty-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.loyalty-card-brand {
+    font-family: var(--font-accent);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+}
+
+.loyalty-card-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #C5A059;
+    border: 1px solid #C5A059;
+    padding: 4px 10px;
+    border-radius: 30px;
+    text-transform: uppercase;
+}
+
+/* Grilla de Sellos */
+.loyalty-stamps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stamp-slot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(197, 160, 89, 0.3);
+    background-color: rgba(255, 255, 255, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.stamp-slot.active {
+    border-style: solid;
+    border-color: #C5A059;
+    background: radial-gradient(circle, #ffe1aa 0%, #C5A059 100%);
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+}
+
+.stamp-icon {
+    font-size: 1.1rem;
+    color: #ffffff;
+}
+
+.stamp-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(197, 160, 89, 0.5);
+    font-family: var(--font-accent);
+}
+
+.loyalty-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid rgba(197, 160, 89, 0.2);
+    padding-top: 15px;
+}
+
+.loyalty-cardholder {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.loyalty-cardholder-label {
+    font-size: 0.55rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.loyalty-cardholder-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.loyalty-progress-summary {
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #C5A059;
+}
+
+.loyalty-info-text {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.4;
+    margin-top: 12px;
+}
+
+/* Sección de Gift Cards */
+.gift-cards-section {
+    margin-bottom: 35px;
+}
+
+.gift-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gift-card-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #FAF7F2;
+    border: 1.5px solid var(--color-border-light);
+    border-radius: 6px;
+    transition: border-color 0.2s ease;
+}
+
+.gift-card-item:hover {
+    border-color: #C5A059;
+}
+
+.gift-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gift-card-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.gift-card-code-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gift-card-code {
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #C5A059;
+    letter-spacing: 0.05em;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.gift-card-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    text-align: right;
+}
+
+.gift-card-tag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #4CAF50;
+    text-transform: uppercase;
+}
+
+.copy-btn {
+    background-color: var(--color-text-dark);
+    color: #ffffff;
+    border: none;
+    padding: 5px 12px;
+    font-family: var(--font-primary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.copy-btn:hover {
+    background-color: #C5A059;
+}
+
+.copy-btn.copied {
+    background-color: #4CAF50;
+}
+
+.gift-card-empty {
+    text-align: center;
+    padding: 25px;
+    border: 1px dashed var(--color-border-light);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    background-color: #FAF7F2;
+    border-radius: 6px;
+}
+
+/* Botones de acción del Perfil */
+.profile-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.profile-close-btn {
+    flex: 1;
+    padding: 14px;
+    background-color: #eae5dc;
+    color: var(--color-text-dark);
+    border: none;
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.profile-close-btn:hover {
+    background-color: #dfd8cb;
+}
+
+.profile-logout-btn {
+    flex: 1;
+    padding: 14px;
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+    border: none;
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.profile-logout-btn:hover {
+    background-color: var(--color-accent-hover);
+}
+
