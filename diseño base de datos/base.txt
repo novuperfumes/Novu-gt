@@ -1,0 +1,125 @@
+Tablas:
+    Usuario
+        id
+        correo
+        contrasenia
+        rol
+        nombre
+        apellido
+        telefono
+        genero 
+        
+    Gift Card (Tarjeta de fidelidad - 8 sellos virtuales)
+        id
+        id_usuario
+        sellos (número de 0 a 8)
+
+    Perfume
+        id
+        nombre
+        descripcion
+        categoria
+        imagen
+        marca
+        activo (para poder deshabilitar perfumes sin borrarlos del historial)
+        
+    Presentacion_Perfume (variantes de tamaño para un perfume)
+        id
+        id_perfume (relación con Perfume)
+        tamanio (ej. '100 ml', '50 ml')
+        precio
+        stock
+
+    Carrito Maestro
+        id
+        id_usuario
+
+    Carrito Detalle
+        id
+        id_carrito_maestro (relación con Carrito Maestro)
+        id_presentacion (relación con Presentacion_Perfume)
+        cantidad
+
+    Orden de Compra
+        id
+        id_usuario
+        fecha
+        total
+        estado
+        metodo_de_pago
+        tipo_entrega (ej. 'domicilio' o 'sucursal')
+        id_sucursal (opcional, si es para recoger en tienda)
+        id_codigo_promocion (opcional)
+        
+        -- Dirección y datos de envío (se copian de la dirección del usuario al comprar para congelar el historial)
+        nombre_recibe
+        telefono_contacto
+        direccion_entrega
+        departamento_entrega
+        municipio_entrega
+        referencias_entrega
+        codigo_postal_entrega
+
+    Orden Detalle (para registrar qué productos se compraron, cuántos y a qué precio en ese momento)
+        id
+        id_orden (relación con Orden de Compra)
+        id_presentacion (relación con Presentacion_Perfume)
+        cantidad
+        precio_unitario (precio congelado al momento del pago)
+
+    Direccion (direcciones guardadas por el usuario en su perfil para reutilizar)
+        id
+        id_usuario
+        direccion
+        departamento
+        municipio
+        referencias (ej. "hay una casa amarilla en frente")
+        codigo_postal
+
+    Sucursal
+        id
+        nombre_sucursal (ej. "Cayalá", "Zona 10")
+        direccion
+        departamento
+        municipio
+        telefono
+
+    Codigo_promocion
+        id
+        codigo (el texto del cupón que ingresa el usuario, ej. "SAVE10")
+        tipo_descuento (ej. 'porcentaje' o 'monto_fijo')
+        descuento
+        fecha_inicio
+        fecha_fin
+        estado
+
+    Mensaje_Contacto
+        id
+        nombre
+        correo
+        asunto
+        mensaje
+        fecha_creacion
+        leido (para control administrativo, ej. true/false)
+
+    Historial_Sellos (registro de transacciones para auditoría de los 8 sellos)
+        id
+        id_usuario
+        id_orden (opcional, si viene de una compra)
+        tipo_operacion (ej. 'acumulado' por compra, 'canjeado' por regalo)
+        cantidad_sellos (ej. +1, -8)
+        fecha
+
+    Resenia_Perfume (calificaciones y opiniones del perfume en general)
+        id
+        id_usuario
+        id_perfume
+        calificacion (1 a 5 estrellas)
+        comentario
+        fecha
+
+    Favorito (Wishlist del producto)
+        id
+        id_usuario
+        id_perfume
+        fecha_agregado

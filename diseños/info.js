@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         question.addEventListener('click', () => {
             const item = question.closest('.faq-item');
             const answerWrapper = item.querySelector('.faq-answer-wrapper');
-            
+
             // Close other items if open
             const activeItem = document.querySelector('.faq-item.active');
             if (activeItem && activeItem !== item) {
@@ -35,21 +35,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
             const submitBtn = contactForm.querySelector('.contact-submit-btn');
             const originalText = submitBtn.innerText;
-            
+
             // Premium sending micro-animation
             submitBtn.disabled = true;
             submitBtn.innerText = 'ENVIANDO...';
-            
+
             setTimeout(() => {
                 submitBtn.style.backgroundColor = '#C5A059';
                 submitBtn.innerText = '¡MENSAJE ENVIADO CON ÉXITO!';
-                
-                // Reset form fields
+
+
                 contactForm.reset();
-                
+
                 setTimeout(() => {
                     submitBtn.disabled = false;
                     submitBtn.style.backgroundColor = '';

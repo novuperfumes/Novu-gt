@@ -1,0 +1,156 @@
+Table Usuario {
+  id integer [primary key]
+  correo varchar
+  contrasenia varchar
+  rol varchar
+  nombre varchar
+  apellido varchar
+  telefono varchar
+  genero varchar
+}
+
+Table GiftCard {
+  id integer [primary key]
+  id_usuario integer
+  sellos integer
+}
+
+Table Perfume {
+  id integer [primary key]
+  nombre varchar
+  descripcion text
+  categoria varchar
+  imagen varchar
+  marca varchar
+  activo boolean
+}
+
+Table Presentacion_Perfume {
+  id integer [primary key]
+  id_perfume integer
+  tamanio varchar
+  precio decimal
+  stock integer
+}
+
+Table CarritoMaestro {
+  id integer [primary key]
+  id_usuario integer
+}
+
+Table CarritoDetalle {
+  id integer [primary key]
+  id_carrito_maestro integer
+  id_presentacion integer
+  cantidad integer
+}
+
+Table OrdenCompra {
+  id integer [primary key]
+  id_usuario integer
+  fecha timestamp
+  total decimal
+  estado varchar
+  metodo_de_pago varchar
+  tipo_entrega varchar
+  id_sucursal integer
+  id_codigo_promocion integer
+  nombre_recibe varchar
+  telefono_contacto varchar
+  direccion_entrega varchar
+  departamento_entrega varchar
+  municipio_entrega varchar
+  referencias_entrega text
+  codigo_postal_entrega varchar
+}
+
+Table OrdenDetalle {
+  id integer [primary key]
+  id_orden integer
+  id_presentacion integer
+  cantidad integer
+  precio_unitario decimal
+}
+
+Table Direccion {
+  id integer [primary key]
+  id_usuario integer
+  direccion varchar
+  departamento varchar
+  municipio varchar
+  referencias text
+  codigo_postal varchar
+}
+
+Table Sucursal {
+  id integer [primary key]
+  nombre_sucursal varchar
+  direccion varchar
+  departamento varchar
+  municipio varchar
+  telefono varchar
+}
+
+Table CodigoPromocion {
+  id integer [primary key]
+  codigo varchar
+  tipo_descuento varchar
+  descuento decimal
+  fecha_inicio date
+  fecha_fin date
+  estado varchar
+}
+
+Table MensajeContacto {
+  id integer [primary key]
+  nombre varchar
+  correo varchar
+  asunto varchar
+  mensaje text
+  fecha_creacion timestamp
+  leido boolean
+}
+
+Table HistorialSellos {
+  id integer [primary key]
+  id_usuario integer
+  id_orden integer
+  tipo_operacion varchar
+  cantidad_sellos integer
+  fecha timestamp
+}
+
+Table ReseniaPerfume {
+  id integer [primary key]
+  id_usuario integer
+  id_perfume integer
+  calificacion integer
+  comentario text
+  fecha timestamp
+}
+
+Table Favorito {
+  id integer [primary key]
+  id_usuario integer
+  id_perfume integer
+  fecha_agregado timestamp
+}
+
+// Relaciones y Llaves Foráneas (Foreign Keys)
+Ref: GiftCard.id_usuario > Usuario.id
+Ref: Presentacion_Perfume.id_perfume > Perfume.id
+Ref: CarritoMaestro.id_usuario > Usuario.id
+Ref: CarritoDetalle.id_carrito_maestro > CarritoMaestro.id
+Ref: CarritoDetalle.id_presentacion > Presentacion_Perfume.id
+Ref: OrdenCompra.id_usuario > Usuario.id
+Ref: OrdenCompra.id_sucursal > Sucursal.id
+Ref: OrdenCompra.id_codigo_promocion > CodigoPromocion.id
+Ref: OrdenDetalle.id_orden > OrdenCompra.id
+Ref: OrdenDetalle.id_presentacion > Presentacion_Perfume.id
+Ref: Direccion.id_usuario > Usuario.id
+Ref: HistorialSellos.id_usuario > Usuario.id
+Ref: HistorialSellos.id_orden > OrdenCompra.id
+Ref: ReseniaPerfume.id_usuario > Usuario.id
+Ref: ReseniaPerfume.id_perfume > Perfume.id
+Ref: Favorito.id_usuario > Usuario.id
+Ref: Favorito.id_perfume > Perfume.id
