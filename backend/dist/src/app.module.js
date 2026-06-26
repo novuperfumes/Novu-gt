@@ -26,6 +26,9 @@ const branches_module_1 = require("./modules/branches/branches.module");
 const stamps_module_1 = require("./modules/stamps/stamps.module");
 const contact_module_1 = require("./modules/contact/contact.module");
 const addresses_module_1 = require("./modules/addresses/addresses.module");
+const favorites_module_1 = require("./modules/favorites/favorites.module");
+const reviews_module_1 = require("./modules/reviews/reviews.module");
+const uploads_module_1 = require("./modules/uploads/uploads.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -54,6 +57,9 @@ exports.AppModule = AppModule = __decorate([
             stamps_module_1.StampsModule,
             contact_module_1.ContactModule,
             addresses_module_1.AddressesModule,
+            favorites_module_1.FavoritesModule,
+            reviews_module_1.ReviewsModule,
+            uploads_module_1.UploadsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

@@ -17,6 +17,9 @@ import { BranchesModule } from './modules/branches/branches.module';
 import { StampsModule } from './modules/stamps/stamps.module';
 import { ContactModule } from './modules/contact/contact.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
+import { FavoritesModule } from './modules/favorites/favorites.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -48,6 +51,9 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     StampsModule,
     ContactModule,
     AddressesModule,
+    FavoritesModule,
+    ReviewsModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [
