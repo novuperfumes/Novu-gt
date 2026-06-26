@@ -1,0 +1,62 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { LoggerModule } from 'nestjs-pino';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from './common/prisma/prisma.module';
+import { RedisModule } from './common/cache/redis.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RedisThrottlerGuard } from './common/guards/throttler.guard';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { PerfumesModule } from './modules/perfumes/perfumes.module';
+import { CartsModule } from './modules/carts/carts.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { PromoCodesModule } from './modules/promo-codes/promo-codes.module';
+import { BranchesModule } from './modules/branches/branches.module';
+import { StampsModule } from './modules/stamps/stamps.module';
+import { ContactModule } from './modules/contact/contact.module';
+import { AddressesModule } from './modules/addresses/addresses.module';
+
+@Module({
+  imports: [
+    // Load config globally
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    // Async high-throughput pino logging
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: process.env.NODE_ENV !== 'production'
+          ? { target: 'pino-pretty', options: { colorize: true, singleLine: true } }
+          : undefined,
+      },
+    }),
+    // Global database client module
+    PrismaModule,
+    // Global Redis caching module
+    RedisModule,
+    
+    // Business modules
+    UsersModule,
+    AuthModule,
+    PerfumesModule,
+    CartsModule,
+    OrdersModule,
+    PromoCodesModule,
+    BranchesModule,
+    StampsModule,
+    ContactModule,
+    AddressesModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    // Global Rate Limiting Guard
+    {
+      provide: APP_GUARD,
+      useClass: RedisThrottlerGuard,
+    },
+  ],
+})
+export class AppModule {}

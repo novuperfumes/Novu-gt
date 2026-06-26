@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id              Int               @id @default(autoincrement())
+  correo          String            @unique
+  contrasenia     String
+  rol             String            @default("CLIENTE") // e.g. "CLIENTE", "ADMIN"
+  nombre          String
+  apellido        String
+  telefono        String?
+  genero          String?
+  
+  giftCards       GiftCard[]
+  carrito         CarritoMaestro?
+  ordenes         OrdenCompra[]
+  direcciones     Direccion[]
+  historialSellos HistorialSellos[]
+  resenias        ReseniaPerfume[]
+  favoritos       Favorito[]
+}
+
+model GiftCard {
+  id          Int     @id @default(autoincrement())
+  id_usuario  Int
+  usuario     Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  sellos      Int     @default(0) // Número de 0 a 8 sellos
+}
+
+model Perfume {
+  id             Int                   @id @default(autoincrement())
+  nombre         String
+  descripcion    String                @db.Text
+  categoria      String
+  imagen         String
+  marca          String
+  activo         Boolean               @default(true)
+  
+  presentaciones PresentacionPerfume[]
+  resenias       ReseniaPerfume[]
+  favoritos      Favorito[]
+}
+
+model PresentacionPerfume {
+  id              Int               @id @default(autoincrement())
+  id_perfume      Int
+  perfume         Perfume           @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
+  tamanio         String            // ej. '100 ml', '50 ml'
+  precio          Decimal           @db.Decimal(10, 2)
+  stock           Int               @default(0)
+  
+  carritoDetalles CarritoDetalle[]
+  ordenDetalles   OrdenDetalle[]
+}
+
+model CarritoMaestro {
+  id          Int              @id @default(autoincrement())
+  id_usuario  Int              @unique
+  usuario     Usuario          @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  detalles    CarritoDetalle[]
+}
+
+model CarritoDetalle {
+  id                 Int                 @id @default(autoincrement())
+  id_carrito_maestro Int
+  carritoMaestro     CarritoMaestro      @relation(fields: [id_carrito_maestro], references: [id], onDelete: Cascade)
+  id_presentacion    Int
+  presentacion       PresentacionPerfume @relation(fields: [id_presentacion], references: [id], onDelete: Cascade)
+  cantidad           Int                 @default(1)
+}
+
+model OrdenCompra {
+  id                    Int             @id @default(autoincrement())
+  id_usuario            Int
+  usuario               Usuario         @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  fecha                 DateTime        @default(now())
+  total                 Decimal         @db.Decimal(10, 2)
+  estado                String          @default("PENDIENTE") // e.g. "PENDIENTE", "PROCESADO", "ENTREGADO", "CANCELADO"
+  metodo_de_pago        String
+  tipo_entrega          String          // e.g. "domicilio", "sucursal"
+  id_sucursal           Int?
+  sucursal              Sucursal?       @relation(fields: [id_sucursal], references: [id], onDelete: SetNull)
+  id_codigo_promocion   Int?
+  codigoPromocion       CodigoPromocion? @relation(fields: [id_codigo_promocion], references: [id], onDelete: SetNull)
+  
+  // Dirección y datos de envío (se copian al comprar para congelar el historial)
+  nombre_recibe         String
+  telefono_contacto     String
+  direccion_entrega     String
+  departamento_entrega  String
+  municipio_entrega     String
+  referencias_entrega   String?         @db.Text
+  codigo_postal_entrega String?
+  
+  detalles              OrdenDetalle[]
+  historialSellos       HistorialSellos[]
+}
+
+model OrdenDetalle {
+  id              Int                 @id @default(autoincrement())
+  id_orden        Int
+  orden           OrdenCompra         @relation(fields: [id_orden], references: [id], onDelete: Cascade)
+  id_presentacion Int
+  presentacion    PresentacionPerfume @relation(fields: [id_presentacion], references: [id], onDelete: Restrict)
+  cantidad        Int
+  precio_unitario Decimal             @db.Decimal(10, 2) // Precio congelado al pagar
+}
+
+model Direccion {
+  id           Int     @id @default(autoincrement())
+  id_usuario   Int
+  usuario      Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  direccion    String
+  departamento String
+  municipio    String
+  referencias  String? @db.Text
+  codigo_postal String?
+}
+
+model Sucursal {
+  id              Int           @id @default(autoincrement())
+  nombre_sucursal String
+  direccion       String
+  departamento    String
+  municipio       String
+  telefono        String?
+  ordenes         OrdenCompra[]
+}
+
+model CodigoPromocion {
+  id             Int           @id @default(autoincrement())
+  codigo         String        @unique
+  tipo_descuento String        // e.g. 'porcentaje' o 'monto_fijo'
+  descuento      Decimal       @db.Decimal(10, 2)
+  fecha_inicio   DateTime
+  fecha_fin      DateTime
+  estado         String        @default("ACTIVO") // e.g. "ACTIVO", "INACTIVO"
+  ordenes        OrdenCompra[]
+}
+
+model MensajeContacto {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  correo         String
+  asunto         String
+  mensaje        String   @db.Text
+  fecha_creacion DateTime @default(now())
+  leido          Boolean  @default(false)
+}
+
+model HistorialSellos {
+  id              Int          @id @default(autoincrement())
+  id_usuario      Int
+  usuario         Usuario      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  id_orden        Int?
+  orden           OrdenCompra? @relation(fields: [id_orden], references: [id], onDelete: SetNull)
+  tipo_operacion  String       // e.g. 'acumulado', 'canjeado'
+  cantidad_sellos Int
+  fecha           DateTime     @default(now())
+}
+
+model ReseniaPerfume {
+  id           Int      @id @default(autoincrement())
+  id_usuario   Int
+  usuario      Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  id_perfume   Int
+  perfume      Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
+  calificacion Int      // 1 a 5 estrellas
+  comentario   String?  @db.Text
+  fecha        DateTime @default(now())
+}
+
+model Favorito {
+  id             Int      @id @default(autoincrement())
+  id_usuario     Int
+  usuario        Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  id_perfume     Int
+  perfume        Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
+  fecha_agregado DateTime @default(now())
+}

@@ -1,0 +1,8 @@
+export declare class UpdatePerfumeDto {
+    nombre?: string;
+    descripcion?: string;
+    categoria?: string;
+    imagen?: string;
+    marca?: string;
+    activo?: boolean;
+}
