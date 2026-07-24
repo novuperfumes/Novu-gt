@@ -112,11 +112,14 @@ export function PerfumeDetail() {
   const currentOption = options[selectedOptionIndex] || options[0];
 
   const handleAddToCart = () => {
+    if (!perfume) return;
+    const { precioFinal } = calcularPrecio(perfume, currentOption.price);
+    
     addToCart({
       id: `${perfume.id}-${currentOption.id}`,
       brand: perfume.marca,
       name: perfume.nombre,
-      price: currentOption.price,
+      price: precioFinal,
       quantity: quantity,
       size: currentOption.label,
       presentacionId: currentOption.presentacionId,
