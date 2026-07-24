@@ -34,6 +34,7 @@ const uploads_module_1 = require("./modules/uploads/uploads.module");
 const sales_reports_module_1 = require("./modules/sales-reports/sales-reports.module");
 const whatsapp_orders_module_1 = require("./modules/whatsapp-orders/whatsapp-orders.module");
 const gift_cards_module_1 = require("./modules/gift-cards/gift-cards.module");
+const campanias_module_1 = require("./modules/campanias/campanias.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -70,6 +71,7 @@ exports.AppModule = AppModule = __decorate([
             sales_reports_module_1.SalesReportsModule,
             whatsapp_orders_module_1.WhatsappOrdersModule,
             gift_cards_module_1.GiftCardsModule,
+            campanias_module_1.CampaniasModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

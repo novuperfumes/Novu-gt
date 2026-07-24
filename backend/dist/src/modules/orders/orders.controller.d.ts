@@ -81,8 +81,8 @@ export declare class OrdersController {
         } & {
             id: number;
             id_orden: number;
-            id_presentacion: number | null;
             cantidad: number;
+            id_presentacion: number | null;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
@@ -185,8 +185,8 @@ export declare class OrdersController {
         } & {
             id: number;
             id_orden: number;
-            id_presentacion: number | null;
             cantidad: number;
+            id_presentacion: number | null;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
@@ -284,8 +284,8 @@ export declare class OrdersController {
         } & {
             id: number;
             id_orden: number;
-            id_presentacion: number | null;
             cantidad: number;
+            id_presentacion: number | null;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;

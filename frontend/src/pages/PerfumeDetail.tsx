@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { usePerfumes } from '../hooks/usePerfumes';
 import type { Perfume } from '../hooks/usePerfumes';
 import { useCart } from '../context/CartContext';
+import { useCampania } from '../hooks/useCampania';
 
 interface SizeOption {
   id: string;
@@ -18,6 +19,7 @@ export function PerfumeDetail() {
   const { id } = useParams<{ id: string }>();
   const { loading, perfumes } = usePerfumes();
   const { addToCart } = useCart();
+  const { campania, calcularPrecio } = useCampania();
   
   const [perfume, setPerfume] = useState<Perfume | null>(null);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(0);
@@ -279,15 +281,40 @@ export function PerfumeDetail() {
 
             {/* Price & Quantity & Add to Cart */}
             <div style={{ backgroundColor: theme.boxBg, padding: '25px', borderRadius: '12px', border: theme.boxBorder }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '15px', marginBottom: '20px' }}>
-                <span style={{ fontSize: '2.1rem', fontWeight: 800, color: '#C5A059' }}>
-                  Q {(currentOption.price * quantity).toFixed(2)}
-                </span>
-                {quantity > 1 && (
-                  <span style={{ fontSize: '0.85rem', color: theme.textMuted }}>
-                    (Q {currentOption.price.toFixed(2)} c/u)
-                  </span>
-                )}
+              <div style={{ marginBottom: '20px' }}>
+                {perfume && (() => {
+                  const pc = calcularPrecio(perfume, currentOption.price * quantity);
+                  const unitPc = calcularPrecio(perfume, currentOption.price);
+                  return pc.tieneDescuento ? (
+                    <div>
+                      <span className="discount-badge" style={{ marginBottom: '6px', display: 'inline-block' }}>{pc.porcentaje}% OFF</span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '1.3rem', color: '#aaa', textDecoration: 'line-through', fontWeight: 600 }}>
+                          Q {(currentOption.price * quantity).toFixed(2)}
+                        </span>
+                        <span style={{ fontSize: '2.1rem', fontWeight: 800, color: '#C5A059' }}>
+                          Q {pc.precioFinal.toFixed(2)}
+                        </span>
+                      </div>
+                      {quantity > 1 && (
+                        <span style={{ fontSize: '0.85rem', color: theme.textMuted }}>
+                          (Q {unitPc.precioFinal.toFixed(2)} c/u)
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '15px' }}>
+                      <span style={{ fontSize: '2.1rem', fontWeight: 800, color: '#C5A059' }}>
+                        Q {(currentOption.price * quantity).toFixed(2)}
+                      </span>
+                      {quantity > 1 && (
+                        <span style={{ fontSize: '0.85rem', color: theme.textMuted }}>
+                          (Q {currentOption.price.toFixed(2)} c/u)
+                        </span>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>

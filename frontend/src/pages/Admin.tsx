@@ -43,6 +43,12 @@ export function Admin() {
             </svg>
             Promociones
           </button>
+          <button className={`admin-nav-item ${activeTab === 'campanias' ? 'active' : ''}`} onClick={() => setActiveTab('campanias')}>
+            <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+            Campañas / Bazar
+          </button>
         </nav>
         <div className="admin-sidebar-footer" style={{ padding: '25px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', textAlign: 'center' }}>
           <Link to="/" className="admin-logout-btn" style={{ textAlign: 'center', textDecoration: 'none', display: 'block', boxSizing: 'border-box' }}>VOLVER A LA TIENDA</Link>
@@ -57,12 +63,14 @@ export function Admin() {
           {activeTab === 'history' && 'Historial de Pedidos'}
           {activeTab === 'catalog' && 'Administración de Catálogo'}
           {activeTab === 'promotions' && 'Promociones y Gift Cards'}
+          {activeTab === 'campanias' && 'Campañas de Descuento'}
         </h2>
         {activeTab === 'metrics' && <MetricsTab />}
         {activeTab === 'loyalty' && <LoyaltyTab />}
         {activeTab === 'history' && <HistoryTab />}
         {activeTab === 'catalog' && <CatalogTab />}
         {activeTab === 'promotions' && <PromotionsTab />}
+        {activeTab === 'campanias' && <CampaniasTab />}
       </main>
     </div>
   );
@@ -1686,3 +1694,299 @@ function PromotionsTab() {
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────
+// CAMPAÑAS / BAZAR TAB
+// ─────────────────────────────────────────────────────────────
+function CampaniasTab() {
+  const [campanias, setCampanias] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [perfumes, setPerfumes] = useState<any[]>([]);
+
+  // Form state
+  const [nombre, setNombre] = useState('');
+  const [tipo, setTipo] = useState<'GLOBAL' | 'CATEGORIA' | 'SELECCION'>('GLOBAL');
+  const [descuento, setDescuento] = useState<number>(10);
+  const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState<string[]>([]);
+  const [perfumesSeleccionados, setPerfumesSeleccionados] = useState<number[]>([]);
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+
+  const CATEGORIAS_DISPONIBLES = ['árabe', 'diseñador', 'nicho'];
+
+  useEffect(() => {
+    Promise.all([
+      fetch('http://localhost:3000/campanias', { credentials: 'include' }).then(r => r.json()),
+      fetch('http://localhost:3000/perfumes/admin/all', { credentials: 'include' }).then(r => r.json()),
+    ])
+      .then(([c, p]) => {
+        setCampanias(Array.isArray(c) ? c : []);
+        setPerfumes(Array.isArray(p) ? p : []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const refresh = () => {
+    fetch('http://localhost:3000/campanias', { credentials: 'include' })
+      .then(r => r.json())
+      .then(c => setCampanias(Array.isArray(c) ? c : []))
+      .catch(() => {});
+  };
+
+  const handleCreate = async () => {
+    if (!nombre.trim()) return alert('Ponle un nombre a la campaña');
+    if (descuento <= 0 || descuento > 100) return alert('El descuento debe estar entre 1 y 100%');
+    setSaving(true);
+    try {
+      const body: any = { nombre: nombre.trim(), tipo, descuento };
+      if (tipo === 'CATEGORIA') body.categorias = JSON.stringify(categoriasSeleccionadas);
+      if (tipo === 'SELECCION') body.perfume_ids = JSON.stringify(perfumesSeleccionados);
+      if (fechaInicio) body.fecha_inicio = fechaInicio;
+      if (fechaFin) body.fecha_fin = fechaFin;
+
+      await fetch('http://localhost:3000/campanias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+      setNombre(''); setTipo('GLOBAL'); setDescuento(10);
+      setCategoriasSeleccionadas([]); setPerfumesSeleccionados([]);
+      setFechaInicio(''); setFechaFin('');
+      refresh();
+    } catch (e) { alert('Error al crear campaña'); }
+    finally { setSaving(false); }
+  };
+
+  const handleToggle = async (id: number) => {
+    await fetch(`http://localhost:3000/campanias/${id}/toggle`, {
+      method: 'PATCH', credentials: 'include',
+    });
+    refresh();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('¿Eliminar esta campaña?')) return;
+    await fetch(`http://localhost:3000/campanias/${id}`, {
+      method: 'DELETE', credentials: 'include',
+    });
+    refresh();
+  };
+
+  const toggleCategoria = (cat: string) => {
+    setCategoriasSeleccionadas(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const togglePerfume = (id: number) => {
+    setPerfumesSeleccionados(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  if (loading) return <p style={{ color: '#666' }}>Cargando campañas...</p>;
+
+  const campaniaActiva = campanias.find(c => c.activa);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+
+      {/* Banner campaña activa */}
+      {campaniaActiva && (
+        <div style={{
+          background: 'linear-gradient(135deg, #C5A059, #8a6e30)',
+          borderRadius: '8px',
+          padding: '20px 25px',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: '0 4px 20px rgba(197,160,89,0.35)',
+        }}>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.85 }}>Campaña Activa Ahora</p>
+            <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', fontWeight: 800 }}>{campaniaActiva.nombre}</h3>
+            <p style={{ margin: '4px 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
+              {Number(campaniaActiva.descuento)}% de descuento · Tipo: {campaniaActiva.tipo}
+            </p>
+          </div>
+          <button
+            onClick={() => handleToggle(campaniaActiva.id)}
+            style={{ padding: '10px 22px', background: 'rgba(255,255,255,0.2)', border: '1.5px solid rgba(255,255,255,0.6)', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.1em' }}
+          >
+            DESACTIVAR
+          </button>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+
+        {/* Formulario de creación */}
+        <div style={{ border: '1px solid #eae5dc', borderRadius: '8px', padding: '25px' }}>
+          <h3 style={{ margin: '0 0 20px', fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1c1a17', borderBottom: '2px solid #C5A059', paddingBottom: '10px' }}>
+            Nueva Campaña
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Nombre del evento</label>
+              <input
+                value={nombre}
+                onChange={e => setNombre(e.target.value)}
+                placeholder='ej. "Bazar Julio" o "Navidad 2026"'
+                style={{ width: '100%', padding: '10px 14px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.85rem', boxSizing: 'border-box', outline: 'none' }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>% de Descuento</label>
+              <input
+                type="number" min={1} max={99}
+                value={descuento}
+                onChange={e => setDescuento(Number(e.target.value))}
+                style={{ width: '100%', padding: '10px 14px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.85rem', boxSizing: 'border-box', outline: 'none' }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Aplica a</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {(['GLOBAL', 'CATEGORIA', 'SELECCION'] as const).map(t => (
+                  <button key={t} onClick={() => setTipo(t)} style={{
+                    flex: 1, padding: '9px 5px', border: `1.5px solid ${tipo === t ? '#C5A059' : '#eae5dc'}`,
+                    background: tipo === t ? '#C5A059' : 'transparent', color: tipo === t ? '#fff' : '#1c1a17',
+                    borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.65rem', letterSpacing: '0.06em',
+                  }}>
+                    {t === 'GLOBAL' ? 'Todo' : t === 'CATEGORIA' ? 'Categoría' : 'Selección'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {tipo === 'CATEGORIA' && (
+              <div>
+                <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>Categorías</label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {CATEGORIAS_DISPONIBLES.map(cat => (
+                    <button key={cat} onClick={() => toggleCategoria(cat)} style={{
+                      padding: '7px 14px', border: `1.5px solid ${categoriasSeleccionadas.includes(cat) ? '#C5A059' : '#eae5dc'}`,
+                      background: categoriasSeleccionadas.includes(cat) ? '#C5A059' : 'transparent',
+                      color: categoriasSeleccionadas.includes(cat) ? '#fff' : '#1c1a17',
+                      borderRadius: '20px', cursor: 'pointer', fontWeight: 600, fontSize: '0.75rem', textTransform: 'capitalize',
+                    }}>
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {tipo === 'SELECCION' && (
+              <div>
+                <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                  Perfumes ({perfumesSeleccionados.length} seleccionados)
+                </label>
+                <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #eae5dc', borderRadius: '4px', padding: '8px' }}>
+                  {perfumes.map(p => (
+                    <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 8px', cursor: 'pointer', borderRadius: '3px', background: perfumesSeleccionados.includes(p.id) ? '#fdf8f0' : 'transparent' }}>
+                      <input
+                        type="checkbox"
+                        checked={perfumesSeleccionados.includes(p.id)}
+                        onChange={() => togglePerfume(p.id)}
+                        style={{ accentColor: '#C5A059' }}
+                      />
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{p.marca}</span>
+                      <span style={{ fontSize: '0.75rem', color: '#5e5a54' }}>{p.nombre}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>
+                <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Inicio (opc.)</label>
+                <input type="date" value={fechaInicio} onChange={e => setFechaInicio(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.8rem', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Fin (opc.)</label>
+                <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.8rem', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+
+            <button
+              onClick={handleCreate}
+              disabled={saving}
+              style={{ padding: '13px', background: saving ? '#ccc' : '#1c1a17', color: '#fff', border: 'none', borderRadius: '4px', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.1em', cursor: saving ? 'default' : 'pointer', textTransform: 'uppercase' }}
+            >
+              {saving ? 'Guardando...' : 'Crear Campaña'}
+            </button>
+          </div>
+        </div>
+
+        {/* Lista de campañas */}
+        <div>
+          <h3 style={{ margin: '0 0 20px', fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1c1a17', borderBottom: '2px solid #C5A059', paddingBottom: '10px' }}>
+            Campañas Guardadas
+          </h3>
+          {campanias.length === 0 ? (
+            <p style={{ color: '#a8a297', fontSize: '0.85rem', textAlign: 'center', padding: '30px 0' }}>No hay campañas creadas aún</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {campanias.map(c => (
+                <div key={c.id} style={{
+                  border: `1.5px solid ${c.activa ? '#C5A059' : '#eae5dc'}`,
+                  borderRadius: '8px',
+                  padding: '16px 20px',
+                  background: c.activa ? 'linear-gradient(135deg, #fdf8f0, #fff)' : '#ffffff',
+                  boxShadow: c.activa ? '0 4px 15px rgba(197,160,89,0.15)' : 'none',
+                  transition: 'all 0.2s',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        {c.activa && <span style={{ fontSize: '0.6rem', fontWeight: 700, background: '#C5A059', color: '#fff', padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.08em' }}>ACTIVA</span>}
+                        <strong style={{ fontSize: '0.95rem', color: '#1c1a17' }}>{c.nombre}</strong>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: '#5e5a54' }}>
+                        <span style={{ fontWeight: 700, color: '#C5A059' }}>{Number(c.descuento)}% OFF</span>
+                        {' · '}{c.tipo === 'GLOBAL' ? 'Todo el catálogo' : c.tipo === 'CATEGORIA' ? `Categorías: ${c.categorias}` : `${JSON.parse(c.perfume_ids || '[]').length} perfumes`}
+                      </p>
+                      {(c.fecha_inicio || c.fecha_fin) && (
+                        <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: '#a8a297' }}>
+                          {c.fecha_inicio ? new Date(c.fecha_inicio).toLocaleDateString() : '—'} → {c.fecha_fin ? new Date(c.fecha_fin).toLocaleDateString() : '—'}
+                        </p>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
+                      <button onClick={() => handleToggle(c.id)} style={{
+                        padding: '7px 14px', border: `1.5px solid ${c.activa ? '#C5A059' : '#1c1a17'}`,
+                        background: c.activa ? '#C5A059' : 'transparent',
+                        color: c.activa ? '#fff' : '#1c1a17',
+                        borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.65rem', letterSpacing: '0.06em', whiteSpace: 'nowrap',
+                      }}>
+                        {c.activa ? 'Desactivar' : 'Activar'}
+                      </button>
+                      <button onClick={() => handleDelete(c.id)} style={{
+                        padding: '5px 10px', border: '1px solid #fca5a5', background: 'transparent',
+                        color: '#dc2626', borderRadius: '4px', cursor: 'pointer', fontWeight: 600, fontSize: '0.65rem',
+                      }}>
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+

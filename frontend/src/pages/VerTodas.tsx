@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePerfumes } from '../hooks/usePerfumes';
+import { useCampania } from '../hooks/useCampania';
 
 export function VerTodas() {
   const navigate = useNavigate();
   const { perfumes, loading } = usePerfumes();
+  const { campania, calcularPrecio } = useCampania();
   
   const [activeGender, setActiveGender] = useState('todos');
 
@@ -18,6 +20,11 @@ export function VerTodas() {
 
   return (
     <>
+      {campania && (
+        <div className="campania-banner">
+          <span>✦</span> {campania.nombre} — {Number(campania.descuento)}% de descuento en perfumes seleccionados <span>✦</span>
+        </div>
+      )}
       <main className="arabe-main">
         {/* Banner estático para Todas */}
         <section className="hero-carousel-section" id="hero-carousel" style={{ height: '400px' }}>
@@ -57,6 +64,7 @@ export function VerTodas() {
               {loading && <p style={{ color: '#C5A059', textAlign: 'center', width: '100%', padding: '20px' }}>Cargando productos...</p>}
               {!loading && filteredGridProducts.map(product => {
                 const price = product.presentaciones?.length ? Number(product.presentaciones[0].precio) : 0;
+                const { precioFinal, tieneDescuento, porcentaje } = calcularPrecio(product, price);
                 return (
                 <div className="grid-product-card" key={product.id} onClick={() => handleVerMas(product.id)} style={{ cursor: 'pointer' }}>
                   <div className="grid-card-image-wrapper">
@@ -66,7 +74,15 @@ export function VerTodas() {
                     <h3 className="grid-product-brand">{product.marca}</h3>
                     <p className="grid-product-name">{product.nombre}</p>
                     <p className="grid-product-type">{product.categoria}</p>
-                    <p className="grid-product-price">Q {price.toFixed(2)}</p>
+                    {tieneDescuento ? (
+                      <div style={{ marginBottom: '12px' }}>
+                        <span className="discount-badge">{porcentaje}% OFF</span>
+                        <span className="price-original">Q {price.toFixed(2)}</span>
+                        <span className="price-discount">Q {precioFinal.toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <p className="grid-product-price">Q {price.toFixed(2)}</p>
+                    )}
                     <button className="ver-mas-btn" onClick={(e) => { e.stopPropagation(); handleVerMas(product.id); }}>VER MÁS</button>
                   </div>
                 </div>

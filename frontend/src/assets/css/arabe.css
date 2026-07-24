@@ -873,3 +873,70 @@ body {
     }
 }
 
+/* -------------------------------------------------------------
+   CAMPAÑA / DESCUENTO — Precios y Banner
+------------------------------------------------------------- */
+
+/* Banner de campaña activa sobre el hero */
+.campania-banner {
+    background: linear-gradient(90deg, #1c1a17 0%, #3a3026 50%, #1c1a17 100%);
+    color: #C5A059;
+    text-align: center;
+    padding: 10px 20px;
+    font-family: var(--font-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(197,160,89,0.3);
+    animation: campaniaPulse 3s ease-in-out infinite;
+}
+
+.campania-banner span {
+    font-size: 1rem;
+    margin: 0 8px;
+}
+
+@keyframes campaniaPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
+
+/* Precio tachado (original) */
+.price-original {
+    font-size: 0.8rem;
+    color: #aaaaaa;
+    text-decoration: line-through;
+    display: block;
+    line-height: 1.2;
+}
+
+/* Precio con descuento */
+.price-discount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #C5A059;
+    display: block;
+}
+
+/* Badge de porcentaje de descuento en tarjeta */
+.discount-badge {
+    display: inline-block;
+    background-color: #C5A059;
+    color: #ffffff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-bottom: 6px;
+}
+
+/* Precio normal sin descuento (alias para consistencia) */
+.price-normal {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}

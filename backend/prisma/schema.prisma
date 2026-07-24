@@ -328,3 +328,17 @@ model OrdenWhatsApp {
   estado         String   @default("PENDIENTE") // PENDIENTE, CONFIRMADA, CANCELADA
   fecha          DateTime @default(now())
 }
+
+model CampaniaDescuento {
+  id          Int      @id @default(autoincrement())
+  nombre      String   // ej. "Bazar Julio", "Navidad 2026"
+  activa      Boolean  @default(false)
+  tipo        String   // "GLOBAL" | "CATEGORIA" | "SELECCION"
+  descuento   Decimal  @db.Decimal(5, 2) // porcentaje: 10.00 = 10%
+  categorias  String?  // JSON array de categorías (si tipo=CATEGORIA)
+  perfume_ids String?  // JSON array de IDs (si tipo=SELECCION)
+  fecha_inicio DateTime?
+  fecha_fin    DateTime?
+  creado_en   DateTime @default(now())
+}
+

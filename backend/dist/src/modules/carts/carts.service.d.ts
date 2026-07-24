@@ -53,11 +53,11 @@ export declare class CartsService {
             }) | null;
         } & {
             id: number;
-            id_presentacion: number | null;
             cantidad: number;
+            id_presentacion: number | null;
+            id_carrito_maestro: number;
             id_decant: number | null;
             tipo_decant: string | null;
-            id_carrito_maestro: number;
         })[];
     } & {
         id: number;
@@ -65,19 +65,19 @@ export declare class CartsService {
     }>;
     addItem(userId: number, dto: AddItemDto): Promise<{
         id: number;
-        id_presentacion: number | null;
         cantidad: number;
+        id_presentacion: number | null;
+        id_carrito_maestro: number;
         id_decant: number | null;
         tipo_decant: string | null;
-        id_carrito_maestro: number;
     }>;
     updateItem(userId: number, detailId: number, dto: UpdateItemDto): Promise<{
         id: number;
-        id_presentacion: number | null;
         cantidad: number;
+        id_presentacion: number | null;
+        id_carrito_maestro: number;
         id_decant: number | null;
         tipo_decant: string | null;
-        id_carrito_maestro: number;
     }>;
     removeItem(userId: number, detailId: number): Promise<{
         message: string;
