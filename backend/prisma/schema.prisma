@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,129 +7,122 @@ datasource db {
 }
 
 model Usuario {
-  id          Int     @id @default(autoincrement())
-  correo      String  @unique
-  contrasenia String
-  rol         String  @default("CLIENTE") // e.g. "CLIENTE", "ADMIN"
-  nombre      String
-  apellido    String
-  telefono    String?
-  genero      String?
-  sellos      Int     @default(0) // Puntos de fidelidad (0 a 8)
-
-  giftCards       GiftCard[]
+  id              Int               @id @default(autoincrement())
+  correo          String            @unique
+  contrasenia     String
+  rol             String            @default("CLIENTE")
+  nombre          String
+  apellido        String
+  telefono        String?
+  genero          String?
+  sellos          Int               @default(0)
   carrito         CarritoMaestro?
-  ordenes         OrdenCompra[]
   direcciones     Direccion[]
-  historialSellos HistorialSellos[]
-  resenias        ReseniaPerfume[]
   favoritos       Favorito[]
+  giftCards       GiftCard[]
+  historialSellos HistorialSellos[]
+  ordenes         OrdenCompra[]
+  resenias        ReseniaPerfume[]
   usosPromocion   UsoPromocion[]
 }
 
 model GiftCard {
-  id            Int     @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   id_usuario    Int
-  usuario       Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
-  codigo        String  @unique
-  monto         Decimal @db.Decimal(10, 2)
-  activa        Boolean @default(true)
-  es_bienvenida Boolean @default(false)
-
+  codigo        String        @unique
+  monto         Decimal       @db.Decimal(10, 2)
+  activa        Boolean       @default(true)
+  es_bienvenida Boolean       @default(false)
+  usuario       Usuario       @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   ordenes       OrdenCompra[]
 }
 
 model Perfume {
-  id          Int     @id @default(autoincrement())
-  nombre      String
-  descripcion String  @db.Text
-  categoria   String
-  tipo        String? // ej. árabe, nicho, diseñador, etc.
-  genero      String? // ej. Masculino, Femenino, Unisex
-  imagen      String
-  marca       String
-  activo      Boolean @default(true)
-
+  id             Int                   @id @default(autoincrement())
+  nombre         String
+  descripcion    String
+  categoria      String
+  tipo           String?
+  genero         String?
+  imagen         String
+  marca          String
+  activo         Boolean               @default(true)
+  decant         Decant?
+  favoritos      Favorito[]
   presentaciones PresentacionPerfume[]
   resenias       ReseniaPerfume[]
-  favoritos      Favorito[]
-  decant         Decant?
 }
 
 model PresentacionPerfume {
-  id         Int     @id @default(autoincrement())
-  id_perfume Int
-  perfume    Perfume @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
-  tamanio    String // ej. '100 ml', '50 ml'
-  costo      Decimal? @default(0) @db.Decimal(10, 2)
-  precio     Decimal @db.Decimal(10, 2)
-  stock      Int     @default(0)
-
+  id              Int                 @id @default(autoincrement())
+  id_perfume      Int
+  tamanio         String
+  precio          Decimal             @db.Decimal(10, 2)
+  stock           Int                 @default(0)
+  costo           Decimal?            @default(0) @db.Decimal(10, 2)
   carritoDetalles CarritoDetalle[]
-  ordenDetalles   OrdenDetalle[]
   ingresos        IngresoInventario[]
+  ordenDetalles   OrdenDetalle[]
+  perfume         Perfume             @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
 }
 
 model CarritoMaestro {
   id         Int              @id @default(autoincrement())
   id_usuario Int              @unique
-  usuario    Usuario          @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   detalles   CarritoDetalle[]
+  usuario    Usuario          @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 model CarritoDetalle {
   id                 Int                  @id @default(autoincrement())
   id_carrito_maestro Int
-  carritoMaestro     CarritoMaestro       @relation(fields: [id_carrito_maestro], references: [id], onDelete: Cascade)
   id_presentacion    Int?
-  presentacion       PresentacionPerfume? @relation(fields: [id_presentacion], references: [id], onDelete: Cascade)
   id_decant          Int?
-  decant             Decant?              @relation(fields: [id_decant], references: [id], onDelete: Cascade)
-  tipo_decant        String? // ej. "5 ml", "10 ml"
+  tipo_decant        String?
   cantidad           Int                  @default(1)
+  carritoMaestro     CarritoMaestro       @relation(fields: [id_carrito_maestro], references: [id], onDelete: Cascade)
+  decant             Decant?              @relation(fields: [id_decant], references: [id], onDelete: Cascade)
+  presentacion       PresentacionPerfume? @relation(fields: [id_presentacion], references: [id], onDelete: Cascade)
 }
 
 model OrdenCompra {
-  id                  Int              @id @default(autoincrement())
-  id_usuario          Int
-  usuario             Usuario          @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
-  fecha               DateTime         @default(now())
-  total               Decimal          @db.Decimal(10, 2)
-  costo_envio         Decimal?         @default(0) @db.Decimal(10, 2)
-  estado              String           @default("PENDIENTE") // e.g. "PENDIENTE", "PROCESADO", "ENTREGADO", "CANCELADO"
-  metodo_de_pago      String
-  tipo_entrega        String // e.g. "domicilio", "sucursal"
-  id_sucursal         Int?
-  sucursal            Sucursal?        @relation(fields: [id_sucursal], references: [id], onDelete: SetNull)
-  id_codigo_promocion Int?
-  codigoPromocion     CodigoPromocion? @relation(fields: [id_codigo_promocion], references: [id], onDelete: SetNull)
-  id_gift_card        Int?
-  giftCard            GiftCard?        @relation(fields: [id_gift_card], references: [id], onDelete: SetNull)
-
-  // Dirección y datos de envío (se copian al comprar para congelar el historial)
+  id                    Int               @id @default(autoincrement())
+  id_usuario            Int
+  fecha                 DateTime          @default(now())
+  total                 Decimal           @db.Decimal(10, 2)
+  estado                String            @default("PENDIENTE")
+  metodo_de_pago        String
+  tipo_entrega          String
+  id_sucursal           Int?
+  id_codigo_promocion   Int?
   nombre_recibe         String
   telefono_contacto     String
   direccion_entrega     String
   departamento_entrega  String
   municipio_entrega     String
-  referencias_entrega   String? @db.Text
+  referencias_entrega   String?
   codigo_postal_entrega String?
-
-  detalles        OrdenDetalle[]
-  historialSellos HistorialSellos[]
+  costo_envio           Decimal?          @default(0) @db.Decimal(10, 2)
+  id_gift_card          Int?
+  historialSellos       HistorialSellos[]
+  codigoPromocion       CodigoPromocion?  @relation(fields: [id_codigo_promocion], references: [id])
+  giftCard              GiftCard?         @relation(fields: [id_gift_card], references: [id])
+  sucursal              Sucursal?         @relation(fields: [id_sucursal], references: [id])
+  usuario               Usuario           @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  detalles              OrdenDetalle[]
 }
 
 model OrdenDetalle {
   id                       Int                       @id @default(autoincrement())
   id_orden                 Int
-  orden                    OrdenCompra               @relation(fields: [id_orden], references: [id], onDelete: Cascade)
   id_presentacion          Int?
-  presentacion             PresentacionPerfume?      @relation(fields: [id_presentacion], references: [id], onDelete: Restrict)
   id_decant                Int?
-  decant                   Decant?                   @relation(fields: [id_decant], references: [id], onDelete: Restrict)
-  tipo_decant              String? // ej. "5 ml", "10 ml"
+  tipo_decant              String?
   cantidad                 Int
-  precio_unitario          Decimal                   @db.Decimal(10, 2) // Precio congelado al pagar
+  precio_unitario          Decimal                   @db.Decimal(10, 2)
+  decant                   Decant?                   @relation(fields: [id_decant], references: [id], onDelete: Restrict)
+  orden                    OrdenCompra               @relation(fields: [id_orden], references: [id], onDelete: Cascade)
+  presentacion             PresentacionPerfume?      @relation(fields: [id_presentacion], references: [id], onDelete: Restrict)
   registroVentaAdmin       RegistroVentaAdmin?
   registroVentaDecantAdmin RegistroVentaDecantAdmin?
 }
@@ -140,12 +130,12 @@ model OrdenDetalle {
 model Direccion {
   id            Int     @id @default(autoincrement())
   id_usuario    Int
-  usuario       Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   direccion     String
   departamento  String
   municipio     String
-  referencias   String? @db.Text
+  referencias   String?
   codigo_postal String?
+  usuario       Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 model Sucursal {
@@ -159,13 +149,13 @@ model Sucursal {
 }
 
 model CodigoPromocion {
-  id             Int           @id @default(autoincrement())
-  codigo         String        @unique
-  tipo_descuento String // e.g. 'porcentaje' o 'monto_fijo'
-  descuento      Decimal       @db.Decimal(10, 2)
+  id             Int            @id @default(autoincrement())
+  codigo         String         @unique
+  tipo_descuento String
+  descuento      Decimal        @db.Decimal(10, 2)
   fecha_inicio   DateTime
   fecha_fin      DateTime
-  estado         String        @default("ACTIVO") // e.g. "ACTIVO", "INACTIVO"
+  estado         String         @default("ACTIVO")
   ordenes        OrdenCompra[]
   usos           UsoPromocion[]
 }
@@ -173,10 +163,10 @@ model CodigoPromocion {
 model UsoPromocion {
   id                  Int             @id @default(autoincrement())
   id_usuario          Int
-  usuario             Usuario         @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   id_codigo_promocion Int
-  codigoPromocion     CodigoPromocion @relation(fields: [id_codigo_promocion], references: [id], onDelete: Cascade)
   fecha               DateTime        @default(now())
+  codigoPromocion     CodigoPromocion @relation(fields: [id_codigo_promocion], references: [id], onDelete: Cascade)
+  usuario             Usuario         @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 
   @@unique([id_usuario, id_codigo_promocion])
 }
@@ -186,7 +176,7 @@ model MensajeContacto {
   nombre         String
   correo         String
   asunto         String
-  mensaje        String   @db.Text
+  mensaje        String
   fecha_creacion DateTime @default(now())
   leido          Boolean  @default(false)
 }
@@ -194,126 +184,109 @@ model MensajeContacto {
 model HistorialSellos {
   id              Int          @id @default(autoincrement())
   id_usuario      Int
-  usuario         Usuario      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   id_orden        Int?
-  orden           OrdenCompra? @relation(fields: [id_orden], references: [id], onDelete: SetNull)
-  tipo_operacion  String // e.g. 'acumulado', 'canjeado'
+  tipo_operacion  String
   cantidad_sellos Int
   fecha           DateTime     @default(now())
+  orden           OrdenCompra? @relation(fields: [id_orden], references: [id])
+  usuario         Usuario      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 model ReseniaPerfume {
   id           Int      @id @default(autoincrement())
   id_usuario   Int
-  usuario      Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   id_perfume   Int
-  perfume      Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
-  calificacion Int // 1 a 5 estrellas
-  comentario   String?  @db.Text
+  calificacion Int
+  comentario   String?
   fecha        DateTime @default(now())
+  perfume      Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
+  usuario      Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 model Favorito {
   id             Int      @id @default(autoincrement())
   id_usuario     Int
-  usuario        Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
   id_perfume     Int
-  perfume        Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
   fecha_agregado DateTime @default(now())
+  perfume        Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
+  usuario        Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }
 
 model IngresoInventario {
   id              Int                 @id @default(autoincrement())
   id_presentacion Int
-  presentacion    PresentacionPerfume @relation(fields: [id_presentacion], references: [id], onDelete: Cascade)
   fecha_ingreso   DateTime            @default(now())
   cantidad        Int
   costo_compra    Decimal             @db.Decimal(10, 2)
   tipo_traida     String
   costo_traida    Decimal             @db.Decimal(10, 2)
   costo_total     Decimal             @db.Decimal(10, 2)
+  presentacion    PresentacionPerfume @relation(fields: [id_presentacion], references: [id], onDelete: Cascade)
 }
 
 model Decant {
-  id         Int     @id @default(autoincrement())
-  id_perfume Int     @unique
-  perfume    Perfume @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
-
-  ml_origen       Int // ej. 100
-  costo_original  Decimal @db.Decimal(10, 2)
-  precio_original Decimal @db.Decimal(10, 2)
-
-  costo_5ml  Decimal @db.Decimal(10, 2)
-  precio_5ml Decimal @db.Decimal(10, 2)
-  stock_5ml  Int     @default(0)
-
-  costo_10ml  Decimal @db.Decimal(10, 2)
-  precio_10ml Decimal @db.Decimal(10, 2)
-  stock_10ml  Int     @default(0)
-
+  id              Int              @id @default(autoincrement())
+  id_perfume      Int              @unique
+  ml_origen       Int
+  costo_original  Decimal          @db.Decimal(10, 2)
+  precio_original Decimal          @db.Decimal(10, 2)
+  costo_5ml       Decimal          @db.Decimal(10, 2)
+  precio_5ml      Decimal          @db.Decimal(10, 2)
+  stock_5ml       Int              @default(0)
+  costo_10ml      Decimal          @db.Decimal(10, 2)
+  precio_10ml     Decimal          @db.Decimal(10, 2)
+  stock_10ml      Int              @default(0)
   carritoDetalles CarritoDetalle[]
+  perfume         Perfume          @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
   ordenDetalles   OrdenDetalle[]
 }
 
 model RegistroVentaAdmin {
-  id               Int           @id @default(autoincrement())
-  id_orden_detalle Int?          @unique
-  ordenDetalle     OrdenDetalle? @relation(fields: [id_orden_detalle], references: [id], onDelete: SetNull)
-
-  // Datos del Producto (Congelados al momento de la venta)
-  fecha_venta DateTime @default(now())
-  tipo        String? // árabe, nicho, etc.
-  perfume     String // Nombre del perfume
-  genero      String?
-
-  // Costos de inventario
-  costo_compra  Decimal  @default(0) @db.Decimal(10, 2)
-  costo_traida  Decimal  @default(0) @db.Decimal(10, 2)
-  tipo_traida   String?
-  costo_total   Decimal  @default(0) @db.Decimal(10, 2)
-  costo_perfume Decimal? @db.Decimal(10, 2)
-  costo         Decimal? @db.Decimal(10, 2)
-
-  // Datos de Finanzas y Logística
+  id                 Int           @id @default(autoincrement())
+  id_orden_detalle   Int?          @unique
+  fecha_venta        DateTime      @default(now())
+  tipo               String?
+  perfume            String
+  genero             String?
+  costo_compra       Decimal       @default(0) @db.Decimal(10, 2)
+  costo_traida       Decimal       @default(0) @db.Decimal(10, 2)
+  tipo_traida        String?
+  costo_total        Decimal       @default(0) @db.Decimal(10, 2)
+  costo_perfume      Decimal?      @db.Decimal(10, 2)
+  costo              Decimal?      @db.Decimal(10, 2)
   pago               String?
-  total_cliente      Decimal  @default(0) @db.Decimal(10, 2)
-  total_recibido     Decimal? @db.Decimal(10, 2)
-  recibido_en_cuenta Decimal? @db.Decimal(10, 2)
-  entregado          Boolean  @default(false)
+  total_cliente      Decimal       @default(0) @db.Decimal(10, 2)
+  total_recibido     Decimal?      @db.Decimal(10, 2)
+  recibido_en_cuenta Decimal?      @db.Decimal(10, 2)
+  entregado          Boolean       @default(false)
   envio_ce           String?
-  total              Decimal? @db.Decimal(10, 2)
+  total              Decimal?      @db.Decimal(10, 2)
+  ordenDetalle       OrdenDetalle? @relation(fields: [id_orden_detalle], references: [id])
 }
 
 model RegistroVentaDecantAdmin {
-  id               Int           @id @default(autoincrement())
-  id_orden_detalle Int?          @unique
-  ordenDetalle     OrdenDetalle? @relation(fields: [id_orden_detalle], references: [id], onDelete: SetNull)
-
-  // Datos del Decant
-  fecha_venta DateTime @default(now())
-  tipo        String? // árabe, nicho, etc.
-  genero      String?
-  ml_origen   Int?
-  perfume     String // Nombre
-
-  costo_original Decimal? @db.Decimal(10, 2)
-  costo_5ml      Decimal? @db.Decimal(10, 2)
-  costo_10ml     Decimal? @db.Decimal(10, 2)
-
-  precio_original Decimal? @db.Decimal(10, 2)
-  precio_5ml      Decimal? @db.Decimal(10, 2)
-  precio_10ml     Decimal? @db.Decimal(10, 2)
-
-  tamano_vendido String? // "5 ml" o "10 ml"
-
-  // Datos de Finanzas y Logística
+  id                 Int           @id @default(autoincrement())
+  id_orden_detalle   Int?          @unique
+  fecha_venta        DateTime      @default(now())
+  tipo               String?
+  genero             String?
+  ml_origen          Int?
+  perfume            String
+  costo_original     Decimal?      @db.Decimal(10, 2)
+  costo_5ml          Decimal?      @db.Decimal(10, 2)
+  costo_10ml         Decimal?      @db.Decimal(10, 2)
+  precio_original    Decimal?      @db.Decimal(10, 2)
+  precio_5ml         Decimal?      @db.Decimal(10, 2)
+  precio_10ml        Decimal?      @db.Decimal(10, 2)
+  tamano_vendido     String?
   pago               String?
-  total_cliente      Decimal  @default(0) @db.Decimal(10, 2)
-  total_recibido     Decimal? @db.Decimal(10, 2)
-  recibido_en_cuenta Decimal? @db.Decimal(10, 2)
-  entregado          Boolean  @default(false)
+  total_cliente      Decimal       @default(0) @db.Decimal(10, 2)
+  total_recibido     Decimal?      @db.Decimal(10, 2)
+  recibido_en_cuenta Decimal?      @db.Decimal(10, 2)
+  entregado          Boolean       @default(false)
   envio_ce           String?
-  total              Decimal? @db.Decimal(10, 2)
+  total              Decimal?      @db.Decimal(10, 2)
+  ordenDetalle       OrdenDetalle? @relation(fields: [id_orden_detalle], references: [id])
 }
 
 model OrdenWhatsApp {
@@ -324,21 +297,20 @@ model OrdenWhatsApp {
   direccion      String?
   nit            String?
   total          Decimal  @db.Decimal(10, 2)
-  carrito_json   String   @db.Text
-  estado         String   @default("PENDIENTE") // PENDIENTE, CONFIRMADA, CANCELADA
+  carrito_json   String
+  estado         String   @default("PENDIENTE")
   fecha          DateTime @default(now())
 }
 
 model CampaniaDescuento {
-  id          Int      @id @default(autoincrement())
-  nombre      String   // ej. "Bazar Julio", "Navidad 2026"
-  activa      Boolean  @default(false)
-  tipo        String   // "GLOBAL" | "CATEGORIA" | "SELECCION"
-  descuento   Decimal  @db.Decimal(5, 2) // porcentaje: 10.00 = 10%
-  categorias  String?  // JSON array de categorías (si tipo=CATEGORIA)
-  perfume_ids String?  // JSON array de IDs (si tipo=SELECCION)
+  id           Int       @id @default(autoincrement())
+  nombre       String
+  activa       Boolean   @default(false)
+  tipo         String
+  descuento    Decimal   @db.Decimal(5, 2)
+  categorias   String?
+  perfume_ids  String?
   fecha_inicio DateTime?
   fecha_fin    DateTime?
-  creado_en   DateTime @default(now())
+  creado_en    DateTime  @default(now())
 }
-

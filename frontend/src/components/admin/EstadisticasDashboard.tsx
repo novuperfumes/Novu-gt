@@ -90,9 +90,12 @@ export function EstadisticasDashboard() {
   ];
 
   const chartGenderData = [
-    { name: 'M', value: summaryByGender.Mujer || 0 }, // Naranja en mock
-    { name: 'H', value: summaryByGender.Hombre || 0 }  // Azul en mock
+    { name: 'M', value: summaryByGender.Mujer || 0 },
+    { name: 'H', value: summaryByGender.Hombre || 0 },
+    { name: 'U', value: summaryByGender.Unisex || 0 }
   ];
+
+  const GENDER_COLORS = ['#F97316', '#3B82F6', '#10B981']; // Naranja (M), Azul (H), Verde (U)
 
   // Helper para generar las tablas
   const renderTableCategorias = (dataKey: 'cantidad' | 'ingresos' | 'ganancias', isMoneda = false) => (
@@ -140,7 +143,7 @@ export function EstadisticasDashboard() {
       <thead>
         <tr>
           <th colSpan={3} style={{ backgroundColor: '#A9C4EB', padding: '10px', border: '1px solid #ddd' }}>
-            Compras de Hombres vs Mujeres
+            Compras por Género del Perfume
           </th>
         </tr>
       </thead>
@@ -148,7 +151,7 @@ export function EstadisticasDashboard() {
         {monthlyData.map((m: any) => (
           <React.Fragment key={m.month}>
             <tr>
-              <td rowSpan={2} style={{ border: '1px solid #ddd', padding: '8px', verticalAlign: 'middle', fontWeight: 'bold' }}>
+              <td rowSpan={3} style={{ border: '1px solid #ddd', padding: '8px', verticalAlign: 'middle', fontWeight: 'bold' }}>
                 {getMonthName(m.month)}
               </td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>H</td>
@@ -157,6 +160,10 @@ export function EstadisticasDashboard() {
             <tr>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>M</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{m.generos.Mujer}</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>U</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{m.generos.Unisex}</td>
             </tr>
           </React.Fragment>
         ))}
@@ -168,7 +175,7 @@ export function EstadisticasDashboard() {
     if (active && payload && payload.length) {
       return (
         <div style={{ backgroundColor: '#222', padding: '10px', color: '#fff', border: '1px solid #444' }}>
-          <p style={{ margin: 0 }}>{`${label}: ${payload[0].value}`}</p>
+          <p style={{ margin: 0 }}>{`${label || payload[0].name}: ${payload[0].value}`}</p>
         </div>
       );
     }
@@ -227,17 +234,17 @@ export function EstadisticasDashboard() {
             </div>
           </div>
 
-          {/* Fila 2: Hombres vs Mujeres */}
+          {/* Fila 2: Hombres vs Mujeres vs Unisex */}
           <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
             <div style={{ flex: '0 0 350px' }}>{renderTableGenero()}</div>
             <div style={{ flex: 1, backgroundColor: '#000', padding: '20px', borderRadius: '8px' }}>
-              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Compras de Hombres vs Mujeres</h3>
+              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Ventas por Género del Perfume</h3>
               <div style={{ height: '300px', display: 'flex', justifyContent: 'center' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={chartGenderData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value" label={({ value }) => value} labelLine={false}>
                       {chartGenderData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={GENDER_COLORS[index % GENDER_COLORS.length]} />
                       ))}
                     </Pie>
                     <RechartsTooltip content={<CustomTooltip />} />
@@ -245,8 +252,9 @@ export function EstadisticasDashboard() {
                 </ResponsiveContainer>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', color: '#fff', marginTop: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#3B82F6' }}></div> H</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#F97316' }}></div> M</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#3B82F6' }}></div> H</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#10B981' }}></div> U</div>
               </div>
             </div>
           </div>
@@ -294,7 +302,6 @@ export function EstadisticasDashboard() {
               </div>
             </div>
           </div>
-
         </div>
       )}
     </div>
