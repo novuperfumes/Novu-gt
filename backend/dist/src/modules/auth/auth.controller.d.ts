@@ -6,23 +6,25 @@ export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
     register(dto: RegisterDto): Promise<{
-        nombre: string;
         id: number;
+        nombre: string;
+        genero: string | null;
         correo: string;
         rol: string;
         apellido: string;
         telefono: string | null;
-        genero: string | null;
+        sellos: number;
     }>;
     login(dto: LoginDto, response: fastify.FastifyReply): Promise<{
         user: {
-            nombre: string;
             id: number;
+            nombre: string;
+            genero: string | null;
             correo: string;
             rol: string;
             apellido: string;
             telefono: string | null;
-            genero: string | null;
+            sellos: number;
         };
     }>;
     logout(response: fastify.FastifyReply): Promise<{

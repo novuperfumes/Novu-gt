@@ -16,13 +16,15 @@ export declare class FavoritesService {
     }>;
     getUserFavorites(userId: number): Promise<({
         perfume: {
+            id: number;
             nombre: string;
             descripcion: string;
             categoria: string;
+            tipo: string | null;
+            genero: string | null;
             imagen: string;
             marca: string;
             activo: boolean;
-            id: number;
         };
     } & {
         id: number;

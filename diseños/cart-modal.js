@@ -1,5 +1,5 @@
 // Teléfono de WhatsApp destino para compras (con código de país, p.ej. 502)
-const WHATSAPP_PHONE = '50230752538';
+const WHATSAPP_PHONE = '50233135816';
 
 // Mapeo de fallbacks para imágenes locales que no existan aún
 const imageFallbacks = {
@@ -215,6 +215,16 @@ const productsDatabase = {
     }
 };
 
+// Inyectar precios de decants calculados (demo frontal)
+for (let key in productsDatabase) {
+    const p = productsDatabase[key];
+    p.hasDecants = true;
+    // Criterio para el de 10ml: precio botella / 4
+    p.price_10ml = Math.round(p.price / 4);
+    // Criterio para 5ml: (precio 10ml / 2) + 10
+    p.price_5ml = Math.round(p.price_10ml / 2) + 10;
+}
+
 // =============================================================
 // STATS AND ORDERS SEEDING (TELEMETRY)
 // =============================================================
@@ -429,11 +439,18 @@ function addToCart(id, size, quantity) {
     if (existingItem) {
         existingItem.quantity += quantity;
     } else {
+        let itemPrice = productData.price;
+        if (size === 'Decant 5 ml' && productData.price_5ml) {
+            itemPrice = productData.price_5ml;
+        } else if (size === 'Decant 10 ml' && productData.price_10ml) {
+            itemPrice = productData.price_10ml;
+        }
+
         cart.push({
             id: id,
             brand: productData.brand,
             name: productData.name,
-            price: productData.price,
+            price: itemPrice,
             image: productData.image,
             size: size,
             quantity: quantity
@@ -562,13 +579,30 @@ function toggleProductModal(show, id = null) {
             document.getElementById('modal-product-price').textContent = `Q ${product.price.toFixed(2)}`;
             document.getElementById('modal-product-desc').textContent = product.desc;
 
-            // Resetear selectores de cantidad y tamaño
+            // Resetear cantidad
             document.getElementById('qty-value-el').textContent = '1';
-            const sizeBtns = document.querySelectorAll('.size-options .size-btn');
-            sizeBtns.forEach((btn, idx) => {
-                if (idx === 0) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
+            
+            // Generar botones de tamaño
+            const sizeContainer = document.querySelector('.size-options');
+            if (sizeContainer) {
+                let sizeHtml = '';
+                if (product.presentaciones && product.presentaciones.length > 0) {
+                    product.presentaciones.forEach((pres, i) => {
+                        const activeClass = i === 0 ? 'active' : '';
+                        const sizeLabel = String(pres.tamanio).toLowerCase().includes('ml') ? pres.tamanio : `${pres.tamanio} ml`;
+                        sizeHtml += `<button class="size-btn ${activeClass}" data-price="${pres.precio}">${sizeLabel}</button>`;
+                    });
+                } else {
+                    sizeHtml = `<button class="size-btn active" data-price="${product.price}">100 ml</button>`;
+                }
+                if (product.hasDecants || product.decant) {
+                    const price5 = product.price_5ml || (product.decant && product.decant.precio_5ml);
+                    const price10 = product.price_10ml || (product.decant && product.decant.precio_10ml);
+                    if (price5) sizeHtml += `<button class="size-btn" data-price="${price5}">Decant 5 ml</button>`;
+                    if (price10) sizeHtml += `<button class="size-btn" data-price="${price10}">Decant 10 ml</button>`;
+                }
+                sizeContainer.innerHTML = sizeHtml;
+            }
 
             modal.classList.add('active');
             backdrop.classList.add('active');
@@ -700,8 +734,15 @@ function openCheckoutFlow() {
                         <input type="email" id="co-email" required placeholder="tu@correo.com" value="${activeUser ? activeUser.email : ''}">
                     </div>
                     <div class="form-group">
-                        <label for="co-phone">Teléfono / WhatsApp</label>
-                        <input type="tel" id="co-phone" required placeholder="55554444" pattern="[0-9]{8}" title="Debe ingresar un número de 8 dígitos (ej. 55554444)">
+                        <label for="co-phone">Teléfono / WhatsApp (ej. 5555-4444)</label>
+                        <input type="text" id="co-phone" required placeholder="5555-4444" pattern="[0-9]{4}-[0-9]{4}" maxlength="9" title="Debe ingresar un número en formato 4444-5555" oninput="this.value = this.value.replace(/\D/g, '').slice(0,8).replace(/^(\d{4})(\d)/, '$1-$2')">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="co-nit">NIT para Facturación (Opcional)</label>
+                        <input type="text" id="co-nit" placeholder="CF (Consumidor Final)" value="">
                     </div>
                 </div>
                 
@@ -711,19 +752,41 @@ function openCheckoutFlow() {
                         <input type="text" id="co-address" required placeholder="Avenida Las Américas 15-20, Zona 13, Edificio Reforma">
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="co-references">Referencias / Detalles Adicionales de Entrega (Opcional)</label>
+                        <input type="text" id="co-references" placeholder="Ej. Frente al árbol grande, casa con rótulo que dice 'Compra aquí', portón negro">
+                    </div>
+                </div>
                 
                 <div class="form-row split">
                     <div class="form-group">
                         <label for="co-dept">Departamento</label>
                         <select id="co-dept" required>
                             <option value="" disabled selected>Selecciona tu departamento</option>
-                            <option value="Guatemala">Guatemala</option>
-                            <option value="Sacatepéquez">Sacatepéquez</option>
-                            <option value="Quetzaltenango">Quetzaltenango</option>
-                            <option value="Escuintla">Escuintla</option>
-                            <option value="Chimaltenango">Chimaltenango</option>
                             <option value="Alta Verapaz">Alta Verapaz</option>
+                            <option value="Baja Verapaz">Baja Verapaz</option>
+                            <option value="Chimaltenango">Chimaltenango</option>
+                            <option value="Chiquimula">Chiquimula</option>
+                            <option value="El Progreso">El Progreso</option>
+                            <option value="Escuintla">Escuintla</option>
+                            <option value="Guatemala">Guatemala</option>
+                            <option value="Huehuetenango">Huehuetenango</option>
+                            <option value="Izabal">Izabal</option>
+                            <option value="Jalapa">Jalapa</option>
+                            <option value="Jutiapa">Jutiapa</option>
+                            <option value="Petén">Petén</option>
+                            <option value="Quetzaltenango">Quetzaltenango</option>
+                            <option value="Quiché">Quiché</option>
                             <option value="Retalhuleu">Retalhuleu</option>
+                            <option value="Sacatepéquez">Sacatepéquez</option>
+                            <option value="San Marcos">San Marcos</option>
+                            <option value="Santa Rosa">Santa Rosa</option>
+                            <option value="Sololá">Sololá</option>
+                            <option value="Suchitepéquez">Suchitepéquez</option>
+                            <option value="Totonicapán">Totonicapán</option>
+                            <option value="Zacapa">Zacapa</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -747,7 +810,7 @@ function openCheckoutFlow() {
                     </div>
                 </div>
                 
-                <button type="submit" class="confirm-order-btn" style="margin-top: 30px; background-color: #25D366;">ENVIAR POR WHATSAPP (Q ${total.toFixed(2)})</button>
+                <button type="submit" class="confirm-order-btn" style="margin-top: 30px; background-color: #25D366;">ENVIAR POR WHATSAPP (Q ${total.toFixed(2)} + Envío)</button>
             </form>
             
             <!-- Resumen de los Productos en Compra -->
@@ -820,10 +883,12 @@ function handleConfirmOrder(total) {
     const dept = document.getElementById('co-dept').value;
     const city = document.getElementById('co-city').value;
     const phone = document.getElementById('co-phone').value;
+    const nit = document.getElementById('co-nit').value.trim() || 'CF';
     const gender = document.getElementById('co-gender').value;
     
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 25.00;
+    const shipping = 0;
+    const total = subtotal;
     
     // Guardar orden en localStorage para el panel BI
     const orders = JSON.parse(localStorage.getItem('novu_orders')) || [];
@@ -833,6 +898,7 @@ function handleConfirmOrder(total) {
         clientName: name,
         email: email,
         phone: phone,
+        nit: nit,
         address: address,
         city: city,
         dept: dept,
@@ -906,20 +972,34 @@ function handleConfirmOrder(total) {
 *DATOS DE ENVÍO:*
 - *Nombre:* ${name}
 - *Teléfono:* +502 ${phone}
+- *NIT:* ${nit}
 - *Dirección:* ${address}
-- *Municipio/Ciudad:* ${city}
+${references ? `- *Referencias:* ${references}\n` : ''}- *Municipio/Ciudad:* ${city}
 - *Departamento:* ${dept}
 - *Correo:* ${email}
 
 *DETALLE DEL PEDIDO:*
 ${orderDetailsText}
 - *Subtotal:* Q ${subtotal.toFixed(2)}
-- *Envío:* Q ${shipping.toFixed(2)}
-- *TOTAL A PAGAR:* Q ${total.toFixed(2)}
+- *Envío:* Se cotiza según ubicación / distancia
+- *TOTAL PRODUCTOS:* Q ${total.toFixed(2)} + Envío
 
 _Espero la confirmación de la orden._`;
+    // 2. Enviar a la base de datos como PENDIENTE
+    fetch('http://localhost:3000/whatsapp-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nombre_cliente: name,
+            telefono: phone,
+            direccion: address,
+            nit: nit,
+            total: total,
+            carrito_json: JSON.stringify(cart)
+        })
+    }).catch(err => console.error('Error enviando orden:', err));
 
-    // 2. Redirigir a la API de WhatsApp
+    // 3. Redirigir a la API de WhatsApp
     const encodedText = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodedText}`;
     window.open(whatsappUrl, '_blank');
@@ -934,8 +1014,12 @@ _Espero la confirmación de la orden._`;
                 </svg>
             </div>
             
-            <h2 class="success-title" style="font-family: var(--font-primary); font-size: 1.6rem; font-weight: 700; color: #2e7d32; margin-bottom: 10px; letter-spacing: 0.05em;">¡PEDIDO REGISTRADO!</h2>
-            <p class="success-subtitle" style="font-size: 0.85rem; color: #666666; max-width: 500px; margin: 0 auto 30px; line-height: 1.5;">Hemos abierto una pestaña de WhatsApp con los datos de tu orden. Por favor envía el mensaje de WhatsApp para que procesemos tu compra.</p>
+            <h2 class="success-title" style="font-family: var(--font-primary); font-size: 1.6rem; font-weight: 700; color: #2e7d32; margin-bottom: 15px; letter-spacing: 0.05em;">¡PEDIDO REGISTRADO!</h2>
+            
+            <div style="margin: 20px auto 30px; padding: 20px; background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 10px; max-width: 520px; box-shadow: 0 4px 15px rgba(245,158,11,0.15);">
+                <p style="font-size: 0.95rem; color: #92400E; font-weight: 700; margin-bottom: 14px;">⚠️ ¿Tu navegador no abrió WhatsApp automáticamente?</p>
+                <a href="${whatsappUrl}" target="_blank" style="display: inline-block; background-color: #25D366; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 1rem; letter-spacing: 0.03em; box-shadow: 0 4px 12px rgba(37,211,102,0.4);">📲 ENVIAR ORDEN POR WHATSAPP AQUÍ</a>
+            </div>
             
             <!-- Recibo Premium -->
             <div class="receipt-card" style="background-color: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 8px; max-width: 600px; margin: 0 auto 30px; text-align: left; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
@@ -1349,6 +1433,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeTabBtn = document.querySelector('.tab-btn.active');
         const activeTab = activeTabBtn ? activeTabBtn.getAttribute('data-tab') : 'novedades';
 
+        // Helper para normalizar género
+        const normalizeGender = (g) => {
+            if (!g) return 'unisex';
+            const lower = g.toLowerCase().trim();
+            if (lower === 'masculino' || lower === 'el' || lower === 'hombre' || lower === 'él') return 'el';
+            if (lower === 'femenino' || lower === 'ella' || lower === 'mujer') return 'ella';
+            return 'unisex';
+        };
+
         // Buscar género activo
         const activeGenderBtn = document.querySelector('.gender-btn.active');
         const activeGender = activeGenderBtn ? activeGenderBtn.getAttribute('data-gender') : 'todos';
@@ -1361,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = card.querySelector('.grid-product-name')?.textContent.toLowerCase() || '';
             const matchesSearch = brand.includes(query) || name.includes(query);
 
-            const cardGender = card.getAttribute('data-gender') || 'unisex';
+            const cardGender = normalizeGender(card.getAttribute('data-gender'));
             const matchesGender = (activeGender === 'todos') || 
                                   (activeGender === 'el' && (cardGender === 'el' || cardGender === 'unisex')) || 
                                   (activeGender === 'ella' && (cardGender === 'ella' || cardGender === 'unisex'));
@@ -1384,7 +1477,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const categories = (card.getAttribute('data-category') || '').split(' ');
             const matchesTab = categories.includes(activeTab);
 
-            const cardGender = card.getAttribute('data-gender') || 'unisex';
+            const cardGender = normalizeGender(card.getAttribute('data-gender'));
             const matchesGender = (activeGender === 'todos') || 
                                   (activeGender === 'el' && (cardGender === 'el' || cardGender === 'unisex')) || 
                                   (activeGender === 'ella' && (cardGender === 'ella' || cardGender === 'unisex'));
@@ -1570,14 +1663,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Selector de Tamaño del Modal
-    const sizeBtns = document.querySelectorAll('.size-options .size-btn');
-    sizeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            sizeBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
-    });
+    // (Se removieron los listeners de tamaño antiguos para usar delegación de eventos)
 
     // Agregar al carrito desde el Modal
     const modalAddToCartBtn = document.getElementById('modal-add-to-cart-btn');
@@ -1585,7 +1671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAddToCartBtn.addEventListener('click', () => {
             if (currentViewingProduct) {
                 const activeSizeBtn = document.querySelector('.size-options .size-btn.active');
-                const size = activeSizeBtn ? activeSizeBtn.textContent : '100 ml';
+                const size = activeSizeBtn ? activeSizeBtn.textContent : 'Botella Completa';
                 const qty = parseInt(qtyValue.textContent) || 1;
                 addToCart(currentViewingProduct, size, qty);
                 toggleProductModal(false);
@@ -1598,6 +1684,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // En lugar de usar addEventListener que se puede perder en sliders re-generados o estáticos,
     // usamos delegación de eventos en el body:
     document.body.addEventListener('click', (e) => {
+        // Capturar click en botones de tamaño del modal
+        if (e.target.classList.contains('size-btn')) {
+            const sizeBtns = e.target.closest('.size-options').querySelectorAll('.size-btn');
+            sizeBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+
+            // Actualizar el precio visualmente en el modal
+            const price = parseFloat(e.target.getAttribute('data-price'));
+            if (!isNaN(price)) {
+                const priceEl = document.getElementById('modal-product-price');
+                if (priceEl) priceEl.textContent = `Q ${price.toFixed(2)}`;
+            }
+        }
+
         // Capturar click en VER MÁS de cuadrículas
         if (e.target.classList.contains('ver-mas-btn')) {
             e.preventDefault();
@@ -1692,8 +1792,7 @@ function setupModalMarkups() {
                         <div class="product-selector-group">
                             <label>Tamaño</label>
                             <div class="size-options">
-                                <button class="size-btn active">100 ml</button>
-                                <button class="size-btn">50 ml</button>
+                                <button class="size-btn active">Botella Completa</button>
                             </div>
                         </div>
                         
@@ -2285,6 +2384,18 @@ function renderAdminDashboardTab(tabName) {
 
         renderCatalogList();
     }
+    else if (tabName === 'whatsapp') {
+        container.innerHTML = `
+            <div class="admin-tab-header">
+                <h2 style="font-family: var(--font-primary); font-size: 1.8rem; font-weight: 700; color: #1c1a17; margin-bottom: 5px; letter-spacing: 0.05em;">Confirmación de Órdenes (WhatsApp)</h2>
+                <p>Confirma manualmente los pedidos ingresados vía WhatsApp para deducir inventario y registrar en contabilidad.</p>
+            </div>
+            <div id="whatsapp-orders-container" style="display: flex; flex-direction: column; gap: 15px;">
+                <p>Cargando órdenes...</p>
+            </div>
+        `;
+        fetchAdminWhatsappOrders();
+    }
 }
 
 function exportOrdersToCSV(orders) {
@@ -2447,3 +2558,69 @@ function openProductEditForm(id) {
 
 // Exponer en window scope para su uso en los botones dinámicos onclick
 window.openProductEditForm = openProductEditForm;
+
+// --- Admin WhatsApp Orders Functions ---
+async function fetchAdminWhatsappOrders() {
+    const container = document.getElementById('whatsapp-orders-container');
+    if (!container) return;
+    
+    try {
+        const response = await fetch('http://localhost:3000/whatsapp-orders/admin');
+        const orders = await response.json();
+        
+        if (!orders || orders.length === 0) {
+            container.innerHTML = '<p>No hay órdenes de WhatsApp registradas.</p>';
+            return;
+        }
+
+        container.innerHTML = orders.map(order => {
+            const isPending = order.estado === 'PENDIENTE';
+            const cartItems = JSON.parse(order.carrito_json);
+            const itemsHtml = cartItems.map(item => `<li>${item.quantity}x ${item.name} (${item.size}) - Q${item.price}</li>`).join('');
+            
+            return `
+            <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; background: #fafafa; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0 0 10px 0; font-family: var(--font-primary);">Pedido ${order.codigo} <span style="font-size: 0.8em; padding: 2px 8px; border-radius: 12px; background: ${isPending ? '#ffe082' : '#a5d6a7'}; color: #000;">${order.estado}</span></h3>
+                    <p style="margin: 0; font-size: 0.9em; color: #555;"><strong>Cliente:</strong> ${order.nombre_cliente} | <strong>NIT:</strong> ${order.nit || 'CF'} | <strong>Tel:</strong> ${order.telefono}</p>
+                    <p style="margin: 5px 0; font-size: 0.9em; color: #555;"><strong>Dir:</strong> ${order.direccion}</p>
+                    <ul style="margin: 10px 0; padding-left: 20px; font-size: 0.85em;">${itemsHtml}</ul>
+                    <p style="margin: 0; font-weight: bold; color: #1c1a17;">Total: Q${parseFloat(order.total).toFixed(2)}</p>
+                </div>
+                ${isPending ? `
+                <button onclick="confirmWhatsappOrder(${order.id})" style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Confirmar Compra
+                </button>
+                ` : `
+                <span style="color: #4caf50; font-weight: bold;">✓ Confirmada</span>
+                `}
+            </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error('Error cargando órdenes whatsapp:', err);
+        container.innerHTML = '<p style="color: red;">Error conectando con el servidor.</p>';
+    }
+}
+
+async function confirmWhatsappOrder(id) {
+    if (!confirm('¿Estás seguro de que el cliente pagó y deseas descontar esto del inventario?')) return;
+    
+    try {
+        const response = await fetch(`http://localhost:3000/whatsapp-orders/${id}/confirm`, {
+            method: 'PATCH'
+        });
+        
+        if (response.ok) {
+            alert('Orden confirmada y ventas registradas exitosamente.');
+            fetchAdminWhatsappOrders(); // recargar
+        } else {
+            const data = await response.json();
+            alert('Error: ' + (data.message || 'No se pudo confirmar la orden'));
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error de conexión al confirmar');
+    }
+}

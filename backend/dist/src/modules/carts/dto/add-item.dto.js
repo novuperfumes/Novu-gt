@@ -13,13 +13,26 @@ exports.AddItemDto = void 0;
 const class_validator_1 = require("class-validator");
 class AddItemDto {
     id_presentacion;
+    id_decant;
+    tipo_decant;
     cantidad;
 }
 exports.AddItemDto = AddItemDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)({ message: 'El id de presentación debe ser un número entero' }),
     __metadata("design:type", Number)
 ], AddItemDto.prototype, "id_presentacion", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)({ message: 'El id del decant debe ser un número entero' }),
+    __metadata("design:type", Number)
+], AddItemDto.prototype, "id_decant", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ message: 'El tipo de decant debe ser una cadena' }),
+    __metadata("design:type", String)
+], AddItemDto.prototype, "tipo_decant", void 0);
 __decorate([
     (0, class_validator_1.IsInt)({ message: 'La cantidad debe ser un número entero' }),
     (0, class_validator_1.IsPositive)({ message: 'La cantidad debe ser mayor a cero' }),

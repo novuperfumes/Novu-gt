@@ -16,6 +16,13 @@ export class PerfumesController {
     return this.perfumesService.findAllActive();
   }
 
+  @Get('admin/all')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async findAllAdmin() {
+    return this.perfumesService.findAllAdmin();
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.perfumesService.findOne(id);
@@ -36,6 +43,23 @@ export class PerfumesController {
     @Body() dto: CreatePresentacionDto,
   ) {
     return this.perfumesService.addPresentacion(id, dto);
+  }
+
+  @Patch('presentaciones/:presId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async updatePresentacion(
+    @Param('presId', ParseIntPipe) presId: number,
+    @Body() dto: { tamanio?: string; precio?: number; stock?: number },
+  ) {
+    return this.perfumesService.updatePresentacion(presId, dto);
+  }
+
+  @Delete('presentaciones/:presId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async removePresentacion(@Param('presId', ParseIntPipe) presId: number) {
+    return this.perfumesService.removePresentacion(presId);
   }
 
   @Patch(':id')

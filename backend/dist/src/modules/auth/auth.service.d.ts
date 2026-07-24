@@ -7,23 +7,25 @@ export declare class AuthService {
     private jwtService;
     constructor(usersService: UsersService, jwtService: JwtService);
     register(dto: RegisterDto): Promise<{
-        nombre: string;
         id: number;
+        nombre: string;
+        genero: string | null;
         correo: string;
         rol: string;
         apellido: string;
         telefono: string | null;
-        genero: string | null;
+        sellos: number;
     }>;
     login(dto: LoginDto): Promise<{
         user: {
-            nombre: string;
             id: number;
+            nombre: string;
+            genero: string | null;
             correo: string;
             rol: string;
             apellido: string;
             telefono: string | null;
-            genero: string | null;
+            sellos: number;
         };
         token: string;
     }>;

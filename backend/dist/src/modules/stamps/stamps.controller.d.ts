@@ -3,7 +3,6 @@ export declare class StampsController {
     private readonly stampsService;
     constructor(stampsService: StampsService);
     getMyStamps(req: any): Promise<{
-        giftCardId: number;
         userId: number;
         stampsCount: number;
         remainingForFreePerfume: number;
@@ -17,7 +16,6 @@ export declare class StampsController {
         }[];
     }>;
     getUserStampsForAdmin(userId: number): Promise<{
-        giftCardId: number;
         userId: number;
         stampsCount: number;
         remainingForFreePerfume: number;

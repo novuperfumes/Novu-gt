@@ -18,6 +18,11 @@ export class CartsService {
                 perfume: true,
               },
             },
+            decant: {
+              include: {
+                perfume: true,
+              },
+            },
           },
         },
       },
@@ -34,6 +39,11 @@ export class CartsService {
                   perfume: true,
                 },
               },
+              decant: {
+                include: {
+                  perfume: true,
+                },
+              },
             },
           },
         },
@@ -46,49 +56,115 @@ export class CartsService {
   async addItem(userId: number, dto: AddItemDto) {
     const cart = await this.getOrCreateCart(userId);
 
-    // Verify presentation and stock
-    const presentation = await this.prisma.presentacionPerfume.findUnique({
-      where: { id: dto.id_presentacion },
-    });
-
-    if (!presentation) {
-      throw new NotFoundException('Presentación de perfume no encontrada.');
+    if (!dto.id_presentacion && !dto.id_decant) {
+      throw new BadRequestException('Debe proporcionar id_presentacion o id_decant.');
     }
 
-    if (presentation.stock < dto.cantidad) {
-      throw new BadRequestException(`Stock insuficiente. Solo quedan ${presentation.stock} unidades de este tamaño.`);
+    if (dto.id_decant && !dto.tipo_decant) {
+      throw new BadRequestException('Debe especificar el tipo_decant para compras de decants.');
     }
 
-    // Check if item already in cart
-    const existingDetail = await this.prisma.carritoDetalle.findFirst({
-      where: {
-        id_carrito_maestro: cart.id,
-        id_presentacion: dto.id_presentacion,
-      },
-    });
+    if (dto.id_presentacion) {
+      // Verify presentation and stock
+      const presentation = await this.prisma.presentacionPerfume.findUnique({
+        where: { id: dto.id_presentacion },
+      });
 
-    if (existingDetail) {
-      const newQuantity = existingDetail.cantidad + dto.cantidad;
-      if (presentation.stock < newQuantity) {
-        throw new BadRequestException(
-          `Stock insuficiente para aumentar la cantidad. Stock total: ${presentation.stock}, cantidad actual en carrito: ${existingDetail.cantidad}`,
-        );
+      if (!presentation) {
+        throw new NotFoundException('Presentación de perfume no encontrada.');
       }
 
-      return this.prisma.carritoDetalle.update({
-        where: { id: existingDetail.id },
-        data: { cantidad: newQuantity },
+      if (presentation.stock < dto.cantidad) {
+        throw new BadRequestException(`Stock insuficiente. Solo quedan ${presentation.stock} unidades de este tamaño.`);
+      }
+
+      // Check if item already in cart
+      const existingDetail = await this.prisma.carritoDetalle.findFirst({
+        where: {
+          id_carrito_maestro: cart.id,
+          id_presentacion: dto.id_presentacion,
+        },
+      });
+
+      if (existingDetail) {
+        const newQuantity = existingDetail.cantidad + dto.cantidad;
+        if (presentation.stock < newQuantity) {
+          throw new BadRequestException(
+            `Stock insuficiente para aumentar la cantidad. Stock total: ${presentation.stock}, cantidad actual en carrito: ${existingDetail.cantidad}`,
+          );
+        }
+
+        return this.prisma.carritoDetalle.update({
+          where: { id: existingDetail.id },
+          data: { cantidad: newQuantity },
+        });
+      }
+
+      // Create new detail line
+      return this.prisma.carritoDetalle.create({
+        data: {
+          id_carrito_maestro: cart.id,
+          id_presentacion: dto.id_presentacion,
+          cantidad: dto.cantidad,
+        },
+      });
+    } else {
+      // Verify decant and stock
+      const decant = await this.prisma.decant.findUnique({
+        where: { id: dto.id_decant },
+      });
+
+      if (!decant) {
+        throw new NotFoundException('Decant no encontrado.');
+      }
+
+      const tipo = dto.tipo_decant!.toLowerCase().trim();
+      let stock = 0;
+      if (tipo === '5 ml' || tipo === '5ml') {
+        stock = decant.stock_5ml;
+      } else if (tipo === '10 ml' || tipo === '10ml') {
+        stock = decant.stock_10ml;
+      } else {
+        throw new BadRequestException('El tipo de decant debe ser "5 ml" o "10 ml".');
+      }
+
+      if (stock < dto.cantidad) {
+        throw new BadRequestException(`Stock insuficiente para decant. Solo quedan ${stock} unidades de este tamaño.`);
+      }
+
+      // Check if item already in cart
+      const existingDetail = await this.prisma.carritoDetalle.findFirst({
+        where: {
+          id_carrito_maestro: cart.id,
+          id_decant: dto.id_decant,
+          tipo_decant: dto.tipo_decant,
+        },
+      });
+
+      if (existingDetail) {
+        const newQuantity = existingDetail.cantidad + dto.cantidad;
+        if (stock < newQuantity) {
+          throw new BadRequestException(
+            `Stock insuficiente para aumentar la cantidad. Stock total: ${stock}, cantidad actual en carrito: ${existingDetail.cantidad}`,
+          );
+        }
+
+        return this.prisma.carritoDetalle.update({
+          where: { id: existingDetail.id },
+          data: { cantidad: newQuantity },
+        });
+      }
+
+      // Create new detail line for decant
+      return this.prisma.carritoDetalle.create({
+        data: {
+          id_carrito_maestro: cart.id,
+          id_decant: dto.id_decant,
+          tipo_decant: dto.tipo_decant,
+          cantidad: dto.cantidad,
+        },
       });
     }
-
-    // Create new detail line
-    return this.prisma.carritoDetalle.create({
-      data: {
-        id_carrito_maestro: cart.id,
-        id_presentacion: dto.id_presentacion,
-        cantidad: dto.cantidad,
-      },
-    });
   }
 
   async updateItem(userId: number, detailId: number, dto: UpdateItemDto) {
@@ -96,16 +172,28 @@ export class CartsService {
 
     const detail = await this.prisma.carritoDetalle.findUnique({
       where: { id: detailId },
-      include: { presentacion: true },
+      include: { presentacion: true, decant: true },
     });
 
     if (!detail || detail.id_carrito_maestro !== cart.id) {
       throw new NotFoundException('Elemento del carrito no encontrado.');
     }
 
-    if (detail.presentacion.stock < dto.cantidad) {
+    let stock = 0;
+    if (detail.id_presentacion && detail.presentacion) {
+      stock = detail.presentacion.stock;
+    } else if (detail.id_decant && detail.decant && detail.tipo_decant) {
+      const tipo = detail.tipo_decant.toLowerCase().trim();
+      if (tipo === '5 ml' || tipo === '5ml') {
+        stock = detail.decant.stock_5ml;
+      } else if (tipo === '10 ml' || tipo === '10ml') {
+        stock = detail.decant.stock_10ml;
+      }
+    }
+
+    if (stock < dto.cantidad) {
       throw new BadRequestException(
-        `Stock insuficiente. Solo quedan ${detail.presentacion.stock} unidades.`,
+        `Stock insuficiente. Solo quedan ${stock} unidades.`,
       );
     }
 

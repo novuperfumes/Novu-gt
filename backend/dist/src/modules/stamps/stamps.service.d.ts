@@ -3,7 +3,6 @@ export declare class StampsService {
     private prisma;
     constructor(prisma: PrismaService);
     getUserStamps(userId: number): Promise<{
-        giftCardId: number;
         userId: number;
         stampsCount: number;
         remainingForFreePerfume: number;

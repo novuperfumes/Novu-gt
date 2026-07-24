@@ -48,6 +48,7 @@ async function bootstrap() {
   app.enableCors({
     origin: true, // Configured for dev; restrict in production
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
   // Global validation pipeline

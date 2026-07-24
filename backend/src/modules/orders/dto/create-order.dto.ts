@@ -19,6 +19,10 @@ export class CreateOrderDto {
 
   @IsString()
   @IsOptional()
+  codigo_descuento?: string;
+
+  @IsString()
+  @IsOptional()
   nombre_recibe?: string;
 
   @IsString()

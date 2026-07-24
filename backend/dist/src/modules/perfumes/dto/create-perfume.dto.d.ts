@@ -5,4 +5,6 @@ export declare class CreatePerfumeDto {
     imagen: string;
     marca: string;
     activo?: boolean;
+    tipo?: string;
+    genero?: string;
 }

@@ -29,6 +29,9 @@ let PerfumesController = class PerfumesController {
     async findAll() {
         return this.perfumesService.findAllActive();
     }
+    async findAllAdmin() {
+        return this.perfumesService.findAllAdmin();
+    }
     async findOne(id) {
         return this.perfumesService.findOne(id);
     }
@@ -37,6 +40,12 @@ let PerfumesController = class PerfumesController {
     }
     async addPresentacion(id, dto) {
         return this.perfumesService.addPresentacion(id, dto);
+    }
+    async updatePresentacion(presId, dto) {
+        return this.perfumesService.updatePresentacion(presId, dto);
+    }
+    async removePresentacion(presId) {
+        return this.perfumesService.removePresentacion(presId);
     }
     async update(id, dto) {
         return this.perfumesService.update(id, dto);
@@ -52,6 +61,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PerfumesController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('admin/all'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PerfumesController.prototype, "findAllAdmin", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -78,6 +95,25 @@ __decorate([
     __metadata("design:paramtypes", [Number, create_presentacion_dto_1.CreatePresentacionDto]),
     __metadata("design:returntype", Promise)
 ], PerfumesController.prototype, "addPresentacion", null);
+__decorate([
+    (0, common_1.Patch)('presentaciones/:presId'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Param)('presId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], PerfumesController.prototype, "updatePresentacion", null);
+__decorate([
+    (0, common_1.Delete)('presentaciones/:presId'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Param)('presId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], PerfumesController.prototype, "removePresentacion", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),

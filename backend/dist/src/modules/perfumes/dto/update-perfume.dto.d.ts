@@ -5,4 +5,7 @@ export declare class UpdatePerfumeDto {
     imagen?: string;
     marca?: string;
     activo?: boolean;
+    tipo?: string;
+    genero?: string;
+    decant?: any;
 }

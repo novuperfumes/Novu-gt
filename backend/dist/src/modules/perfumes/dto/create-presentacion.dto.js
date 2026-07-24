@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 class CreatePresentacionDto {
     tamanio;
     precio;
+    costo;
     stock;
 }
 exports.CreatePresentacionDto = CreatePresentacionDto;
@@ -27,6 +28,11 @@ __decorate([
     (0, class_validator_1.IsPositive)({ message: 'El precio debe ser mayor a cero' }),
     __metadata("design:type", Number)
 ], CreatePresentacionDto.prototype, "precio", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
+    __metadata("design:type", Number)
+], CreatePresentacionDto.prototype, "costo", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)({}, { message: 'El stock debe ser un número entero' }),
     (0, class_validator_1.Min)(0, { message: 'El stock mínimo es 0' }),

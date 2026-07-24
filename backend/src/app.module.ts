@@ -10,6 +10,8 @@ import { RedisThrottlerGuard } from './common/guards/throttler.guard';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PerfumesModule } from './modules/perfumes/perfumes.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
+import { DecantsModule } from './modules/decants/decants.module';
 import { CartsModule } from './modules/carts/carts.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PromoCodesModule } from './modules/promo-codes/promo-codes.module';
@@ -20,6 +22,9 @@ import { AddressesModule } from './modules/addresses/addresses.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { SalesReportsModule } from './modules/sales-reports/sales-reports.module';
+import { WhatsappOrdersModule } from './modules/whatsapp-orders/whatsapp-orders.module';
+import { GiftCardsModule } from './modules/gift-cards/gift-cards.module';
 
 @Module({
   imports: [
@@ -44,6 +49,8 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     UsersModule,
     AuthModule,
     PerfumesModule,
+    InventoryModule,
+    DecantsModule,
     CartsModule,
     OrdersModule,
     PromoCodesModule,
@@ -54,6 +61,9 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     FavoritesModule,
     ReviewsModule,
     UploadsModule,
+    SalesReportsModule,
+    WhatsappOrdersModule,
+    GiftCardsModule,
   ],
   controllers: [AppController],
   providers: [

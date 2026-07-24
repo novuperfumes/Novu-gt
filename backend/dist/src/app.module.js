@@ -19,6 +19,8 @@ const throttler_guard_1 = require("./common/guards/throttler.guard");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const perfumes_module_1 = require("./modules/perfumes/perfumes.module");
+const inventory_module_1 = require("./modules/inventory/inventory.module");
+const decants_module_1 = require("./modules/decants/decants.module");
 const carts_module_1 = require("./modules/carts/carts.module");
 const orders_module_1 = require("./modules/orders/orders.module");
 const promo_codes_module_1 = require("./modules/promo-codes/promo-codes.module");
@@ -29,6 +31,9 @@ const addresses_module_1 = require("./modules/addresses/addresses.module");
 const favorites_module_1 = require("./modules/favorites/favorites.module");
 const reviews_module_1 = require("./modules/reviews/reviews.module");
 const uploads_module_1 = require("./modules/uploads/uploads.module");
+const sales_reports_module_1 = require("./modules/sales-reports/sales-reports.module");
+const whatsapp_orders_module_1 = require("./modules/whatsapp-orders/whatsapp-orders.module");
+const gift_cards_module_1 = require("./modules/gift-cards/gift-cards.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -50,6 +55,8 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
             perfumes_module_1.PerfumesModule,
+            inventory_module_1.InventoryModule,
+            decants_module_1.DecantsModule,
             carts_module_1.CartsModule,
             orders_module_1.OrdersModule,
             promo_codes_module_1.PromoCodesModule,
@@ -60,6 +67,9 @@ exports.AppModule = AppModule = __decorate([
             favorites_module_1.FavoritesModule,
             reviews_module_1.ReviewsModule,
             uploads_module_1.UploadsModule,
+            sales_reports_module_1.SalesReportsModule,
+            whatsapp_orders_module_1.WhatsappOrdersModule,
+            gift_cards_module_1.GiftCardsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

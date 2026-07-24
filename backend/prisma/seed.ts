@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -13,6 +14,30 @@ async function main() {
   await prisma.perfume.deleteMany();
   await prisma.sucursal.deleteMany();
   await prisma.usuario.deleteMany();
+
+  // Create Users
+  const salt = await bcrypt.genSalt(10);
+  const adminPassword = await bcrypt.hash('admin123', salt);
+  const clientePassword = await bcrypt.hash('cliente123', salt);
+
+  await prisma.usuario.createMany({
+    data: [
+      {
+        correo: 'admin@novugt.com',
+        contrasenia: adminPassword,
+        rol: 'ADMIN',
+        nombre: 'Admin',
+        apellido: 'Novu',
+      },
+      {
+        correo: 'cliente@novugt.com',
+        contrasenia: clientePassword,
+        rol: 'CLIENTE',
+        nombre: 'Juan',
+        apellido: 'Pérez',
+      }
+    ]
+  });
 
   // Create physical pickup branches
   await prisma.sucursal.createMany({

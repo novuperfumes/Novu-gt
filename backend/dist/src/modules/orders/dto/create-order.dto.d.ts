@@ -3,6 +3,7 @@ export declare class CreateOrderDto {
     tipo_entrega: string;
     id_sucursal?: number;
     id_codigo_promocion?: number;
+    codigo_descuento?: string;
     nombre_recibe?: string;
     telefono_contacto?: string;
     direccion_entrega?: string;

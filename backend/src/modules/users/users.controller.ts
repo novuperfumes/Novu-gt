@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, UseGuards, Req, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Req, NotFoundException, Param, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -22,5 +22,23 @@ export class UsersController {
   async updateProfile(@Req() req: any, @Body() dto: UpdateUserDto) {
     const userId = req.user.sub;
     return this.usersService.updateProfile(userId, dto);
+  }
+
+  @Get('admin/metrics')
+  async getAdminMetrics(@Req() req: any) {
+    if (req.user.role !== 'ADMIN') throw new NotFoundException('No autorizado');
+    return this.usersService.getAdminMetrics();
+  }
+
+  @Get('search')
+  async searchUsers(@Req() req: any, @Query('q') q: string) {
+    if (req.user.role !== 'ADMIN') throw new NotFoundException('No autorizado');
+    return this.usersService.searchUsers(q || '');
+  }
+
+  @Patch(':id/sellos')
+  async updateSellos(@Req() req: any, @Param('id') id: string, @Body() body: { sellos: number }) {
+    if (req.user.role !== 'ADMIN') throw new NotFoundException('No autorizado');
+    return this.usersService.updateSellos(Number(id), body.sellos);
   }
 }

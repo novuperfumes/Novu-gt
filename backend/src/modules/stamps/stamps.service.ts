@@ -6,14 +6,13 @@ export class StampsService {
   constructor(private prisma: PrismaService) {}
 
   async getUserStamps(userId: number) {
-    let giftCard = await this.prisma.giftCard.findFirst({
-      where: { id_usuario: userId },
+    const user = await this.prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { giftCards: true }
     });
 
-    if (!giftCard) {
-      giftCard = await this.prisma.giftCard.create({
-        data: { id_usuario: userId, sellos: 0 },
-      });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
     }
 
     const history = await this.prisma.historialSellos.findMany({
@@ -22,10 +21,9 @@ export class StampsService {
     });
 
     return {
-      giftCardId: giftCard.id,
-      userId: giftCard.id_usuario,
-      stampsCount: giftCard.sellos,
-      remainingForFreePerfume: Math.max(0, 8 - giftCard.sellos),
+      userId: user.id,
+      stampsCount: user.sellos,
+      remainingForFreePerfume: Math.max(0, 8 - user.sellos),
       history,
     };
   }

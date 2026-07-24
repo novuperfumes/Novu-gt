@@ -31,6 +31,7 @@ export class PerfumesService {
       data: {
         id_perfume: perfumeId,
         tamanio: dto.tamanio,
+        costo: dto.costo ?? 0,
         precio: dto.precio,
         stock: dto.stock,
       },
@@ -39,6 +40,33 @@ export class PerfumesService {
     await this.invalidateCatalogCache();
     await this.invalidatePerfumeCache(perfumeId);
     return presentacion;
+  }
+
+  async updatePresentacion(presId: number, dto: { tamanio?: string; costo?: number; precio?: number; stock?: number }) {
+    const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+    if (!pres) throw new NotFoundException('Presentación no encontrada.');
+
+    const updated = await this.prisma.presentacionPerfume.update({
+      where: { id: presId },
+      data: dto,
+    });
+
+    await this.invalidateCatalogCache();
+    await this.invalidatePerfumeCache(pres.id_perfume);
+    return updated;
+  }
+
+  async removePresentacion(presId: number) {
+    const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+    if (!pres) throw new NotFoundException('Presentación no encontrada.');
+
+    const deleted = await this.prisma.presentacionPerfume.delete({
+      where: { id: presId },
+    });
+
+    await this.invalidateCatalogCache();
+    await this.invalidatePerfumeCache(pres.id_perfume);
+    return deleted;
   }
 
   async findAllActive() {
@@ -53,12 +81,23 @@ export class PerfumesService {
       where: { activo: true },
       include: {
         presentaciones: true,
+        decant: true,
       },
     });
 
     // Write Cache
     await this.redisService.set(this.CATALOG_CACHE_KEY, JSON.stringify(perfumes), this.CACHE_TTL);
     return perfumes;
+  }
+
+  async findAllAdmin() {
+    return this.prisma.perfume.findMany({
+      include: {
+        presentaciones: true,
+        decant: true,
+      },
+      orderBy: { id: 'desc' }
+    });
   }
 
   async findOne(id: number) {
@@ -75,6 +114,7 @@ export class PerfumesService {
       where: { id },
       include: {
         presentaciones: true,
+        decant: true,
       },
     });
 
@@ -87,19 +127,54 @@ export class PerfumesService {
     return perfume;
   }
 
-  async update(id: number, dto: UpdatePerfumeDto) {
+  async update(id: number, dto: any) {
     const existing = await this.prisma.perfume.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException('Perfume no encontrado.');
 
+    // Separate decant data from basic perfume data
+    const { decant, ...perfumeData } = dto;
+
     const updated = await this.prisma.perfume.update({
       where: { id },
-      data: dto,
+      data: perfumeData,
     });
+
+    if (decant) {
+      const existingDecant = await this.prisma.decant.findFirst({ where: { id_perfume: id } });
+      if (existingDecant) {
+        await this.prisma.decant.update({
+          where: { id: existingDecant.id },
+          data: {
+            precio_5ml: decant.precio_5ml,
+            stock_5ml: decant.stock_5ml,
+            precio_10ml: decant.precio_10ml,
+            stock_10ml: decant.stock_10ml,
+          },
+        });
+      } else {
+        await this.prisma.decant.create({
+          data: {
+            id_perfume: id,
+            ml_origen: 100, // default
+            costo_original: 0,
+            precio_original: 0,
+            costo_5ml: 0,
+            costo_10ml: 0,
+            precio_5ml: decant.precio_5ml,
+            stock_5ml: decant.stock_5ml,
+            precio_10ml: decant.precio_10ml,
+            stock_10ml: decant.stock_10ml,
+          }
+        });
+      }
+    }
 
     await this.invalidateCatalogCache();
     await this.invalidatePerfumeCache(id);
     return updated;
   }
+
+
 
   async remove(id: number) {
     const existing = await this.prisma.perfume.findUnique({ where: { id } });

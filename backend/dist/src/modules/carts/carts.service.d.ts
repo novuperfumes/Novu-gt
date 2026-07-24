@@ -6,27 +6,57 @@ export declare class CartsService {
     constructor(prisma: PrismaService);
     getOrCreateCart(userId: number): Promise<{
         detalles: ({
-            presentacion: {
+            decant: ({
                 perfume: {
+                    id: number;
                     nombre: string;
                     descripcion: string;
                     categoria: string;
+                    tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     marca: string;
                     activo: boolean;
+                };
+            } & {
+                id: number;
+                id_perfume: number;
+                ml_origen: number;
+                costo_original: import("@prisma/client-runtime-utils").Decimal;
+                precio_original: import("@prisma/client-runtime-utils").Decimal;
+                costo_5ml: import("@prisma/client-runtime-utils").Decimal;
+                precio_5ml: import("@prisma/client-runtime-utils").Decimal;
+                stock_5ml: number;
+                costo_10ml: import("@prisma/client-runtime-utils").Decimal;
+                precio_10ml: import("@prisma/client-runtime-utils").Decimal;
+                stock_10ml: number;
+            }) | null;
+            presentacion: ({
+                perfume: {
                     id: number;
+                    nombre: string;
+                    descripcion: string;
+                    categoria: string;
+                    tipo: string | null;
+                    genero: string | null;
+                    imagen: string;
+                    marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
                 tamanio: string;
+                costo: import("@prisma/client-runtime-utils").Decimal | null;
                 precio: import("@prisma/client-runtime-utils").Decimal;
                 stock: number;
                 id_perfume: number;
-            };
+            }) | null;
         } & {
             id: number;
-            id_presentacion: number;
+            id_presentacion: number | null;
             cantidad: number;
+            id_decant: number | null;
+            tipo_decant: string | null;
             id_carrito_maestro: number;
         })[];
     } & {
@@ -35,14 +65,18 @@ export declare class CartsService {
     }>;
     addItem(userId: number, dto: AddItemDto): Promise<{
         id: number;
-        id_presentacion: number;
+        id_presentacion: number | null;
         cantidad: number;
+        id_decant: number | null;
+        tipo_decant: string | null;
         id_carrito_maestro: number;
     }>;
     updateItem(userId: number, detailId: number, dto: UpdateItemDto): Promise<{
         id: number;
-        id_presentacion: number;
+        id_presentacion: number | null;
         cantidad: number;
+        id_decant: number | null;
+        tipo_decant: string | null;
         id_carrito_maestro: number;
     }>;
     removeItem(userId: number, detailId: number): Promise<{

@@ -24,4 +24,15 @@ export class UpdatePerfumeDto {
   @IsBoolean()
   @IsOptional()
   activo?: boolean;
+
+  @IsString()
+  @IsOptional()
+  tipo?: string;
+
+  @IsString()
+  @IsOptional()
+  genero?: string;
+
+  @IsOptional()
+  decant?: any;
 }

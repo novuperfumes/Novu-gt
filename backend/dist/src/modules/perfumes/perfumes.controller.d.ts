@@ -6,39 +6,99 @@ export declare class PerfumesController {
     private readonly perfumesService;
     constructor(perfumesService: PerfumesService);
     findAll(): Promise<any>;
-    findOne(id: number): Promise<any>;
-    create(dto: CreatePerfumeDto): Promise<{
+    findAllAdmin(): Promise<({
+        presentaciones: {
+            id: number;
+            tamanio: string;
+            costo: import("@prisma/client-runtime-utils").Decimal | null;
+            precio: import("@prisma/client-runtime-utils").Decimal;
+            stock: number;
+            id_perfume: number;
+        }[];
+        decant: {
+            id: number;
+            id_perfume: number;
+            ml_origen: number;
+            costo_original: import("@prisma/client-runtime-utils").Decimal;
+            precio_original: import("@prisma/client-runtime-utils").Decimal;
+            costo_5ml: import("@prisma/client-runtime-utils").Decimal;
+            precio_5ml: import("@prisma/client-runtime-utils").Decimal;
+            stock_5ml: number;
+            costo_10ml: import("@prisma/client-runtime-utils").Decimal;
+            precio_10ml: import("@prisma/client-runtime-utils").Decimal;
+            stock_10ml: number;
+        } | null;
+    } & {
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
+    })[]>;
+    findOne(id: number): Promise<any>;
+    create(dto: CreatePerfumeDto): Promise<{
         id: number;
+        nombre: string;
+        descripcion: string;
+        categoria: string;
+        tipo: string | null;
+        genero: string | null;
+        imagen: string;
+        marca: string;
+        activo: boolean;
     }>;
     addPresentacion(id: number, dto: CreatePresentacionDto): Promise<{
         id: number;
         tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
+        precio: import("@prisma/client-runtime-utils").Decimal;
+        stock: number;
+        id_perfume: number;
+    }>;
+    updatePresentacion(presId: number, dto: {
+        tamanio?: string;
+        precio?: number;
+        stock?: number;
+    }): Promise<{
+        id: number;
+        tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
+        precio: import("@prisma/client-runtime-utils").Decimal;
+        stock: number;
+        id_perfume: number;
+    }>;
+    removePresentacion(presId: number): Promise<{
+        id: number;
+        tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
         precio: import("@prisma/client-runtime-utils").Decimal;
         stock: number;
         id_perfume: number;
     }>;
     update(id: number, dto: UpdatePerfumeDto): Promise<{
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
-        id: number;
     }>;
     remove(id: number): Promise<{
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
-        id: number;
     }>;
 }

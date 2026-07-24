@@ -4,8 +4,8 @@ export declare class ContactService {
     private prisma;
     constructor(prisma: PrismaService);
     create(dto: CreateMessageDto): Promise<{
-        nombre: string;
         id: number;
+        nombre: string;
         correo: string;
         asunto: string;
         mensaje: string;
@@ -13,8 +13,8 @@ export declare class ContactService {
         leido: boolean;
     }>;
     findAll(): Promise<{
-        nombre: string;
         id: number;
+        nombre: string;
         correo: string;
         asunto: string;
         mensaje: string;
@@ -22,8 +22,8 @@ export declare class ContactService {
         leido: boolean;
     }[]>;
     markAsRead(id: number): Promise<{
-        nombre: string;
         id: number;
+        nombre: string;
         correo: string;
         asunto: string;
         mensaje: string;

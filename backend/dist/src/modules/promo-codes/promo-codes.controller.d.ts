@@ -5,8 +5,8 @@ export declare class PromoCodesController {
     constructor(promoCodesService: PromoCodesService);
     create(dto: CreatePromoDto): Promise<{
         id: number;
-        estado: string;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
@@ -14,8 +14,8 @@ export declare class PromoCodesController {
     }>;
     findAll(): Promise<{
         id: number;
-        estado: string;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
@@ -23,8 +23,8 @@ export declare class PromoCodesController {
     }[]>;
     validate(code: string): Promise<{
         id: number;
-        estado: string;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;

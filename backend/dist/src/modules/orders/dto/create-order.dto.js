@@ -16,6 +16,7 @@ class CreateOrderDto {
     tipo_entrega;
     id_sucursal;
     id_codigo_promocion;
+    codigo_descuento;
     nombre_recibe;
     telefono_contacto;
     direccion_entrega;
@@ -45,6 +46,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateOrderDto.prototype, "id_codigo_promocion", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateOrderDto.prototype, "codigo_descuento", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

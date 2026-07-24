@@ -24,4 +24,12 @@ export class CreatePerfumeDto {
   @IsBoolean()
   @IsOptional()
   activo?: boolean;
+
+  @IsString()
+  @IsOptional()
+  tipo?: string;
+
+  @IsString()
+  @IsOptional()
+  genero?: string;
 }

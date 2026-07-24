@@ -28,6 +28,17 @@ export class AuthService {
       apellido: dto.apellido,
       telefono: dto.telefono,
       genero: dto.genero,
+      sellos: 1, // Sello de bienvenida
+      giftCards: {
+        create: [
+          {
+            codigo: 'GIFT-WELCOME-' + Math.floor(1000 + Math.random() * 9000),
+            monto: 50.00,
+            activa: true,
+            es_bienvenida: true
+          }
+        ]
+      }
     });
 
     const { contrasenia, ...result } = user;

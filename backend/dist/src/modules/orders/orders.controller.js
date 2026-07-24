@@ -30,6 +30,16 @@ let OrdersController = class OrdersController {
         const userId = req.user.sub;
         return this.ordersService.findAllByUser(userId);
     }
+    async findAllAdmin(req) {
+        if (req.user.role !== 'ADMIN')
+            throw new common_1.NotFoundException('No autorizado');
+        return this.ordersService.findAllAdmin();
+    }
+    async updateStatus(req, id, body) {
+        if (req.user.role !== 'ADMIN')
+            throw new common_1.NotFoundException('No autorizado');
+        return this.ordersService.updateStatus(id, body.estado, body.costo_envio);
+    }
     async findOne(req, id) {
         const userId = req.user.sub;
         return this.ordersService.findOne(userId, id);
@@ -51,6 +61,22 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('admin/all'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "findAllAdmin", null);
+__decorate([
+    (0, common_1.Patch)('admin/:id/status'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "updateStatus", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Req)()),

@@ -34,6 +34,21 @@ let UsersController = class UsersController {
         const userId = req.user.sub;
         return this.usersService.updateProfile(userId, dto);
     }
+    async getAdminMetrics(req) {
+        if (req.user.role !== 'ADMIN')
+            throw new common_1.NotFoundException('No autorizado');
+        return this.usersService.getAdminMetrics();
+    }
+    async searchUsers(req, q) {
+        if (req.user.role !== 'ADMIN')
+            throw new common_1.NotFoundException('No autorizado');
+        return this.usersService.searchUsers(q || '');
+    }
+    async updateSellos(req, id, body) {
+        if (req.user.role !== 'ADMIN')
+            throw new common_1.NotFoundException('No autorizado');
+        return this.usersService.updateSellos(Number(id), body.sellos);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -51,6 +66,30 @@ __decorate([
     __metadata("design:paramtypes", [Object, update_user_dto_1.UpdateUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.Get)('admin/metrics'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getAdminMetrics", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('q')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "searchUsers", null);
+__decorate([
+    (0, common_1.Patch)(':id/sellos'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateSellos", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

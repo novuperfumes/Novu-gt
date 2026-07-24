@@ -37,6 +37,7 @@ let PerfumesService = class PerfumesService {
             data: {
                 id_perfume: perfumeId,
                 tamanio: dto.tamanio,
+                costo: dto.costo ?? 0,
                 precio: dto.precio,
                 stock: dto.stock,
             },
@@ -44,6 +45,29 @@ let PerfumesService = class PerfumesService {
         await this.invalidateCatalogCache();
         await this.invalidatePerfumeCache(perfumeId);
         return presentacion;
+    }
+    async updatePresentacion(presId, dto) {
+        const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+        if (!pres)
+            throw new common_1.NotFoundException('Presentación no encontrada.');
+        const updated = await this.prisma.presentacionPerfume.update({
+            where: { id: presId },
+            data: dto,
+        });
+        await this.invalidateCatalogCache();
+        await this.invalidatePerfumeCache(pres.id_perfume);
+        return updated;
+    }
+    async removePresentacion(presId) {
+        const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+        if (!pres)
+            throw new common_1.NotFoundException('Presentación no encontrada.');
+        const deleted = await this.prisma.presentacionPerfume.delete({
+            where: { id: presId },
+        });
+        await this.invalidateCatalogCache();
+        await this.invalidatePerfumeCache(pres.id_perfume);
+        return deleted;
     }
     async findAllActive() {
         const cached = await this.redisService.get(this.CATALOG_CACHE_KEY);
@@ -54,10 +78,20 @@ let PerfumesService = class PerfumesService {
             where: { activo: true },
             include: {
                 presentaciones: true,
+                decant: true,
             },
         });
         await this.redisService.set(this.CATALOG_CACHE_KEY, JSON.stringify(perfumes), this.CACHE_TTL);
         return perfumes;
+    }
+    async findAllAdmin() {
+        return this.prisma.perfume.findMany({
+            include: {
+                presentaciones: true,
+                decant: true,
+            },
+            orderBy: { id: 'desc' }
+        });
     }
     async findOne(id) {
         const cacheKey = `perfume:${id}`;
@@ -69,6 +103,7 @@ let PerfumesService = class PerfumesService {
             where: { id },
             include: {
                 presentaciones: true,
+                decant: true,
             },
         });
         if (!perfume) {
@@ -81,10 +116,41 @@ let PerfumesService = class PerfumesService {
         const existing = await this.prisma.perfume.findUnique({ where: { id } });
         if (!existing)
             throw new common_1.NotFoundException('Perfume no encontrado.');
+        const { decant, ...perfumeData } = dto;
         const updated = await this.prisma.perfume.update({
             where: { id },
-            data: dto,
+            data: perfumeData,
         });
+        if (decant) {
+            const existingDecant = await this.prisma.decant.findFirst({ where: { id_perfume: id } });
+            if (existingDecant) {
+                await this.prisma.decant.update({
+                    where: { id: existingDecant.id },
+                    data: {
+                        precio_5ml: decant.precio_5ml,
+                        stock_5ml: decant.stock_5ml,
+                        precio_10ml: decant.precio_10ml,
+                        stock_10ml: decant.stock_10ml,
+                    },
+                });
+            }
+            else {
+                await this.prisma.decant.create({
+                    data: {
+                        id_perfume: id,
+                        ml_origen: 100,
+                        costo_original: 0,
+                        precio_original: 0,
+                        costo_5ml: 0,
+                        costo_10ml: 0,
+                        precio_5ml: decant.precio_5ml,
+                        stock_5ml: decant.stock_5ml,
+                        precio_10ml: decant.precio_10ml,
+                        stock_10ml: decant.stock_10ml,
+                    }
+                });
+            }
+        }
         await this.invalidateCatalogCache();
         await this.invalidatePerfumeCache(id);
         return updated;

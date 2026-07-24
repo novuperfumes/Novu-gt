@@ -18,6 +18,9 @@ class UpdatePerfumeDto {
     imagen;
     marca;
     activo;
+    tipo;
+    genero;
+    decant;
 }
 exports.UpdatePerfumeDto = UpdatePerfumeDto;
 __decorate([
@@ -50,4 +53,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], UpdatePerfumeDto.prototype, "activo", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdatePerfumeDto.prototype, "tipo", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdatePerfumeDto.prototype, "genero", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdatePerfumeDto.prototype, "decant", void 0);
 //# sourceMappingURL=update-perfume.dto.js.map

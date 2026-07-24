@@ -2,7 +2,6 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { RedisService } from '../../common/cache/redis.service';
 import { CreatePerfumeDto } from './dto/create-perfume.dto';
 import { CreatePresentacionDto } from './dto/create-presentacion.dto';
-import { UpdatePerfumeDto } from './dto/update-perfume.dto';
 export declare class PerfumesService {
     private prisma;
     private redisService;
@@ -10,40 +9,101 @@ export declare class PerfumesService {
     private readonly CATALOG_CACHE_KEY;
     constructor(prisma: PrismaService, redisService: RedisService);
     create(dto: CreatePerfumeDto): Promise<{
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
-        id: number;
     }>;
     addPresentacion(perfumeId: number, dto: CreatePresentacionDto): Promise<{
         id: number;
         tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
+        precio: import("@prisma/client-runtime-utils").Decimal;
+        stock: number;
+        id_perfume: number;
+    }>;
+    updatePresentacion(presId: number, dto: {
+        tamanio?: string;
+        costo?: number;
+        precio?: number;
+        stock?: number;
+    }): Promise<{
+        id: number;
+        tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
+        precio: import("@prisma/client-runtime-utils").Decimal;
+        stock: number;
+        id_perfume: number;
+    }>;
+    removePresentacion(presId: number): Promise<{
+        id: number;
+        tamanio: string;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
         precio: import("@prisma/client-runtime-utils").Decimal;
         stock: number;
         id_perfume: number;
     }>;
     findAllActive(): Promise<any>;
-    findOne(id: number): Promise<any>;
-    update(id: number, dto: UpdatePerfumeDto): Promise<{
+    findAllAdmin(): Promise<({
+        presentaciones: {
+            id: number;
+            tamanio: string;
+            costo: import("@prisma/client-runtime-utils").Decimal | null;
+            precio: import("@prisma/client-runtime-utils").Decimal;
+            stock: number;
+            id_perfume: number;
+        }[];
+        decant: {
+            id: number;
+            id_perfume: number;
+            ml_origen: number;
+            costo_original: import("@prisma/client-runtime-utils").Decimal;
+            precio_original: import("@prisma/client-runtime-utils").Decimal;
+            costo_5ml: import("@prisma/client-runtime-utils").Decimal;
+            precio_5ml: import("@prisma/client-runtime-utils").Decimal;
+            stock_5ml: number;
+            costo_10ml: import("@prisma/client-runtime-utils").Decimal;
+            precio_10ml: import("@prisma/client-runtime-utils").Decimal;
+            stock_10ml: number;
+        } | null;
+    } & {
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
+    })[]>;
+    findOne(id: number): Promise<any>;
+    update(id: number, dto: any): Promise<{
         id: number;
+        nombre: string;
+        descripcion: string;
+        categoria: string;
+        tipo: string | null;
+        genero: string | null;
+        imagen: string;
+        marca: string;
+        activo: boolean;
     }>;
     remove(id: number): Promise<{
+        id: number;
         nombre: string;
         descripcion: string;
         categoria: string;
+        tipo: string | null;
+        genero: string | null;
         imagen: string;
         marca: string;
         activo: boolean;
-        id: number;
     }>;
     private invalidateCatalogCache;
     private invalidatePerfumeCache;

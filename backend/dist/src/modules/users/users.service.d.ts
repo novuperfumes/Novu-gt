@@ -1,10 +1,74 @@
+import { OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { Prisma, Usuario } from '@prisma/client';
-export declare class UsersService {
+export declare class UsersService implements OnModuleInit {
     private prisma;
     constructor(prisma: PrismaService);
+    onModuleInit(): Promise<void>;
     create(data: Prisma.UsuarioCreateInput): Promise<Usuario>;
     findOneByCorreo(correo: string): Promise<Usuario | null>;
-    findOneById(id: number): Promise<Omit<Usuario, 'contrasenia'> | null>;
+    findOneById(id: number): Promise<{
+        giftCards: {
+            id: number;
+            codigo: string;
+            monto: Prisma.Decimal;
+            activa: boolean;
+            es_bienvenida: boolean;
+            id_usuario: number;
+        }[];
+        id: number;
+        nombre: string;
+        genero: string | null;
+        correo: string;
+        rol: string;
+        apellido: string;
+        telefono: string | null;
+        sellos: number;
+    } | null>;
     updateProfile(id: number, data: Prisma.UsuarioUpdateInput): Promise<Omit<Usuario, 'contrasenia'>>;
+    searchUsers(query: string): Promise<{
+        giftCards: {
+            id: number;
+            codigo: string;
+            monto: Prisma.Decimal;
+            activa: boolean;
+            es_bienvenida: boolean;
+            id_usuario: number;
+        }[];
+        id: number;
+        nombre: string;
+        genero: string | null;
+        correo: string;
+        rol: string;
+        apellido: string;
+        telefono: string | null;
+        sellos: number;
+    }[]>;
+    updateSellos(id: number, sellos: number): Promise<{
+        user: {
+            giftCards: {
+                id: number;
+                codigo: string;
+                monto: Prisma.Decimal;
+                activa: boolean;
+                es_bienvenida: boolean;
+                id_usuario: number;
+            }[];
+            id: number;
+            nombre: string;
+            genero: string | null;
+            correo: string;
+            rol: string;
+            apellido: string;
+            telefono: string | null;
+            sellos: number;
+        };
+        giftCardCreated: any;
+    }>;
+    getAdminMetrics(): Promise<{
+        totalUsers: number;
+        totalOrders: number;
+        totalSales: number | Prisma.Decimal;
+        totalPerfumes: number;
+    }>;
 }

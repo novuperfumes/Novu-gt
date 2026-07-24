@@ -68,6 +68,17 @@ let AuthService = class AuthService {
             apellido: dto.apellido,
             telefono: dto.telefono,
             genero: dto.genero,
+            sellos: 1,
+            giftCards: {
+                create: [
+                    {
+                        codigo: 'GIFT-WELCOME-' + Math.floor(1000 + Math.random() * 9000),
+                        monto: 50.00,
+                        activa: true,
+                        es_bienvenida: true
+                    }
+                ]
+            }
         });
         const { contrasenia, ...result } = user;
         return result;
