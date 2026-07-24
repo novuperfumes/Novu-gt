@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { EstadisticasDashboard } from '../components/admin/EstadisticasDashboard';
 
 export function Admin() {
   const [activeTab, setActiveTab] = useState('metrics');
@@ -49,6 +50,12 @@ export function Admin() {
             </svg>
             Campañas / Bazar
           </button>
+          <button className={`admin-nav-item ${activeTab === 'estadisticas' ? 'active' : ''}`} onClick={() => setActiveTab('estadisticas')}>
+            <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+            </svg>
+            Estadísticas
+          </button>
         </nav>
         <div className="admin-sidebar-footer" style={{ padding: '25px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', textAlign: 'center' }}>
           <Link to="/" className="admin-logout-btn" style={{ textAlign: 'center', textDecoration: 'none', display: 'block', boxSizing: 'border-box' }}>VOLVER A LA TIENDA</Link>
@@ -64,6 +71,7 @@ export function Admin() {
           {activeTab === 'catalog' && 'Administración de Catálogo'}
           {activeTab === 'promotions' && 'Promociones y Gift Cards'}
           {activeTab === 'campanias' && 'Campañas de Descuento'}
+          {activeTab === 'estadisticas' && 'Estadísticas Avanzadas'}
         </h2>
         {activeTab === 'metrics' && <MetricsTab />}
         {activeTab === 'loyalty' && <LoyaltyTab />}
@@ -71,6 +79,7 @@ export function Admin() {
         {activeTab === 'catalog' && <CatalogTab />}
         {activeTab === 'promotions' && <PromotionsTab />}
         {activeTab === 'campanias' && <CampaniasTab />}
+        {activeTab === 'estadisticas' && <EstadisticasDashboard />}
       </main>
     </div>
   );

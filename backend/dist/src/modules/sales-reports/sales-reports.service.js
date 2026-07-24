@@ -172,6 +172,71 @@ let SalesReportsService = class SalesReportsService {
         });
         return combinado;
     }
+    async getDashboardStats(startDate, endDate, gender) {
+        const whereClause = {};
+        if (startDate || endDate) {
+            whereClause.fecha_venta = {};
+            if (startDate) {
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+                whereClause.fecha_venta.gte = start;
+            }
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                whereClause.fecha_venta.lte = end;
+            }
+        }
+        if (gender && gender !== 'todos') {
+            whereClause.genero = gender;
+        }
+        const ventasPerfumes = await this.prisma.registroVentaAdmin.findMany({
+            where: whereClause
+        });
+        const ventasDecants = await this.prisma.registroVentaDecantAdmin.findMany({
+            where: whereClause
+        });
+        let totalVendido = 0;
+        let totalIngresos = 0;
+        let totalGanancias = 0;
+        const ventasPorFecha = {};
+        const procesarVenta = (v) => {
+            const tipoLower = (v.tipo || 'Desconocido').toLowerCase();
+            const tipo = tipoLower.includes('arabe') || tipoLower.includes('árabe') ? 'Arabe' :
+                tipoLower.includes('nicho') ? 'Nicho' :
+                    tipoLower.includes('diseñador') || tipoLower.includes('disenador') ? 'Diseñador' : 'Otro';
+            const ingresos = Number(v.total_cliente || 0);
+            const costo = Number(v.costo_total || 0);
+            const ganancia = ingresos - costo;
+            totalVendido += 1;
+            totalIngresos += ingresos;
+            totalGanancias += ganancia;
+            const dateStr = new Date(v.fecha_venta).toISOString().split('T')[0];
+            if (!ventasPorFecha[dateStr]) {
+                ventasPorFecha[dateStr] = {
+                    date: dateStr,
+                    Arabe: 0,
+                    Nicho: 0,
+                    Diseñador: 0,
+                    Otro: 0
+                };
+            }
+            ventasPorFecha[dateStr][tipo] += ingresos;
+        };
+        ventasPerfumes.forEach(procesarVenta);
+        ventasDecants.forEach(procesarVenta);
+        const chartData = Object.values(ventasPorFecha).sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+        return {
+            kpis: {
+                totalVendido,
+                totalIngresos,
+                totalGanancias
+            },
+            chartData
+        };
+    }
 };
 exports.SalesReportsService = SalesReportsService;
 exports.SalesReportsService = SalesReportsService = __decorate([

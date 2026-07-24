@@ -3,6 +3,14 @@ import { UpdateSaleDto } from './dto/update-sale.dto';
 export declare class SalesReportsController {
     private readonly salesReportsService;
     constructor(salesReportsService: SalesReportsService);
+    getDashboardStats(startDate?: string, endDate?: string, gender?: string): Promise<{
+        kpis: {
+            totalVendido: number;
+            totalIngresos: number;
+            totalGanancias: number;
+        };
+        chartData: any[];
+    }>;
     findAll(): Promise<({
         ordenDetalle: ({
             orden: {
@@ -35,8 +43,8 @@ export declare class SalesReportsController {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
@@ -108,8 +116,8 @@ export declare class SalesReportsController {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
@@ -162,8 +170,8 @@ export declare class SalesReportsController {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
@@ -239,8 +247,8 @@ export declare class SalesReportsController {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;

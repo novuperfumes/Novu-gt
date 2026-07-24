@@ -82,8 +82,8 @@ export declare class OrdersService {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: Prisma.Decimal;
@@ -158,8 +158,8 @@ export declare class OrdersService {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: Prisma.Decimal;
@@ -262,8 +262,8 @@ export declare class OrdersService {
         } & {
             id: number;
             id_orden: number;
-            cantidad: number;
             id_presentacion: number | null;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
             precio_unitario: Prisma.Decimal;

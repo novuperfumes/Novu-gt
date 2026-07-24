@@ -53,11 +53,11 @@ export declare class CartsController {
             }) | null;
         } & {
             id: number;
-            cantidad: number;
             id_presentacion: number | null;
-            id_carrito_maestro: number;
+            cantidad: number;
             id_decant: number | null;
             tipo_decant: string | null;
+            id_carrito_maestro: number;
         })[];
     } & {
         id: number;
@@ -65,19 +65,19 @@ export declare class CartsController {
     }>;
     addItem(req: any, dto: AddItemDto): Promise<{
         id: number;
-        cantidad: number;
         id_presentacion: number | null;
-        id_carrito_maestro: number;
+        cantidad: number;
         id_decant: number | null;
         tipo_decant: string | null;
+        id_carrito_maestro: number;
     }>;
     updateItem(req: any, detailId: number, dto: UpdateItemDto): Promise<{
         id: number;
-        cantidad: number;
         id_presentacion: number | null;
-        id_carrito_maestro: number;
+        cantidad: number;
         id_decant: number | null;
         tipo_decant: string | null;
+        id_carrito_maestro: number;
     }>;
     removeItem(req: any, detailId: number): Promise<{
         message: string;

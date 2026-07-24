@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Perfume } from './usePerfumes';
+import type { Perfume } from './usePerfumes';
+
 
 export interface Campania {
   id: number;

@@ -24,6 +24,9 @@ let SalesReportsController = class SalesReportsController {
     constructor(salesReportsService) {
         this.salesReportsService = salesReportsService;
     }
+    getDashboardStats(startDate, endDate, gender) {
+        return this.salesReportsService.getDashboardStats(startDate, endDate, gender);
+    }
     findAll() {
         return this.salesReportsService.findAll();
     }
@@ -47,6 +50,16 @@ let SalesReportsController = class SalesReportsController {
     }
 };
 exports.SalesReportsController = SalesReportsController;
+__decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.Get)('dashboard-stats'),
+    __param(0, (0, common_1.Query)('startDate')),
+    __param(1, (0, common_1.Query)('endDate')),
+    __param(2, (0, common_1.Query)('gender')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", void 0)
+], SalesReportsController.prototype, "getDashboardStats", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.Get)(),

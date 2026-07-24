@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Patch, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { SalesReportsService } from './sales-reports.service';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -9,6 +9,16 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @Controller('sales-reports')
 export class SalesReportsController {
   constructor(private readonly salesReportsService: SalesReportsService) {}
+
+  @Roles('ADMIN')
+  @Get('dashboard-stats')
+  getDashboardStats(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+    @Query('gender') gender?: string,
+  ) {
+    return this.salesReportsService.getDashboardStats(startDate, endDate, gender);
+  }
 
   @Roles('ADMIN')
   @Get()
