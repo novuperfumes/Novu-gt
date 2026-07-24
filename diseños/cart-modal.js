@@ -1,5 +1,5 @@
 // Teléfono de WhatsApp destino para compras (con código de país, p.ej. 502)
-const WHATSAPP_PHONE = '50233135816';
+const WHATSAPP_PHONE = '50232316390';
 
 // Mapeo de fallbacks para imágenes locales que no existan aún
 const imageFallbacks = {

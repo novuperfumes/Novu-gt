@@ -171,7 +171,7 @@ ${appliedDiscount ? `*Descuento Aplicado (${appliedDiscount.code}):* - Q ${appli
 _Espero la confirmación de la orden con el costo de envío._`;
 
     const encodedText = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/50233135816?text=${encodedText}`;
+    const whatsappUrl = `https://wa.me/50232316390?text=${encodedText}`;
     setWhatsappLink(whatsappUrl);
     window.open(whatsappUrl, '_blank');
 
