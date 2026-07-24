@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
-  BarChart, Bar
+  BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer
 } from 'recharts';
+
+const COLORS = ['#F97316', '#3B82F6']; // Naranja para H/M y Azul
+const CAT_COLORS = { Arabe: '#3B82F6', Diseñador: '#3B82F6', Nicho: '#3B82F6' }; // In screenshot they are all blue
+
+const MESES = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+
+function getMonthName(monthStr: string) {
+  // monthStr is "YYYY-MM"
+  const parts = monthStr.split('-');
+  const m = parseInt(parts[1], 10);
+  return MESES[m - 1];
+}
 
 export function EstadisticasDashboard() {
   const [data, setData] = useState<any>(null);
@@ -13,9 +24,6 @@ export function EstadisticasDashboard() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [gender, setGender] = useState('todos');
-
-  // Tipo de gráfico
-  const [chartType, setChartType] = useState('line');
 
   // Efecto para calcular fechas predefinidas
   useEffect(() => {
@@ -64,142 +72,230 @@ export function EstadisticasDashboard() {
 
   useEffect(() => {
     if (dateRange === 'personalizado' && (!startDate || !endDate)) {
-      return; // Esperar a que seleccione ambas fechas
+      return; 
     }
     fetchStats();
   }, [startDate, endDate, gender]);
 
   const kpis = data?.kpis || { totalVendido: 0, totalIngresos: 0, totalGanancias: 0 };
-  const chartData = data?.chartData || [];
+  const monthlyData = data?.monthlyData || [];
+  const summaryByCategory = data?.summaryByCategory || { Arabe: {}, Diseñador: {}, Nicho: {} };
+  const summaryByGender = data?.summaryByGender || { Hombre: 0, Mujer: 0 };
+
+  // Datos para gráficas (Global del periodo seleccionado)
+  const chartCategoryData = [
+    { name: 'A', cantidad: summaryByCategory.Arabe?.cantidad || 0, ventas: summaryByCategory.Arabe?.ingresos || 0, ganancias: summaryByCategory.Arabe?.ganancias || 0 },
+    { name: 'D', cantidad: summaryByCategory.Diseñador?.cantidad || 0, ventas: summaryByCategory.Diseñador?.ingresos || 0, ganancias: summaryByCategory.Diseñador?.ganancias || 0 },
+    { name: 'N', cantidad: summaryByCategory.Nicho?.cantidad || 0, ventas: summaryByCategory.Nicho?.ingresos || 0, ganancias: summaryByCategory.Nicho?.ganancias || 0 }
+  ];
+
+  const chartGenderData = [
+    { name: 'M', value: summaryByGender.Mujer || 0 }, // Naranja en mock
+    { name: 'H', value: summaryByGender.Hombre || 0 }  // Azul en mock
+  ];
+
+  // Helper para generar las tablas
+  const renderTableCategorias = (dataKey: 'cantidad' | 'ingresos' | 'ganancias', isMoneda = false) => (
+    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', backgroundColor: '#fff', fontSize: '0.9rem' }}>
+      <thead>
+        <tr>
+          <th colSpan={3} style={{ backgroundColor: '#A9C4EB', padding: '10px', border: '1px solid #ddd' }}>
+            {dataKey === 'cantidad' ? 'Total de Perfumes Vendidos por Tipo de Perfumes' : 
+             dataKey === 'ingresos' ? 'Total Ventas por Tipo de Perfume' : 'Total Ganancias por Tipo de Perfume'}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {monthlyData.map((m: any) => (
+          <React.Fragment key={m.month}>
+            <tr>
+              <td rowSpan={3} style={{ border: '1px solid #ddd', padding: '8px', verticalAlign: 'middle', fontWeight: 'bold' }}>
+                {getMonthName(m.month)}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>A</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {isMoneda ? `GTQ ${m.categorias.Arabe[dataKey].toFixed(2)}` : m.categorias.Arabe[dataKey]}
+              </td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>D</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {isMoneda ? `GTQ ${m.categorias.Diseñador[dataKey].toFixed(2)}` : m.categorias.Diseñador[dataKey]}
+              </td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>N</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                {isMoneda ? `GTQ ${m.categorias.Nicho[dataKey].toFixed(2)}` : m.categorias.Nicho[dataKey]}
+              </td>
+            </tr>
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  );
+
+  const renderTableGenero = () => (
+    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', backgroundColor: '#fff', fontSize: '0.9rem' }}>
+      <thead>
+        <tr>
+          <th colSpan={3} style={{ backgroundColor: '#A9C4EB', padding: '10px', border: '1px solid #ddd' }}>
+            Compras de Hombres vs Mujeres
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {monthlyData.map((m: any) => (
+          <React.Fragment key={m.month}>
+            <tr>
+              <td rowSpan={2} style={{ border: '1px solid #ddd', padding: '8px', verticalAlign: 'middle', fontWeight: 'bold' }}>
+                {getMonthName(m.month)}
+              </td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>H</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{m.generos.Hombre}</td>
+            </tr>
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>M</td>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }}>{m.generos.Mujer}</td>
+            </tr>
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  );
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ backgroundColor: '#222', padding: '10px', color: '#fff', border: '1px solid #444' }}>
+          <p style={{ margin: 0 }}>{`${label}: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="estadisticas-dashboard" style={{ display: 'flex', flexDirection: 'column', gap: '25px', color: '#1c1a17' }}>
       
       {/* Controles de Filtros */}
       <div className="filtros-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-        
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Rango de Tiempo</label>
-          <select 
-            value={dateRange} 
-            onChange={(e) => setDateRange(e.target.value)}
-            style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }}
-          >
+          <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }}>
             <option value="semana_pasada">Última semana</option>
             <option value="mes_actual">Este Mes</option>
             <option value="año_actual">Este Año</option>
             <option value="personalizado">Personalizado...</option>
           </select>
         </div>
-
         {dateRange === 'personalizado' && (
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Fecha Inicio</label>
-              <input 
-                type="date" 
-                value={startDate} 
-                onChange={(e) => setStartDate(e.target.value)}
-                style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }}
-              />
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Fecha Fin</label>
-              <input 
-                type="date" 
-                value={endDate} 
-                onChange={(e) => setEndDate(e.target.value)}
-                style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }}
-              />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }} />
             </div>
           </>
         )}
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Género</label>
-          <select 
-            value={gender} 
-            onChange={(e) => setGender(e.target.value)}
-            style={{ padding: '10px 15px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff' }}
-          >
-            <option value="todos">Todos</option>
-            <option value="el">Hombre (Él)</option>
-            <option value="ella">Mujer (Ella)</option>
-            <option value="unisex">Unisex</option>
-          </select>
-        </div>
-
       </div>
 
-      {/* KPIs */}
       {loading ? (
         <p>Cargando estadísticas...</p>
       ) : (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-            <div style={{ backgroundColor: '#1c1a17', color: '#fff', padding: '25px', borderRadius: '12px', borderBottom: '4px solid #C5A059' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#a8a297', textTransform: 'uppercase' }}>Perfumes Vendidos</h3>
-              <p style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>{kpis.totalVendido}</p>
-            </div>
-            <div style={{ backgroundColor: '#1c1a17', color: '#fff', padding: '25px', borderRadius: '12px', borderBottom: '4px solid #4CAF50' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#a8a297', textTransform: 'uppercase' }}>Ingresos Totales (Ventas)</h3>
-              <p style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>Q {kpis.totalIngresos.toFixed(2)}</p>
-            </div>
-            <div style={{ backgroundColor: '#1c1a17', color: '#fff', padding: '25px', borderRadius: '12px', borderBottom: '4px solid #2196F3' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#a8a297', textTransform: 'uppercase' }}>Ganancia Neta</h3>
-              <p style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>Q {kpis.totalGanancias.toFixed(2)}</p>
-            </div>
-          </div>
-
-          {/* Gráfico Principal */}
-          <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: '"Cinzel", serif', fontWeight: 700 }}>Ventas en el tiempo (Ingresos Q)</h3>
-              <select 
-                value={chartType} 
-                onChange={(e) => setChartType(e.target.value)}
-                style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #ccc' }}
-              >
-                <option value="line">Líneas</option>
-                <option value="bar">Barras</option>
-              </select>
-            </div>
-
-            {chartData.length === 0 ? (
-              <div style={{ height: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
-                No hay ventas registradas en este período.
-              </div>
-            ) : (
-              <div style={{ width: '100%', height: '400px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          
+          {/* Fila 1: Cantidad de Perfumes Vendidos */}
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ flex: '0 0 350px' }}>{renderTableCategorias('cantidad')}</div>
+            <div style={{ flex: 1, backgroundColor: '#000', padding: '20px', borderRadius: '8px' }}>
+              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Numero de Perfumes Vendidos</h3>
+              <div style={{ height: '300px' }}>
                 <ResponsiveContainer>
-                  {chartType === 'line' ? (
-                    <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <RechartsTooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="Arabe" stroke="#C5A059" strokeWidth={3} activeDot={{ r: 8 }} />
-                      <Line type="monotone" dataKey="Nicho" stroke="#2196F3" strokeWidth={3} />
-                      <Line type="monotone" dataKey="Diseñador" stroke="#4CAF50" strokeWidth={3} />
-                    </LineChart>
-                  ) : (
-                    <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <RechartsTooltip />
-                      <Legend />
-                      <Bar dataKey="Arabe" fill="#C5A059" />
-                      <Bar dataKey="Nicho" fill="#2196F3" />
-                      <Bar dataKey="Diseñador" fill="#4CAF50" />
-                    </BarChart>
-                  )}
+                  <BarChart data={chartCategoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#333" />
+                    <XAxis dataKey="name" stroke="#fff" tick={{ fill: '#fff' }} />
+                    <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+                    <RechartsTooltip content={<CustomTooltip />} />
+                    <Bar dataKey="cantidad" fill="#4B88E5" barSize={60} label={{ position: 'top', fill: '#fff' }} />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-            )}
+            </div>
           </div>
-        </>
+
+          {/* Fila 2: Hombres vs Mujeres */}
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ flex: '0 0 350px' }}>{renderTableGenero()}</div>
+            <div style={{ flex: 1, backgroundColor: '#000', padding: '20px', borderRadius: '8px' }}>
+              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Compras de Hombres vs Mujeres</h3>
+              <div style={{ height: '300px', display: 'flex', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={chartGenderData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value" label={({ value }) => value} labelLine={false}>
+                      {chartGenderData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', color: '#fff', marginTop: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#3B82F6' }}></div> H</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#F97316' }}></div> M</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Fila 3: Total Ganancias */}
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ flex: '0 0 350px' }}>{renderTableCategorias('ganancias', true)}</div>
+            <div style={{ flex: 1, backgroundColor: '#000', padding: '20px', borderRadius: '8px' }}>
+              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Total Ganancias por Tipo de Perfume</h3>
+              <div style={{ textAlign: 'center', color: '#fff', marginBottom: '10px', fontSize: '1.1rem' }}>
+                GTQ {kpis.totalGanancias.toLocaleString('es-GT', { minimumFractionDigits: 2 })}
+              </div>
+              <div style={{ height: '300px' }}>
+                <ResponsiveContainer>
+                  <BarChart data={chartCategoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#333" />
+                    <XAxis dataKey="name" stroke="#fff" tick={{ fill: '#fff' }} />
+                    <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+                    <RechartsTooltip content={<CustomTooltip />} />
+                    <Bar dataKey="ganancias" fill="#4B88E5" barSize={60} label={{ position: 'top', fill: '#fff', formatter: (val: number) => `GTQ ${val.toLocaleString('es-GT', {minimumFractionDigits: 2})}` }} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          {/* Fila 4: Total Ventas (Ingresos) */}
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ flex: '0 0 350px' }}>{renderTableCategorias('ingresos', true)}</div>
+            <div style={{ flex: 1, backgroundColor: '#000', padding: '20px', borderRadius: '8px' }}>
+              <h3 style={{ color: '#fff', textAlign: 'center', marginTop: 0 }}>Total Ventas por Tipo de Perfume</h3>
+              <div style={{ textAlign: 'center', color: '#fff', marginBottom: '10px', fontSize: '1.1rem' }}>
+                GTQ {kpis.totalIngresos.toLocaleString('es-GT', { minimumFractionDigits: 2 })}
+              </div>
+              <div style={{ height: '300px' }}>
+                <ResponsiveContainer>
+                  <BarChart data={chartCategoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#333" />
+                    <XAxis dataKey="name" stroke="#fff" tick={{ fill: '#fff' }} />
+                    <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+                    <RechartsTooltip content={<CustomTooltip />} />
+                    <Bar dataKey="ventas" fill="#4B88E5" barSize={60} label={{ position: 'top', fill: '#fff', formatter: (val: number) => `GTQ ${val.toLocaleString('es-GT', {minimumFractionDigits: 2})}` }} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+        </div>
       )}
     </div>
   );

@@ -287,12 +287,14 @@ export declare class SalesReportsService {
         costo_total: number;
         total_cliente: number;
     }[]>;
-    getDashboardStats(startDate?: string, endDate?: string, gender?: string): Promise<{
+    getDashboardStats(startDate?: string, endDate?: string, genderFilter?: string): Promise<{
         kpis: {
             totalVendido: number;
             totalIngresos: number;
             totalGanancias: number;
         };
-        chartData: any[];
+        summaryByCategory: Record<string, any>;
+        summaryByGender: Record<string, number>;
+        monthlyData: any[];
     }>;
 }

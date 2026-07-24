@@ -172,7 +172,7 @@ let SalesReportsService = class SalesReportsService {
         });
         return combinado;
     }
-    async getDashboardStats(startDate, endDate, gender) {
+    async getDashboardStats(startDate, endDate, genderFilter) {
         const whereClause = {};
         if (startDate || endDate) {
             whereClause.fecha_venta = {};
@@ -187,54 +187,77 @@ let SalesReportsService = class SalesReportsService {
                 whereClause.fecha_venta.lte = end;
             }
         }
-        if (gender && gender !== 'todos') {
-            whereClause.genero = gender;
+        if (genderFilter && genderFilter !== 'todos') {
+            whereClause.genero = genderFilter;
         }
-        const ventasPerfumes = await this.prisma.registroVentaAdmin.findMany({
-            where: whereClause
-        });
-        const ventasDecants = await this.prisma.registroVentaDecantAdmin.findMany({
-            where: whereClause
-        });
+        const ventasPerfumes = await this.prisma.registroVentaAdmin.findMany({ where: whereClause });
+        const ventasDecants = await this.prisma.registroVentaDecantAdmin.findMany({ where: whereClause });
         let totalVendido = 0;
         let totalIngresos = 0;
         let totalGanancias = 0;
-        const ventasPorFecha = {};
+        const summaryByCategory = {
+            Arabe: { cantidad: 0, ingresos: 0, ganancias: 0 },
+            Diseñador: { cantidad: 0, ingresos: 0, ganancias: 0 },
+            Nicho: { cantidad: 0, ingresos: 0, ganancias: 0 },
+        };
+        const summaryByGender = {
+            Hombre: 0,
+            Mujer: 0,
+            Unisex: 0
+        };
+        const monthlyData = {};
         const procesarVenta = (v) => {
             const tipoLower = (v.tipo || 'Desconocido').toLowerCase();
             const tipo = tipoLower.includes('arabe') || tipoLower.includes('árabe') ? 'Arabe' :
                 tipoLower.includes('nicho') ? 'Nicho' :
                     tipoLower.includes('diseñador') || tipoLower.includes('disenador') ? 'Diseñador' : 'Otro';
+            const generoLower = (v.genero || 'unisex').toLowerCase();
+            const gen = generoLower === 'el' || generoLower === 'hombre' ? 'Hombre' :
+                generoLower === 'ella' || generoLower === 'mujer' ? 'Mujer' : 'Unisex';
             const ingresos = Number(v.total_cliente || 0);
             const costo = Number(v.costo_total || 0);
             const ganancia = ingresos - costo;
-            totalVendido += 1;
+            const cantidad = 1;
+            totalVendido += cantidad;
             totalIngresos += ingresos;
             totalGanancias += ganancia;
-            const dateStr = new Date(v.fecha_venta).toISOString().split('T')[0];
-            if (!ventasPorFecha[dateStr]) {
-                ventasPorFecha[dateStr] = {
-                    date: dateStr,
-                    Arabe: 0,
-                    Nicho: 0,
-                    Diseñador: 0,
-                    Otro: 0
+            if (summaryByCategory[tipo]) {
+                summaryByCategory[tipo].cantidad += cantidad;
+                summaryByCategory[tipo].ingresos += ingresos;
+                summaryByCategory[tipo].ganancias += ganancia;
+            }
+            summaryByGender[gen] += cantidad;
+            const dateObj = new Date(v.fecha_venta);
+            const monthStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthlyData[monthStr]) {
+                monthlyData[monthStr] = {
+                    month: monthStr,
+                    categorias: {
+                        Arabe: { cantidad: 0, ingresos: 0, ganancias: 0 },
+                        Diseñador: { cantidad: 0, ingresos: 0, ganancias: 0 },
+                        Nicho: { cantidad: 0, ingresos: 0, ganancias: 0 },
+                    },
+                    generos: { Hombre: 0, Mujer: 0, Unisex: 0 }
                 };
             }
-            ventasPorFecha[dateStr][tipo] += ingresos;
+            if (monthlyData[monthStr].categorias[tipo]) {
+                monthlyData[monthStr].categorias[tipo].cantidad += cantidad;
+                monthlyData[monthStr].categorias[tipo].ingresos += ingresos;
+                monthlyData[monthStr].categorias[tipo].ganancias += ganancia;
+            }
+            monthlyData[monthStr].generos[gen] += cantidad;
         };
         ventasPerfumes.forEach(procesarVenta);
         ventasDecants.forEach(procesarVenta);
-        const chartData = Object.values(ventasPorFecha).sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-        });
         return {
             kpis: {
                 totalVendido,
                 totalIngresos,
                 totalGanancias
             },
-            chartData
+            summaryByCategory,
+            summaryByGender,
+            monthlyData: Object.values(monthlyData).sort((a, b) => a.month.localeCompare(b.month))
         };
     }
 };

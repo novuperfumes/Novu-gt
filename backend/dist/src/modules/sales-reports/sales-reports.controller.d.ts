@@ -9,7 +9,9 @@ export declare class SalesReportsController {
             totalIngresos: number;
             totalGanancias: number;
         };
-        chartData: any[];
+        summaryByCategory: Record<string, any>;
+        summaryByGender: Record<string, number>;
+        monthlyData: any[];
     }>;
     findAll(): Promise<({
         ordenDetalle: ({
