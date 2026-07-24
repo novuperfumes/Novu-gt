@@ -1575,16 +1575,15 @@
     transform: scaleX(1);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .category-nav-bar {
-        gap: 12px;
-        padding-top: 10px;
+        gap: 15px;
+        padding: 10px 10px 5px 10px;
         justify-content: flex-start;
-        padding-left: 15px;
-        padding-right: 15px;
         overflow-x: auto;
         white-space: nowrap;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
     }
     .category-nav-bar::-webkit-scrollbar {
         display: none;
@@ -1592,6 +1591,7 @@
     .category-nav-link {
         font-size: 0.65rem;
         letter-spacing: 0.05em;
+        flex-shrink: 0;
     }
 }
 
