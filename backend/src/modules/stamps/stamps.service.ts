@@ -23,7 +23,7 @@ export class StampsService {
     return {
       userId: user.id,
       stampsCount: user.sellos,
-      remainingForFreePerfume: Math.max(0, 8 - user.sellos),
+      remainingForFreePerfume: Math.max(0, 6 - user.sellos),
       history,
     };
   }

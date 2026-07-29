@@ -69,12 +69,7 @@ export class OrdersService {
             );
           }
 
-          // Deduct stock
-          await tx.presentacionPerfume.update({
-            where: { id: item.id_presentacion },
-            data: { stock: { decrement: item.cantidad } },
-          });
-
+          // No deducimos stock aquí según el nuevo plan
           subtotal += Number(presentation.precio) * item.cantidad;
         } else if (item.id_decant && item.tipo_decant) {
           const decant = await tx.decant.findUnique({
@@ -105,19 +100,7 @@ export class OrdersService {
             );
           }
 
-          // Deduct stock
-          const dataToUpdate: any = {};
-          if (tipo.includes('5 ml') || tipo.includes('5ml')) {
-            dataToUpdate.stock_5ml = { decrement: item.cantidad };
-          } else {
-            dataToUpdate.stock_10ml = { decrement: item.cantidad };
-          }
-
-          await tx.decant.update({
-            where: { id: item.id_decant },
-            data: dataToUpdate,
-          });
-
+          // No deducimos stock aquí según el nuevo plan
           subtotal += precio * item.cantidad;
         }
       }
@@ -196,12 +179,19 @@ export class OrdersService {
         appliedPromoId = promo.id;
       }
 
-      const total = Math.max(0, subtotal - discountAmount);
+      let costoEnvio = 0;
+      if (dto.tipo_entrega === 'domicilio') {
+        const dept = (dto.departamento_entrega || '').trim().toLowerCase();
+        costoEnvio = dept === 'guatemala' ? 35 : 45;
+      }
+
+      const total = Math.max(0, subtotal - discountAmount) + costoEnvio;
 
       // 5. Create the Order
       const order = await tx.ordenCompra.create({
         data: {
           id_usuario: userId,
+          costo_envio: new Prisma.Decimal(costoEnvio),
           total: new Prisma.Decimal(total),
           estado: 'PENDIENTE',
           metodo_de_pago: dto.metodo_de_pago,
@@ -327,69 +317,8 @@ export class OrdersService {
         where: { id_carrito_maestro: cart.id },
       });
 
-      // 8. Virtual Stamp Loyalty Cards System
-      const totalBottlesPurchased = cart.detalles.reduce((sum, d) => sum + d.cantidad, 0);
-      
-      const user = await tx.usuario.findUnique({ where: { id: userId } });
-      const currentStamps = user?.sellos || 0;
-
-      // Add earned stamps
-      const newStampsCount = currentStamps + totalBottlesPurchased;
-      
-      // Log stamps earning transaction
-      await tx.historialSellos.create({
-        data: {
-          id_usuario: userId,
-          id_orden: order.id,
-          tipo_operacion: 'acumulado',
-          cantidad_sellos: totalBottlesPurchased,
-        },
-      });
-
-      // If they get 8 or more stamps, process loyalty redemptions (e.g. resets every 8 stamps)
-      let finalStamps = newStampsCount;
-      const redemptions = Math.floor(newStampsCount / 8);
-      if (newStampsCount >= 8) {
-        finalStamps = newStampsCount % 8;
-
-        // Log stamps redemption transaction
-        await tx.historialSellos.create({
-          data: {
-            id_usuario: userId,
-            id_orden: order.id,
-            tipo_operacion: 'canjeado',
-            cantidad_sellos: -(redemptions * 8),
-          },
-        });
-
-        // Create the actual GiftCards
-        for (let i = 0; i < redemptions; i++) {
-          await tx.giftCard.create({
-            data: {
-              id_usuario: userId,
-              codigo: 'GIFT-150-' + Math.floor(100000 + Math.random() * 900000),
-              monto: 150.00,
-              activa: true,
-              es_bienvenida: false
-            }
-          });
-        }
-      }
-
-      // Update the user stamps
-      await tx.usuario.update({
-        where: { id: userId },
-        data: { sellos: finalStamps },
-      });
-
       return {
         order,
-        stampsSummary: {
-          earned: totalBottlesPurchased,
-          totalAccumulated: newStampsCount,
-          finalStampsCount: finalStamps,
-          freePresentsAwarded: Math.floor(newStampsCount / 8),
-        },
       };
     });
   }
@@ -471,8 +400,106 @@ export class OrdersService {
   }
 
   async updateStatus(orderId: number, estado: string, costo_envio?: number) {
-    const order = await this.prisma.ordenCompra.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.ordenCompra.findUnique({ 
+      where: { id: orderId },
+      include: { detalles: true }
+    });
     if (!order) throw new NotFoundException('Orden no encontrada');
+
+    // Deduct stock if status changes to CONFIRMADO
+    if (estado === 'CONFIRMADO' && order.estado !== 'CONFIRMADO') {
+      await this.prisma.$transaction(async (tx) => {
+        for (const item of order.detalles) {
+          if (item.id_presentacion) {
+            const presentation = await tx.presentacionPerfume.findUnique({ where: { id: item.id_presentacion } });
+            if (!presentation) throw new NotFoundException(`Presentación ${item.id_presentacion} no encontrada`);
+            if (presentation.stock < item.cantidad) {
+              throw new BadRequestException(`No hay suficiente stock para la presentación ID ${item.id_presentacion}`);
+            }
+            await tx.presentacionPerfume.update({
+              where: { id: item.id_presentacion },
+              data: { stock: { decrement: item.cantidad } }
+            });
+          } else if (item.id_decant && item.tipo_decant) {
+            const decant = await tx.decant.findUnique({ where: { id: item.id_decant } });
+            if (!decant) throw new NotFoundException(`Decant ${item.id_decant} no encontrado`);
+            
+            const tipo = item.tipo_decant.toLowerCase().trim();
+            const stock = tipo.includes('5 ml') || tipo.includes('5ml') ? decant.stock_5ml : decant.stock_10ml;
+            
+            if (stock < item.cantidad) {
+              throw new BadRequestException(`No hay suficiente stock para el decant ${item.tipo_decant}`);
+            }
+            
+            const dataToUpdate: any = {};
+            if (tipo.includes('5 ml') || tipo.includes('5ml')) {
+              dataToUpdate.stock_5ml = { decrement: item.cantidad };
+            } else {
+              dataToUpdate.stock_10ml = { decrement: item.cantidad };
+            }
+            await tx.decant.update({ where: { id: item.id_decant }, data: dataToUpdate });
+          }
+        }
+        
+        // --- Virtual Stamp Loyalty Cards System ---
+        const totalItemsPurchased = order.detalles.reduce((sum, d) => sum + d.cantidad, 0);
+        
+        if (totalItemsPurchased > 0) {
+          const userId = order.id_usuario;
+          const user = await tx.usuario.findUnique({ where: { id: userId } });
+          const currentStamps = user?.sellos || 0;
+  
+          // Add earned stamps
+          const newStampsCount = currentStamps + totalItemsPurchased;
+          
+          // Log stamps earning transaction
+          await tx.historialSellos.create({
+            data: {
+              id_usuario: userId,
+              id_orden: order.id,
+              tipo_operacion: 'acumulado',
+              cantidad_sellos: totalItemsPurchased,
+            },
+          });
+  
+          // If they get 6 or more stamps, process loyalty redemptions (resets every 6 stamps)
+          let finalStamps = newStampsCount;
+          const redemptions = Math.floor(newStampsCount / 6);
+          if (newStampsCount >= 6) {
+            finalStamps = newStampsCount % 6;
+  
+            // Log stamps redemption transaction
+            await tx.historialSellos.create({
+              data: {
+                id_usuario: userId,
+                id_orden: order.id,
+                tipo_operacion: 'canjeado',
+                cantidad_sellos: -(redemptions * 6),
+              },
+            });
+  
+            // Create the actual GiftCards
+            for (let i = 0; i < redemptions; i++) {
+              await tx.giftCard.create({
+                data: {
+                  id_usuario: userId,
+                  codigo: 'GIFT-250-' + Math.floor(100000 + Math.random() * 900000),
+                  monto: 250.00,
+                  activa: true,
+                  es_bienvenida: false
+                }
+              });
+            }
+          }
+  
+          // Update the user stamps
+          await tx.usuario.update({
+            where: { id: userId },
+            data: { sellos: finalStamps },
+          });
+        }
+      });
+    }
 
     const updateData: any = { estado };
 

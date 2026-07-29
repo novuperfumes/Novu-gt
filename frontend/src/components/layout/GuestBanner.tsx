@@ -88,7 +88,7 @@ export function GuestBanner() {
 
         <h3 style={{
           color: '#fff',
-          fontFamily: '"Cinzel", serif',
+          fontFamily: '"Montserrat", sans-serif',
           fontSize: '1.3rem',
           margin: '0 0 12px',
           fontWeight: 700,

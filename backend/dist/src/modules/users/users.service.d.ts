@@ -10,11 +10,11 @@ export declare class UsersService implements OnModuleInit {
     findOneById(id: number): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
+            id_usuario: number;
             codigo: string;
             monto: Prisma.Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         }[];
         id: number;
         nombre: string;
@@ -29,11 +29,11 @@ export declare class UsersService implements OnModuleInit {
     searchUsers(query: string): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
+            id_usuario: number;
             codigo: string;
             monto: Prisma.Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         }[];
         id: number;
         nombre: string;
@@ -48,11 +48,11 @@ export declare class UsersService implements OnModuleInit {
         user: {
             giftCards: {
                 id: number;
+                activa: boolean;
+                id_usuario: number;
                 codigo: string;
                 monto: Prisma.Decimal;
-                activa: boolean;
                 es_bienvenida: boolean;
-                id_usuario: number;
             }[];
             id: number;
             nombre: string;

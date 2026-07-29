@@ -30,7 +30,12 @@ export function CheckoutModal() {
   const [discountError, setDiscountError] = useState('');
   const [validatingDiscount, setValidatingDiscount] = useState(false);
 
-  const total = Math.max(0, cartTotal - (appliedDiscount?.amount || 0));
+  const shippingCost = formData.dept
+    ? (formData.dept.trim().toLowerCase() === 'guatemala' ? 35 : 45)
+    : 0;
+
+  const subtotalAfterDiscount = Math.max(0, cartTotal - (appliedDiscount?.amount || 0));
+  const total = subtotalAfterDiscount + shippingCost;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.id.replace('co-', '')]: e.target.value });
@@ -166,16 +171,16 @@ ${formData.references ? `- *Referencias:* ${formData.references}\n` : ''}- *Muni
 
 *DETALLE DEL PEDIDO:*
 ${orderDetailsText}
-
-${appliedDiscount ? `*Descuento Aplicado (${appliedDiscount.code}):* - Q ${appliedDiscount.amount.toFixed(2)}\n*TOTAL CON DESCUENTO:* Q ${total.toFixed(2)}\n` : ''}
-_Espero la confirmación de la orden con el costo de envío._`;
+- *Subtotal:* Q ${cartTotal.toFixed(2)}
+${appliedDiscount ? `- *Descuento (${appliedDiscount.code}):* - Q ${appliedDiscount.amount.toFixed(2)}\n` : ''}- *Envío (${formData.dept}):* Q ${shippingCost.toFixed(2)}
+*TOTAL A PAGAR:* Q ${total.toFixed(2)}`;
 
     const encodedText = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/50232316390?text=${encodedText}`;
     setWhatsappLink(whatsappUrl);
     window.open(whatsappUrl, '_blank');
 
-    setFinalTotal(cartTotal);
+    setFinalTotal(total);
     setCompletedOrderNumber('NV-' + Math.floor(100000 + Math.random() * 900000));
     setOrderComplete(true);
     setIsSubmitting(false);
@@ -296,7 +301,7 @@ _Espero la confirmación de la orden con el costo de envío._`;
                       </div>
                       
                       <button type="submit" className="confirm-order-btn" style={{ marginTop: '30px', backgroundColor: '#25D366' }} disabled={isSubmitting}>
-                          {isSubmitting ? 'PROCESANDO PEDIDO...' : `ENVIAR POR WHATSAPP (Q ${total.toFixed(2)} + Envío)`}
+                          {isSubmitting ? 'PROCESANDO PEDIDO...' : `ENVIAR POR WHATSAPP (Q ${total.toFixed(2)})`}
                       </button>
                   </form>
                   
@@ -324,7 +329,11 @@ _Espero la confirmación de la orden con el costo de envío._`;
                           </div>
                           <div className="co-summary-row">
                               <span>Envío</span>
-                              <span style={{ color: '#D97706', fontWeight: 600, fontSize: '0.85rem' }}>+ Envío (A cotizar según ubicación)</span>
+                              <span style={{ color: formData.dept ? '#121212' : '#D97706', fontWeight: 600, fontSize: '0.85rem' }}>
+                                {formData.dept
+                                  ? `Q ${shippingCost.toFixed(2)} (${formData.dept.trim().toLowerCase() === 'guatemala' ? 'Guatemala' : 'Departamento'})`
+                                  : 'Q 35 (Guate) / Q 45 (Resto)'}
+                              </span>
                           </div>
                           
                           <div style={{ padding: '15px 0', borderTop: '1px solid #e5e5e5', marginTop: '10px' }}>
@@ -359,7 +368,7 @@ _Espero la confirmación de la orden con el costo de envío._`;
                           )}
 
                           <div className="co-summary-row total" style={{ borderTop: '1px solid #e5e5e5', paddingTop: '15px', marginTop: '15px', fontSize: '1.15rem', fontWeight: 700, color: '#121212' }}>
-                              <span>Total Productos</span>
+                              <span>Total</span>
                               <span>Q {total.toFixed(2)}</span>
                           </div>
                       </div>

@@ -1,4 +1,5 @@
 export declare class CreateReviewDto {
     calificacion: number;
-    comentario?: string;
+    comentario: string;
+    compra_label?: string;
 }

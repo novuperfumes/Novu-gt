@@ -1,32 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
 import { GuestBanner } from '../components/layout/GuestBanner';
+import '../assets/styles/decants.css';
 
-export function Nicho() {
+export function Decants() {
+  const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { perfumes, bestSellers, filterByCategory, loading } = usePerfumes();
+  const { perfumes, bestSellers, loading } = usePerfumes();
   const { calcularPrecio } = useCampania();
-
+  
   // --- Lógica del Carrusel Hero ---
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
     {
-      bgImage: "url('/imagenes/banner_nicho1.jpg')",
-      tag: "ARISTOCRACIA EN FRAGANCIAS",
-      title: "CREED AVENTUS",
-      desc: "Un aroma legendario que celebra la fuerza, el poder y el éxito, con una sofisticada combinación de notas frutales y ahumadas.",
+      bgImage: "url('/imagenes/banner1.png')",
+      tag: "DECANTS ORIGINALES",
+      title: "PRUEBA ANTES DE COMPRAR",
+      desc: "Descubre nuevas fragancias con nuestros decants 100% originales.",
       link: "#novedades-section",
-      btnText: "EXPLORAR AVENTUS"
-    },
-    {
-      bgImage: "url('/imagenes/banner_nicho2.jpg')",
-      tag: "OBRA MAESTRA",
-      title: "LAYTON BY MARLY",
-      desc: "Una fragancia seductora oriental-floral de Parfums de Marly con una firma olfativa intensa y distinguida.",
-      link: "#grid-section",
-      btnText: "DESCUBRIR MARCA"
+      btnText: "EXPLORAR DECANTS"
     }
   ];
 
@@ -43,24 +38,18 @@ export function Nicho() {
   const [activeTab, setActiveTab] = useState('novedades');
   const [activeGender, setActiveGender] = useState('todos');
 
-  // Filtrado de productos utilizando los datos del backend
-  const categoryPerfumes = perfumes.filter(p => p.categoria.toLowerCase() === 'nicho');
-  const categoryBestSellers = bestSellers.filter(p => p.categoria.toLowerCase() === 'nicho');
+  // Filtrado de productos que tienen decant
+  const categoryPerfumes = perfumes.filter(p => p.decant !== undefined && p.decant !== null);
+  const categoryBestSellers = bestSellers.filter(p => p.decant !== undefined && p.decant !== null);
 
   const filteredSliderProducts = activeTab === 'mas-vendidos'
-    ? categoryBestSellers.filter(p => 
-        activeGender === 'todos' || 
-        (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
-      )
+    ? categoryBestSellers.filter(p => activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex')
     : categoryPerfumes.filter(p => 
-      (p.subcategorias?.includes(activeTab)) && 
-      (activeGender === 'todos' || 
-       (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex')))
+      (activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex')
     );
 
   const filteredGridProducts = categoryPerfumes.filter(p => 
-    activeGender === 'todos' || 
-    (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
+    activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex'
   );
 
   const handleVerMas = (id: number) => {
@@ -70,7 +59,7 @@ export function Nicho() {
   return (
     <>
       <GuestBanner />
-      <main className="arabe-main" style={{ backgroundColor: '#121212', color: '#ffffff', minHeight: '100vh' }}>
+      <main className="arabe-main">
         {/* 1. Carrusel de Banners Hero */}
         <section className="hero-carousel-section" id="hero-carousel">
           <div className="carousel-track-container">
@@ -118,12 +107,12 @@ export function Nicho() {
         <section className="featured-tabs-section" id="novedades-section">
           <div className="section-container">
             <div className="gender-filter-container">
-              {['todos', 'el', 'ella', 'decants'].map(g => (
+              {['todos', 'el', 'ella'].map(g => (
                 <button 
                   key={g}
                   className={`gender-btn ${activeGender === g ? 'active' : ''}`} 
                   onClick={() => setActiveGender(g)}>
-                  {g === 'todos' ? 'TODOS' : g === 'decants' ? 'DECANTS' : `PARA ${g.toUpperCase()}`}
+                  {g === 'todos' ? 'TODOS' : `PARA ${g.toUpperCase()}`}
                 </button>
               ))}
             </div>
@@ -175,7 +164,7 @@ export function Nicho() {
         {/* 3. Sección de Cuadrícula de Productos */}
         <section className="products-grid-section" id="grid-section">
           <div className="section-container">
-            <h2 className="grid-section-title">COLECCIÓN DE PERFUMES DE NICHO</h2>
+            <h2 className="grid-section-title">COLECCIÓN DE DECANTS</h2>
             
             <div className="products-grid">
               {loading && <p style={{ color: '#C5A059', textAlign: 'center', width: '100%', padding: '20px' }}>Cargando productos...</p>}

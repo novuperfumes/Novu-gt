@@ -32,6 +32,9 @@ let PerfumesController = class PerfumesController {
     async findAllAdmin() {
         return this.perfumesService.findAllAdmin();
     }
+    async getBestSellers() {
+        return this.perfumesService.getBestSellers();
+    }
     async findOne(id) {
         return this.perfumesService.findOne(id);
     }
@@ -69,6 +72,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PerfumesController.prototype, "findAllAdmin", null);
+__decorate([
+    (0, common_1.Get)('best-sellers'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PerfumesController.prototype, "getBestSellers", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

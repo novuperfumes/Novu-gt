@@ -6,8 +6,8 @@ export declare class AddressesService {
     constructor(prisma: PrismaService);
     create(userId: number, dto: CreateAddressDto): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -15,8 +15,8 @@ export declare class AddressesService {
     }>;
     findAllByUser(userId: number): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -24,8 +24,8 @@ export declare class AddressesService {
     }[]>;
     findOne(userId: number, addressId: number): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -33,8 +33,8 @@ export declare class AddressesService {
     }>;
     update(userId: number, addressId: number, dto: UpdateAddressDto): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -42,8 +42,8 @@ export declare class AddressesService {
     }>;
     remove(userId: number, addressId: number): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;

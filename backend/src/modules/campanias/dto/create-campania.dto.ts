@@ -21,6 +21,10 @@ export class CreateCampaniaDto {
   perfume_ids?: string; // JSON array string: '[1,2,3]'
 
   @IsOptional()
+  @IsString()
+  imagen?: string;
+
+  @IsOptional()
   @IsDateString()
   fecha_inicio?: string;
 

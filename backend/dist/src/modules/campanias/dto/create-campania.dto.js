@@ -17,6 +17,7 @@ class CreateCampaniaDto {
     descuento;
     categorias;
     perfume_ids;
+    imagen;
     fecha_inicio;
     fecha_fin;
 }
@@ -45,6 +46,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCampaniaDto.prototype, "perfume_ids", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateCampaniaDto.prototype, "imagen", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),

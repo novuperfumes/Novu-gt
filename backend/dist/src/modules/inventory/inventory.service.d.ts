@@ -8,8 +8,8 @@ export declare class InventoryService {
     constructor(prisma: PrismaService, redisService: RedisService);
     create(dto: CreateIngresoDto): Promise<{
         id: number;
-        id_presentacion: number;
         cantidad: number;
+        id_presentacion: number;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;
@@ -26,21 +26,22 @@ export declare class InventoryService {
                 tipo: string | null;
                 genero: string | null;
                 imagen: string;
+                galeria: string[];
                 marca: string;
                 activo: boolean;
             };
         } & {
             id: number;
             tamanio: string;
-            costo: import("@prisma/client-runtime-utils").Decimal | null;
             precio: import("@prisma/client-runtime-utils").Decimal;
             stock: number;
+            costo: import("@prisma/client-runtime-utils").Decimal | null;
             id_perfume: number;
         };
     } & {
         id: number;
-        id_presentacion: number;
         cantidad: number;
+        id_presentacion: number;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsArray } from 'class-validator';
 
 export class CreatePerfumeDto {
   @IsString()
@@ -32,4 +32,9 @@ export class CreatePerfumeDto {
   @IsString()
   @IsOptional()
   genero?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  galeria?: string[];
 }

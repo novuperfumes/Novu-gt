@@ -90,6 +90,40 @@ export class PerfumesService {
     return perfumes;
   }
 
+  async getBestSellers(limit: number = 8) {
+    const perfumes = await this.prisma.perfume.findMany({
+      where: { activo: true },
+      include: {
+        presentaciones: { include: { ordenDetalles: true } },
+        decant: { include: { ordenDetalles: true } }
+      }
+    });
+
+    const withSales = perfumes.map(p => {
+      let salesCount = 0;
+      p.presentaciones.forEach(pres => {
+        pres.ordenDetalles.forEach(od => { salesCount += od.cantidad; });
+      });
+      if (p.decant) {
+        p.decant.ordenDetalles.forEach(od => { salesCount += od.cantidad; });
+      }
+      return { ...p, salesCount };
+    });
+
+    withSales.sort((a, b) => b.salesCount - a.salesCount);
+
+    const cleaned = withSales.map(p => {
+      const { salesCount, presentaciones, decant, ...rest } = p;
+      return {
+        ...rest,
+        presentaciones: presentaciones.map(pr => { const { ordenDetalles, ...prRest } = pr; return prRest; }),
+        decant: decant ? (() => { const { ordenDetalles, ...dRest } = decant; return dRest; })() : null
+      };
+    });
+
+    return cleaned.slice(0, limit);
+  }
+
   async findAllAdmin() {
     return this.prisma.perfume.findMany({
       include: {

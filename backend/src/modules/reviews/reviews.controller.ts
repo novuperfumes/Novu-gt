@@ -7,22 +7,36 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  /** Público: lista reseñas de un perfume con promedio */
   @Get('perfume/:perfumeId')
   async getByPerfume(@Param('perfumeId', ParseIntPipe) perfumeId: number) {
     return this.reviewsService.findByPerfume(perfumeId);
   }
 
+  /** Privado: ¿puede el usuario reseñar este perfume? */
+  @Get('can-review/:perfumeId')
+  @UseGuards(AuthGuard)
+  async canReview(
+    @Req() req: any,
+    @Param('perfumeId', ParseIntPipe) perfumeId: number,
+  ) {
+    const userId = req.user.sub;
+    return this.reviewsService.canReview(userId, perfumeId);
+  }
+
+  /** Privado: crear o actualizar (upsert) reseña */
   @Post(':perfumeId')
   @UseGuards(AuthGuard)
-  async createReview(
+  async upsertReview(
     @Req() req: any,
     @Param('perfumeId', ParseIntPipe) perfumeId: number,
     @Body() dto: CreateReviewDto,
   ) {
     const userId = req.user.sub;
-    return this.reviewsService.create(userId, perfumeId, dto);
+    return this.reviewsService.upsert(userId, perfumeId, dto);
   }
 
+  /** Privado: borrar reseña propia */
   @Delete(':reviewId')
   @UseGuards(AuthGuard)
   async removeReview(

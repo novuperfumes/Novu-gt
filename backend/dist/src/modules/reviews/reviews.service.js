@@ -17,16 +17,119 @@ let ReviewsService = class ReviewsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(userId, perfumeId, dto) {
-        const perfume = await this.prisma.perfume.findUnique({ where: { id: perfumeId } });
+    async canReview(userId, perfumeId) {
+        const perfume = await this.prisma.perfume.findUnique({
+            where: { id: perfumeId },
+            include: { presentaciones: { select: { id: true } }, decant: { select: { id: true } } },
+        });
         if (!perfume)
             throw new common_1.NotFoundException('Perfume no encontrado');
-        return this.prisma.reseniaPerfume.create({
-            data: {
+        const presIds = perfume.presentaciones.map((p) => p.id);
+        const decantId = perfume.decant?.id;
+        const confirmedOrder = await this.prisma.ordenCompra.findFirst({
+            where: {
+                id_usuario: userId,
+                estado: 'CONFIRMADO',
+                detalles: {
+                    some: {
+                        OR: [
+                            ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+                            ...(decantId ? [{ id_decant: decantId }] : []),
+                        ],
+                    },
+                },
+            },
+            include: {
+                detalles: {
+                    where: {
+                        OR: [
+                            ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+                            ...(decantId ? [{ id_decant: decantId }] : []),
+                        ],
+                    },
+                    include: {
+                        presentacion: { select: { tamanio: true } },
+                    },
+                    take: 1,
+                },
+            },
+        });
+        const existing = await this.prisma.reseniaPerfume.findUnique({
+            where: { id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId } },
+        });
+        return {
+            canReview: !!confirmedOrder,
+            existing: existing ?? null,
+            compra_label: this.buildCompraLabel(confirmedOrder),
+        };
+    }
+    buildCompraLabel(order) {
+        if (!order || !order.detalles || order.detalles.length === 0)
+            return null;
+        const detalle = order.detalles[0];
+        if (detalle.presentacion) {
+            const tamanio = detalle.presentacion.tamanio;
+            const label = tamanio.toLowerCase().includes('ml') ? tamanio : `${tamanio} ml`;
+            return `Botella ${label}`;
+        }
+        if (detalle.id_decant && detalle.tipo_decant) {
+            return `Decant ${detalle.tipo_decant}`;
+        }
+        return null;
+    }
+    async upsert(userId, perfumeId, dto) {
+        const perfume = await this.prisma.perfume.findUnique({
+            where: { id: perfumeId },
+            include: { presentaciones: { select: { id: true } }, decant: { select: { id: true } } },
+        });
+        if (!perfume)
+            throw new common_1.NotFoundException('Perfume no encontrado');
+        const presIds = perfume.presentaciones.map((p) => p.id);
+        const decantId = perfume.decant?.id;
+        const confirmedOrder = await this.prisma.ordenCompra.findFirst({
+            where: {
+                id_usuario: userId,
+                estado: 'CONFIRMADO',
+                detalles: {
+                    some: {
+                        OR: [
+                            ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+                            ...(decantId ? [{ id_decant: decantId }] : []),
+                        ],
+                    },
+                },
+            },
+            include: {
+                detalles: {
+                    where: {
+                        OR: [
+                            ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+                            ...(decantId ? [{ id_decant: decantId }] : []),
+                        ],
+                    },
+                    include: { presentacion: { select: { tamanio: true } } },
+                    take: 1,
+                },
+            },
+        });
+        if (!confirmedOrder) {
+            throw new common_1.ForbiddenException('Solo puedes reseñar perfumes que hayas comprado y cuya orden haya sido confirmada.');
+        }
+        const compra_label = dto.compra_label ?? this.buildCompraLabel(confirmedOrder);
+        return this.prisma.reseniaPerfume.upsert({
+            where: { id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId } },
+            create: {
                 id_usuario: userId,
                 id_perfume: perfumeId,
                 calificacion: dto.calificacion,
                 comentario: dto.comentario,
+                compra_label,
+            },
+            update: {
+                calificacion: dto.calificacion,
+                comentario: dto.comentario,
+                compra_label,
+                fecha: new Date(),
             },
         });
     }
@@ -34,31 +137,29 @@ let ReviewsService = class ReviewsService {
         const perfume = await this.prisma.perfume.findUnique({ where: { id: perfumeId } });
         if (!perfume)
             throw new common_1.NotFoundException('Perfume no encontrado');
-        return this.prisma.reseniaPerfume.findMany({
+        const resenias = await this.prisma.reseniaPerfume.findMany({
             where: { id_perfume: perfumeId },
             include: {
                 usuario: {
-                    select: {
-                        nombre: true,
-                        apellido: true,
-                    },
+                    select: { nombre: true, apellido: true },
                 },
             },
             orderBy: { fecha: 'desc' },
         });
+        const total = resenias.length;
+        const promedio = total > 0
+            ? Math.round((resenias.reduce((acc, r) => acc + r.calificacion, 0) / total) * 10) / 10
+            : 0;
+        return { resenias, promedio, total };
     }
     async remove(userId, reviewId) {
-        const review = await this.prisma.reseniaPerfume.findUnique({
-            where: { id: reviewId },
-        });
+        const review = await this.prisma.reseniaPerfume.findUnique({ where: { id: reviewId } });
         if (!review)
             throw new common_1.NotFoundException('Reseña no encontrada');
         if (review.id_usuario !== userId) {
             throw new common_1.ForbiddenException('No tienes permiso para borrar esta reseña');
         }
-        return this.prisma.reseniaPerfume.delete({
-            where: { id: reviewId },
-        });
+        return this.prisma.reseniaPerfume.delete({ where: { id: reviewId } });
     }
 };
 exports.ReviewsService = ReviewsService;

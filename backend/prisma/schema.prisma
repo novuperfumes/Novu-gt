@@ -45,6 +45,7 @@ model Perfume {
   tipo           String?
   genero         String?
   imagen         String
+  galeria        String[]              @default([])
   marca          String
   activo         Boolean               @default(true)
   decant         Decant?
@@ -197,10 +198,13 @@ model ReseniaPerfume {
   id_usuario   Int
   id_perfume   Int
   calificacion Int
-  comentario   String?
+  comentario   String
+  compra_label String?
   fecha        DateTime @default(now())
   perfume      Perfume  @relation(fields: [id_perfume], references: [id], onDelete: Cascade)
   usuario      Usuario  @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+
+  @@unique([id_usuario, id_perfume])
 }
 
 model Favorito {
@@ -310,6 +314,7 @@ model CampaniaDescuento {
   descuento    Decimal   @db.Decimal(5, 2)
   categorias   String?
   perfume_ids  String?
+  imagen       String?
   fecha_inicio DateTime?
   fecha_fin    DateTime?
   creado_en    DateTime  @default(now())

@@ -8,8 +8,8 @@ export declare class StampsService {
         remainingForFreePerfume: number;
         history: {
             id: number;
-            id_usuario: number;
             fecha: Date;
+            id_usuario: number;
             tipo_operacion: string;
             cantidad_sellos: number;
             id_orden: number | null;

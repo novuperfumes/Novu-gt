@@ -1,18 +1,48 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
 
 export function VerTodas() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
   const { perfumes, loading } = usePerfumes();
-  const { campania, calcularPrecio } = useCampania();
+  const { calcularPrecio } = useCampania();
   
   const [activeGender, setActiveGender] = useState('todos');
 
-  const filteredGridProducts = perfumes.filter(p => 
-    activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex'
-  );
+  useEffect(() => {
+    if (searchQuery) {
+      setTimeout(() => {
+        const gridSection = document.getElementById('grid-section');
+        if (gridSection) {
+          gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [searchQuery]);
+
+
+  const normalizeString = (str: string) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  };
+
+  const filteredGridProducts = perfumes.filter(p => {
+    const matchesGender = activeGender === 'todos' || 
+                          (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'));
+    
+    if (!matchesGender) return false;
+    
+    if (searchQuery) {
+      const normalizedQuery = normalizeString(searchQuery);
+      const searchStr = `${p.nombre} ${p.marca} ${p.categoria}`.toLowerCase();
+      const normalizedSearchStr = normalizeString(searchStr);
+      return normalizedSearchStr.includes(normalizedQuery);
+    }
+    
+    return true;
+  });
 
   const handleVerMas = (id: number) => {
     navigate(`/perfume/${id}`);
@@ -20,11 +50,6 @@ export function VerTodas() {
 
   return (
     <>
-      {campania && (
-        <div className="campania-banner">
-          <span>✦</span> {campania.nombre} — {Number(campania.descuento)}% de descuento en perfumes seleccionados <span>✦</span>
-        </div>
-      )}
       <main className="arabe-main">
         {/* Banner estático para Todas */}
         <section className="hero-carousel-section" id="hero-carousel" style={{ height: '400px' }}>
@@ -48,17 +73,39 @@ export function VerTodas() {
           <div className="section-container">
             
             <div className="gender-filter-container" style={{ marginBottom: '40px' }}>
-              {['todos', 'el', 'ella'].map(g => (
+              {['todos', 'el', 'ella', 'decants'].map(g => (
                 <button 
                   key={g}
                   className={`gender-btn ${activeGender === g ? 'active' : ''}`} 
                   onClick={() => setActiveGender(g)}>
-                  {g === 'todos' ? 'TODOS' : `PARA ${g.toUpperCase()}`}
+                  {g === 'todos' ? 'TODOS' : g === 'decants' ? 'DECANTS' : `PARA ${g.toUpperCase()}`}
                 </button>
               ))}
             </div>
 
-            <h2 className="grid-section-title">NUESTRO CATÁLOGO</h2>
+            <h2 className="grid-section-title">
+              {searchQuery ? `RESULTADOS DE BÚSQUEDA PARA "${searchQuery.toUpperCase()}"` : 'NUESTRO CATÁLOGO'}
+            </h2>
+            
+            {searchQuery && (
+              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <button 
+                  onClick={() => navigate('/todas')} 
+                  style={{ 
+                    background: 'none', 
+                    border: '1px solid #C5A059', 
+                    color: '#C5A059', 
+                    padding: '8px 16px', 
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    letterSpacing: '0.05em'
+                  }}
+                >
+                  LIMPIAR BÚSQUEDA
+                </button>
+              </div>
+            )}
             
             <div className="products-grid">
               {loading && <p style={{ color: '#C5A059', textAlign: 'center', width: '100%', padding: '20px' }}>Cargando productos...</p>}
@@ -71,9 +118,31 @@ export function VerTodas() {
                     <img src={product.imagen || '/imagenes/logonovu.jpeg'} alt={product.nombre} className="grid-product-image" />
                   </div>
                   <div className="grid-card-details">
-                    <h3 className="grid-product-brand">{product.marca}</h3>
+                    <h3 
+                      className="grid-product-brand"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/todas?q=${encodeURIComponent(product.marca)}`);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ver todos los perfumes de ${product.marca}`}
+                    >
+                      {product.marca}
+                    </h3>
                     <p className="grid-product-name">{product.nombre}</p>
-                    <p className="grid-product-type">{product.categoria}</p>
+                    <p 
+                      className="grid-product-type"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const cat = (product.categoria || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        const path = cat.includes('nicho') ? '/nicho' : cat.includes('arabe') ? '/arabe' : '/disenador';
+                        navigate(path);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ir a la colección ${product.categoria}`}
+                    >
+                      {product.categoria}
+                    </p>
                     {tieneDescuento ? (
                       <div style={{ marginBottom: '12px' }}>
                         <span className="discount-badge">{porcentaje}% OFF</span>

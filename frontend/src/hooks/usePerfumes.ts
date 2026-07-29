@@ -30,15 +30,26 @@ export interface Perfume {
   decant?: Decant;
   genero?: 'el' | 'ella' | 'unisex';
   subcategorias?: string[];
+  galeria?: string[];
 }
+
+const formatGender = (g?: string): 'el' | 'ella' | 'unisex' => {
+  if (!g) return 'unisex';
+  const val = g.toLowerCase().trim();
+  if (val === 'masculino' || val === 'el' || val === 'hombre' || val === 'él') return 'el';
+  if (val === 'femenino' || val === 'ella' || val === 'mujer') return 'ella';
+  return 'unisex';
+};
 
 export function usePerfumes() {
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
+  const [bestSellers, setBestSellers] = useState<Perfume[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPerfumes();
+    fetchBestSellers();
   }, []);
 
   const fetchPerfumes = async () => {
@@ -47,14 +58,6 @@ export function usePerfumes() {
       if (!response.ok) throw new Error('Error al obtener perfumes');
       const data = await response.json();
       
-      const formatGender = (g?: string): 'el' | 'ella' | 'unisex' => {
-        if (!g) return 'unisex';
-        const val = g.toLowerCase().trim();
-        if (val === 'masculino' || val === 'el' || val === 'hombre' || val === 'él') return 'el';
-        if (val === 'femenino' || val === 'ella' || val === 'mujer') return 'ella';
-        return 'unisex';
-      };
-
       const enrichedData = data.map((p: any) => ({
         ...p,
         genero: formatGender(p.genero), 
@@ -69,6 +72,23 @@ export function usePerfumes() {
     }
   };
 
+  const fetchBestSellers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/perfumes/best-sellers');
+      if (response.ok) {
+        const data = await response.json();
+        const enrichedData = data.map((p: any) => ({
+          ...p,
+          genero: formatGender(p.genero), 
+          subcategorias: p.subcategorias || ['novedades', 'indispensables', 'esenciales', 'favoritas']
+        }));
+        setBestSellers(enrichedData);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const getPerfumeById = (id: number) => {
     return perfumes.find(p => p.id === id);
   };
@@ -77,5 +97,5 @@ export function usePerfumes() {
     return perfumes.filter(p => p.categoria.toLowerCase() === category.toLowerCase());
   };
 
-  return { perfumes, loading, error, getPerfumeById, filterByCategory };
+  return { perfumes, bestSellers, loading, error, getPerfumeById, filterByCategory };
 }

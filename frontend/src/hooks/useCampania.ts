@@ -23,21 +23,22 @@ export interface PrecioConDescuento {
 }
 
 export function useCampania() {
-  const [campania, setCampania] = useState<Campania | null>(null);
+  const [campaniasActivas, setCampaniasActivas] = useState<Campania[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('http://localhost:3000/campanias/activa')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => setCampania(data))
-      .catch(() => setCampania(null))
+      .then(r => r.ok ? r.json() : [])
+      .then(data => {
+        if (Array.isArray(data)) setCampaniasActivas(data);
+        else if (data) setCampaniasActivas([data]);
+        else setCampaniasActivas([]);
+      })
+      .catch(() => setCampaniasActivas([]))
       .finally(() => setLoading(false));
   }, []);
 
-  /**
-   * Calcula si un perfume tiene descuento activo y cuánto.
-   */
-  const aplicaDescuento = (perfume: Perfume): boolean => {
+  const aplicaDescuento = (perfume: Perfume, campania?: Campania): boolean => {
     if (!campania) return false;
 
     if (campania.tipo === 'GLOBAL') return true;
@@ -63,7 +64,7 @@ export function useCampania() {
    * Retorna precio original, precio final y si tiene descuento.
    */
   const calcularPrecio = (perfume: Perfume, precioBase: number): PrecioConDescuento => {
-    if (!campania || !aplicaDescuento(perfume)) {
+    if (!campaniasActivas.length) {
       return {
         precioOriginal: precioBase,
         precioFinal: precioBase,
@@ -72,16 +73,33 @@ export function useCampania() {
       };
     }
 
-    const pct = Number(campania.descuento);
-    const precioFinal = precioBase * (1 - pct / 100);
+    let maxDescuento = 0;
+    for (const c of campaniasActivas) {
+      if (aplicaDescuento(perfume, c)) {
+        const d = Number(c.descuento);
+        if (d > maxDescuento) maxDescuento = d;
+      }
+    }
+
+    if (maxDescuento === 0) {
+      return {
+        precioOriginal: precioBase,
+        precioFinal: precioBase,
+        tieneDescuento: false,
+        porcentaje: 0,
+      };
+    }
+
+    const precioFinal = precioBase * (1 - maxDescuento / 100);
 
     return {
       precioOriginal: precioBase,
       precioFinal: Math.round(precioFinal * 100) / 100,
       tieneDescuento: true,
-      porcentaje: pct,
+      porcentaje: maxDescuento,
     };
   };
 
-  return { campania, loading, calcularPrecio, aplicaDescuento };
+  // 'campania' es la primera para compatibilidad con CampaniaBanner.tsx
+  return { campania: campaniasActivas.length > 0 ? campaniasActivas[0] : null, campaniasActivas, loading, calcularPrecio, aplicaDescuento };
 }

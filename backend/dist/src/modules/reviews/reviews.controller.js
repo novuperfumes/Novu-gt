@@ -25,9 +25,13 @@ let ReviewsController = class ReviewsController {
     async getByPerfume(perfumeId) {
         return this.reviewsService.findByPerfume(perfumeId);
     }
-    async createReview(req, perfumeId, dto) {
+    async canReview(req, perfumeId) {
         const userId = req.user.sub;
-        return this.reviewsService.create(userId, perfumeId, dto);
+        return this.reviewsService.canReview(userId, perfumeId);
+    }
+    async upsertReview(req, perfumeId, dto) {
+        const userId = req.user.sub;
+        return this.reviewsService.upsert(userId, perfumeId, dto);
     }
     async removeReview(req, reviewId) {
         const userId = req.user.sub;
@@ -43,6 +47,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "getByPerfume", null);
 __decorate([
+    (0, common_1.Get)('can-review/:perfumeId'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('perfumeId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", Promise)
+], ReviewsController.prototype, "canReview", null);
+__decorate([
     (0, common_1.Post)(':perfumeId'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Req)()),
@@ -51,7 +64,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number, create_review_dto_1.CreateReviewDto]),
     __metadata("design:returntype", Promise)
-], ReviewsController.prototype, "createReview", null);
+], ReviewsController.prototype, "upsertReview", null);
 __decorate([
     (0, common_1.Delete)(':reviewId'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

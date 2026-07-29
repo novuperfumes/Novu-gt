@@ -86,7 +86,7 @@ export function Login() {
   return (
     <main className="arabe-main" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 20px' }}>
       <div style={{ maxWidth: '400px', width: '100%', backgroundColor: '#fff', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ fontFamily: 'Cinzel, serif', textAlign: 'center', marginBottom: '20px', color: '#1c1a17' }}>
+        <h2 style={{ fontFamily: 'Montserrat, sans-serif', textAlign: 'center', marginBottom: '20px', color: '#1c1a17' }}>
           {isLogin ? 'INICIAR SESIÓN' : 'CREAR CUENTA'}
         </h2>
         

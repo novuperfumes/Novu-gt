@@ -11,7 +11,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ padding: '120px 20px', textAlign: 'center', fontFamily: 'Cinzel, serif' }}>Verificando sesión...</div>;
+    return <div style={{ padding: '120px 20px', textAlign: 'center', fontFamily: 'Montserrat, sans-serif' }}>Verificando sesión...</div>;
   }
 
   if (!user) {

@@ -6,11 +6,11 @@ export declare class UsersController {
     getProfile(req: any): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
+            id_usuario: number;
             codigo: string;
             monto: import("@prisma/client-runtime-utils").Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         }[];
         id: number;
         nombre: string;
@@ -41,11 +41,11 @@ export declare class UsersController {
     searchUsers(req: any, q: string): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
+            id_usuario: number;
             codigo: string;
             monto: import("@prisma/client-runtime-utils").Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         }[];
         id: number;
         nombre: string;
@@ -62,11 +62,11 @@ export declare class UsersController {
         user: {
             giftCards: {
                 id: number;
+                activa: boolean;
+                id_usuario: number;
                 codigo: string;
                 monto: import("@prisma/client-runtime-utils").Decimal;
-                activa: boolean;
                 es_bienvenida: boolean;
-                id_usuario: number;
             }[];
             id: number;
             nombre: string;

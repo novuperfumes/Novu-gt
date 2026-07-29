@@ -20,7 +20,7 @@ export function ProfileModal() {
 
   if (!isProfileOpen || !user) return null;
 
-  const totalStamps = 8;
+  const totalStamps = 6;
   const stamps = profileData?.sellos || 0;
   const giftCards = profileData?.giftCards || [];
 
@@ -72,11 +72,11 @@ export function ProfileModal() {
               </div>
               <div className="loyalty-info-text">
                   {stamps < totalStamps 
-                    ? <>Te faltan <strong>{totalStamps - stamps} compra{totalStamps - stamps > 1 ? 's' : ''}</strong> para recibir una Gift Card de Q 150.</>
+                    ? <>Te faltan <strong>{totalStamps - stamps} sello{totalStamps - stamps > 1 ? 's' : ''}</strong> para recibir una Gift Card de Q 250.</>
                     : <>¡Felicidades! Has completado tu tarjeta de fidelidad y tu Gift Card ha sido generada.</>
                   }
                   <br />
-                  <span style={{ fontSize: '0.65rem', color: '#888888' }}>*Obtén 1 sello por cada compra realizada.</span>
+                  <span style={{ fontSize: '0.65rem', color: '#888888' }}>* Obtén 1 sello por cada ítem comprado.<br/>* Solo en perfumes seleccionados.</span>
               </div>
           </div>
           

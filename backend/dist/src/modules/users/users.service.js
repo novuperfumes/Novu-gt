@@ -130,23 +130,23 @@ let UsersService = class UsersService {
     async updateSellos(id, sellos) {
         let finalSellos = Math.max(0, sellos);
         let giftCardCreated = null;
-        if (finalSellos >= 8) {
-            const redemptions = Math.floor(finalSellos / 8);
-            finalSellos = finalSellos % 8;
+        if (finalSellos >= 6) {
+            const redemptions = Math.floor(finalSellos / 6);
+            finalSellos = finalSellos % 6;
             await this.prisma.historialSellos.create({
                 data: {
                     id_usuario: id,
                     tipo_operacion: 'canjeado',
-                    cantidad_sellos: -(redemptions * 8),
+                    cantidad_sellos: -(redemptions * 6),
                 },
             });
             for (let i = 0; i < redemptions; i++) {
-                const codigo = 'GIFT-150-' + Math.floor(100000 + Math.random() * 900000);
+                const codigo = 'GIFT-250-' + Math.floor(100000 + Math.random() * 900000);
                 giftCardCreated = await this.prisma.giftCard.create({
                     data: {
                         id_usuario: id,
                         codigo,
-                        monto: 150.00,
+                        monto: 250.00,
                         activa: true,
                         es_bienvenida: false
                     }

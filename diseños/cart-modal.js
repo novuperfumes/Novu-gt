@@ -293,7 +293,7 @@ function initOrdersAndStats() {
 
         mockTemplates.forEach((t, i) => {
             const subtotal = t.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shipping = 25.00;
+            const shipping = t.dept === 'Guatemala' ? 35.00 : 45.00;
             const total = subtotal + shipping;
             const orderNum = 'NV-' + (200000 + i);
             mockOrders.push({
@@ -582,25 +582,46 @@ function toggleProductModal(show, id = null) {
             // Resetear cantidad
             document.getElementById('qty-value-el').textContent = '1';
             
-            // Generar botones de tamaño
+            // Generar botones de tamaño divididos
             const sizeContainer = document.querySelector('.size-options');
             if (sizeContainer) {
                 let sizeHtml = '';
+                
+                // 1. Presentaciones (Botellas completas)
+                let presHtml = '';
                 if (product.presentaciones && product.presentaciones.length > 0) {
                     product.presentaciones.forEach((pres, i) => {
                         const activeClass = i === 0 ? 'active' : '';
                         const sizeLabel = String(pres.tamanio).toLowerCase().includes('ml') ? pres.tamanio : `${pres.tamanio} ml`;
-                        sizeHtml += `<button class="size-btn ${activeClass}" data-price="${pres.precio}">${sizeLabel}</button>`;
+                        presHtml += `<button class="size-btn ${activeClass}" data-price="${pres.precio}">${sizeLabel}</button>`;
                     });
-                } else {
-                    sizeHtml = `<button class="size-btn active" data-price="${product.price}">100 ml</button>`;
+                } else if (!product.hasDecants && !product.decant) {
+                    presHtml = `<button class="size-btn active" data-price="${product.price}">100 ml</button>`;
                 }
+
+                if (presHtml) {
+                    sizeHtml += `<div class="size-section-group" style="margin-bottom: 15px; width: 100%;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: #aaa; text-transform: uppercase; margin-bottom: 8px;"><span>🍾</span> Presentaciones (Botella Completa):</label>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">${presHtml}</div>
+                    </div>`;
+                }
+
+                // 2. Decants y Muestras
+                let decantHtml = '';
                 if (product.hasDecants || product.decant) {
                     const price5 = product.price_5ml || (product.decant && product.decant.precio_5ml);
                     const price10 = product.price_10ml || (product.decant && product.decant.precio_10ml);
-                    if (price5) sizeHtml += `<button class="size-btn" data-price="${price5}">Decant 5 ml</button>`;
-                    if (price10) sizeHtml += `<button class="size-btn" data-price="${price10}">Decant 10 ml</button>`;
+                    if (price5) decantHtml += `<button class="size-btn ${!presHtml ? 'active' : ''}" data-price="${price5}">Decant 5 ml</button>`;
+                    if (price10) decantHtml += `<button class="size-btn ${!presHtml && !price5 ? 'active' : ''}" data-price="${price10}">Decant 10 ml</button>`;
                 }
+
+                if (decantHtml) {
+                    sizeHtml += `<div class="size-section-group" style="padding: 12px; border-radius: 8px; background: rgba(197, 160, 89, 0.08); border: 1px dashed rgba(197, 160, 89, 0.4); width: 100%;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: #C5A059; text-transform: uppercase; margin-bottom: 8px;"><span>🧪</span> Decants y Muestras:</label>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">${decantHtml}</div>
+                    </div>`;
+                }
+
                 sizeContainer.innerHTML = sizeHtml;
             }
 
@@ -709,7 +730,7 @@ function openCheckoutFlow() {
     if (!container) return;
     
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 25.00; // Envío estándar Q25.00 en Guatemala
+    const shipping = 35.00; // Envío fijo Q35.00 Guatemala / Q45.00 Departamentos
     const total = subtotal + shipping;
     
     // Generar formulario dinámico (Removido método de pago, procesará vía WhatsApp)
@@ -887,8 +908,8 @@ function handleConfirmOrder(total) {
     const gender = document.getElementById('co-gender').value;
     
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 0;
-    const total = subtotal;
+    const shipping = dept === 'Guatemala' ? 35.00 : 45.00;
+    const total = subtotal + shipping;
     
     // Guardar orden en localStorage para el panel BI
     const orders = JSON.parse(localStorage.getItem('novu_orders')) || [];

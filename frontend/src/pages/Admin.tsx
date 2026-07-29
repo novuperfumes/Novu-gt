@@ -10,7 +10,7 @@ export function Admin() {
       {/* Sidebar */}
       <aside className="admin-sidebar" style={{ height: '100%', display: 'flex', flexDirection: 'column', width: '260px', backgroundColor: '#1c1a17', color: '#ffffff', borderRight: '1.5px solid #C5A059', flexShrink: 0, boxSizing: 'border-box' }}>
         <div className="admin-sidebar-header" style={{ padding: '30px 25px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-          <span className="admin-logo" style={{ display: 'block', fontFamily: '"Cinzel", serif', fontSize: '1.15rem', fontWeight: 800, color: '#C5A059', letterSpacing: '0.15em', marginBottom: '5px' }}>NOVU ADMIN</span>
+          <span className="admin-logo" style={{ display: 'block', fontFamily: '"Montserrat", sans-serif', fontSize: '1.15rem', fontWeight: 800, color: '#C5A059', letterSpacing: '0.15em', marginBottom: '5px' }}>NOVU ADMIN</span>
           <span className="admin-role" style={{ display: 'block', fontFamily: '"Montserrat", sans-serif', fontSize: '0.6rem', fontWeight: 600, color: '#a8a297', letterSpacing: '0.1em', textTransform: 'uppercase' }}>BUSINESS INTELLIGENCE</span>
         </div>
         <nav className="admin-nav" style={{ flex: 1, padding: '20px 15px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -64,7 +64,7 @@ export function Admin() {
 
       {/* Content Area */}
       <main className="admin-content-area" id="admin-tab-content-container" style={{ flex: 1, padding: '35px 40px', overflowY: 'auto', backgroundColor: '#ffffff', boxSizing: 'border-box' }}>
-        <h2 style={{ fontFamily: '"Cinzel", serif', fontSize: '1.8rem', fontWeight: 700, color: '#1c1a17', marginBottom: '20px' }}>
+        <h2 style={{ fontFamily: '"Montserrat", sans-serif', fontSize: '1.8rem', fontWeight: 700, color: '#1c1a17', marginBottom: '20px' }}>
           {activeTab === 'metrics' && 'Métricas de Business Intelligence'}
           {activeTab === 'loyalty' && 'Gestión de Fidelidad de Clientes'}
           {activeTab === 'history' && 'Historial de Pedidos'}
@@ -228,7 +228,7 @@ function LoyaltyTab() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', letterSpacing: '1px' }}>Sellos</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#C5A059' }}>{user.sellos || 0} / 8</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#C5A059' }}>{user.sellos || 0} / 6</div>
                 </div>
               </div>
 
@@ -243,7 +243,7 @@ function LoyaltyTab() {
                 boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <span style={{ color: '#C5A059', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', fontFamily: '"Cinzel", serif' }}>NOVU VIP LOYALTY</span>
+                  <span style={{ color: '#C5A059', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', fontFamily: '"Montserrat", sans-serif' }}>NOVU VIP LOYALTY</span>
                   {!isEditing ? (
                     <button
                       onClick={() => { setEditingUserId(user.id); setPendingSellos(user.sellos || 0); }}
@@ -253,8 +253,8 @@ function LoyaltyTab() {
                     <span style={{ color: '#C5A059', fontSize: '0.75rem', fontStyle: 'italic' }}>Haz clic para seleccionar</span>
                   )}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', justifyItems: 'center' }}>
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(num => {
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', justifyItems: 'center' }}>
+                  {[1, 2, 3, 4, 5, 6].map(num => {
                     const isStamped = currentSellos >= num;
                     return (
                       <div 
@@ -302,8 +302,8 @@ function LoyaltyTab() {
                 {!isEditing && (
                   <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.75rem', color: '#999' }}>
                     {(user.sellos || 0) === 0 && 'Sin sellos acumulados'}
-                    {(user.sellos || 0) > 0 && (user.sellos || 0) < 7 && `Faltan ${8 - (user.sellos || 0)} sellos para completar la tarjeta`}
-                    {(user.sellos || 0) === 7 && '¡Falta solo 1 sello para completar la tarjeta!'}
+                    {(user.sellos || 0) > 0 && (user.sellos || 0) < 5 && `Faltan ${6 - (user.sellos || 0)} sellos para completar la tarjeta`}
+                    {(user.sellos || 0) === 5 && '¡Falta solo 1 sello para completar la tarjeta!'}
                   </div>
                 )}
               </div>
@@ -489,6 +489,7 @@ function CatalogTab() {
   const [categoria, setCategoria] = useState('arabe');
   const [descripcion, setDescripcion] = useState('');
   const [imagen, setImagen] = useState('');
+  const [galeria, setGaleria] = useState<string[]>([]);
   const [tipoPresentacion, setTipoPresentacion] = useState('perfume');
   const [costo, setCosto] = useState('');
   const [precio, setPrecio] = useState('');
@@ -605,9 +606,39 @@ function CatalogTab() {
   const [editCategoria, setEditCategoria] = useState('');
   const [editDescripcion, setEditDescripcion] = useState('');
   const [editImagen, setEditImagen] = useState('');
+  const [editGaleria, setEditGaleria] = useState<string[]>([]);
   const [editGenero, setEditGenero] = useState('');
 
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEditForm: boolean) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingImage(true);
+    const newUrls: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append('file', files[i]);
+      try {
+        const res = await fetch('http://localhost:3000/uploads/image', {
+          method: 'POST', credentials: 'include', body: formData
+        });
+        if (res.ok) {
+          const data = await res.json();
+          newUrls.push("http://localhost:3000" + data.url);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (isEditForm) {
+      setEditGaleria(prev => [...prev, ...newUrls]);
+    } else {
+      setGaleria(prev => [...prev, ...newUrls]);
+    }
+    setUploadingImage(false);
+  };
+
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEditForm: boolean) => {
     const file = e.target.files?.[0];
@@ -679,7 +710,7 @@ function CatalogTab() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          nombre, marca, categoria, descripcion, imagen, genero
+          nombre, marca, categoria, descripcion, imagen, genero, galeria
         })
       });
       if (res.ok) {
@@ -722,7 +753,7 @@ function CatalogTab() {
         fetchPerfumes(); // Refresh
 
         // Reset form
-        setNombre(''); setMarca(''); setCategoria('arabe'); setDescripcion(''); setImagen(''); setPrecio(''); setCosto(''); setTamanio(''); setStock('10'); setGenero('unisex'); setTipoPresentacion('perfume');
+        setNombre(''); setMarca(''); setCategoria('arabe'); setDescripcion(''); setImagen(''); setGaleria([]); setPrecio(''); setCosto(''); setTamanio(''); setStock('10'); setGenero('unisex'); setTipoPresentacion('perfume');
       } else {
         const text = await res.text();
         alert('Error al agregar: ' + text);
@@ -823,6 +854,7 @@ function CatalogTab() {
     setEditCategoria(p.categoria || '');
     setEditDescripcion(p.descripcion || '');
     setEditImagen(p.imagen || '');
+    setEditGaleria(p.galeria || []);
     setEditGenero(p.genero || 'unisex');
   };
 
@@ -837,6 +869,7 @@ function CatalogTab() {
       categoria: editCategoria,
       descripcion: editDescripcion,
       imagen: editImagen,
+      galeria: editGaleria,
       genero: editGenero
     };
 
@@ -960,6 +993,16 @@ function CatalogTab() {
                 {imagen && <img src={imagen} alt="preview" style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #ddd' }} />}
               </div>
             </div>
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#666', marginBottom: '4px' }}>Galería de Imágenes (Opcional)</label>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <input type="file" accept="image/*" multiple onChange={(e) => handleGalleryUpload(e, false)} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                {uploadingImage && <span style={{ fontSize: '0.8rem', color: '#C5A059' }}>Subiendo...</span>}
+                {galeria.map((url, idx) => (
+                  <img key={idx} src={url} alt="preview" style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #ddd' }} />
+                ))}
+              </div>
+            </div>
           </div>
 
           <div style={{ marginBottom: '15px' }}>
@@ -1044,10 +1087,24 @@ function CatalogTab() {
                     </div>
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666' }}>Imagen URL o Subir</label>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#666', marginBottom: '4px' }}>Imagen del Producto</label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, true)} style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.8rem' }} />
-                      {editImagen && <img src={editImagen} alt="preview" style={{ width: '35px', height: '35px', objectFit: 'cover', borderRadius: '4px' }} />}
+                      {uploadingImage && <span style={{ fontSize: '0.8rem', color: '#C5A059' }}>Subiendo...</span>}
+                      {editImagen && <img src={editImagen} alt="preview" style={{ width: '35px', height: '35px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }} />}
+                    </div>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#666', marginBottom: '4px' }}>Galería de Imágenes</label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <input type="file" accept="image/*" multiple onChange={(e) => handleGalleryUpload(e, true)} style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.8rem' }} />
+                      {uploadingImage && <span style={{ fontSize: '0.8rem', color: '#C5A059' }}>Subiendo...</span>}
+                      {editGaleria.map((url, idx) => (
+                        <div key={idx} style={{ position: 'relative' }}>
+                          <img src={url} alt="preview" style={{ width: '35px', height: '35px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }} />
+                          <button onClick={() => setEditGaleria(prev => prev.filter((_, i) => i !== idx))} type="button" style={{ position: 'absolute', top: -5, right: -5, background: 'red', color: 'white', borderRadius: '50%', border: 'none', width: '16px', height: '16px', fontSize: '10px', cursor: 'pointer' }}>×</button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                   <div>
@@ -1721,6 +1778,31 @@ function CampaniasTab() {
   const [perfumesSeleccionados, setPerfumesSeleccionados] = useState<number[]>([]);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [imagen, setImagen] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('http://localhost:3000/uploads/image', {
+        method: 'POST', credentials: 'include', body: formData
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setImagen("http://localhost:3000" + data.url);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const CATEGORIAS_DISPONIBLES = ['árabe', 'diseñador', 'nicho'];
 
@@ -1754,6 +1836,7 @@ function CampaniasTab() {
       if (tipo === 'SELECCION') body.perfume_ids = JSON.stringify(perfumesSeleccionados);
       if (fechaInicio) body.fecha_inicio = fechaInicio;
       if (fechaFin) body.fecha_fin = fechaFin;
+      if (imagen) body.imagen = imagen;
 
       await fetch('http://localhost:3000/campanias', {
         method: 'POST',
@@ -1763,7 +1846,7 @@ function CampaniasTab() {
       });
       setNombre(''); setTipo('GLOBAL'); setDescuento(10);
       setCategoriasSeleccionadas([]); setPerfumesSeleccionados([]);
-      setFechaInicio(''); setFechaFin('');
+      setFechaInicio(''); setFechaFin(''); setImagen('');
       refresh();
     } catch (e) { alert('Error al crear campaña'); }
     finally { setSaving(false); }
@@ -1798,38 +1881,10 @@ function CampaniasTab() {
 
   if (loading) return <p style={{ color: '#666' }}>Cargando campañas...</p>;
 
-  const campaniaActiva = campanias.find(c => c.activa);
+  const campaniasActivas = campanias.filter(c => c.activa);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-
-      {/* Banner campaña activa */}
-      {campaniaActiva && (
-        <div style={{
-          background: 'linear-gradient(135deg, #C5A059, #8a6e30)',
-          borderRadius: '8px',
-          padding: '20px 25px',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 4px 20px rgba(197,160,89,0.35)',
-        }}>
-          <div>
-            <p style={{ margin: 0, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.85 }}>Campaña Activa Ahora</p>
-            <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', fontWeight: 800 }}>{campaniaActiva.nombre}</h3>
-            <p style={{ margin: '4px 0 0', fontSize: '0.9rem', opacity: 0.9 }}>
-              {Number(campaniaActiva.descuento)}% de descuento · Tipo: {campaniaActiva.tipo}
-            </p>
-          </div>
-          <button
-            onClick={() => handleToggle(campaniaActiva.id)}
-            style={{ padding: '10px 22px', background: 'rgba(255,255,255,0.2)', border: '1.5px solid rgba(255,255,255,0.6)', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.1em' }}
-          >
-            DESACTIVAR
-          </button>
-        </div>
-      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
 
@@ -1925,6 +1980,15 @@ function CampaniasTab() {
                 <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Fin (opc.)</label>
                 <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.8rem', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: '#5e5a54', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Imagen del Banner (opcional)</label>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <input type="file" accept="image/*" onChange={handleImageUpload} style={{ flex: 1, padding: '8px', border: '1px solid #eae5dc', borderRadius: '4px', fontSize: '0.8rem' }} />
+                {uploadingImage && <span style={{ fontSize: '0.75rem', color: '#C5A059' }}>Subiendo...</span>}
+                {imagen && <img src={imagen} alt="preview" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />}
               </div>
             </div>
 

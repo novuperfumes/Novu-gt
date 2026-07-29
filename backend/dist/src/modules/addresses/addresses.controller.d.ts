@@ -6,8 +6,8 @@ export declare class AddressesController {
     constructor(addressesService: AddressesService);
     create(req: any, dto: CreateAddressDto): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -15,8 +15,8 @@ export declare class AddressesController {
     }>;
     findAll(req: any): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -24,8 +24,8 @@ export declare class AddressesController {
     }[]>;
     findOne(req: any, id: number): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -33,8 +33,8 @@ export declare class AddressesController {
     }>;
     update(req: any, id: number, dto: UpdateAddressDto): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;
@@ -42,8 +42,8 @@ export declare class AddressesController {
     }>;
     remove(req: any, id: number): Promise<{
         id: number;
-        direccion: string;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
         referencias: string | null;

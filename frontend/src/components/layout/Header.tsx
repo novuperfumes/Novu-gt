@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -44,9 +44,19 @@ export function Header() {
                     <img src="/imagenes/logonovu.jpeg" alt="Logo Perfumes" className="brand-logo-img" />
                 </Link>
             </div>
-            
             <div className="search-bar-container">
-                <form action="#" className="search-form" id="search-form-el">
+                <form 
+                  className="search-form" 
+                  id="search-form-el"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const input = e.currentTarget.querySelector('input') as HTMLInputElement;
+                    if (input && input.value.trim()) {
+                      navigate(`/todas?q=${encodeURIComponent(input.value.trim())}`);
+                      closeMenu();
+                    }
+                  }}
+                >
                     <input type="text" placeholder="BUSCAR PERFUME..." aria-label="Buscar perfumes" className="search-input" id="search-input-el" />
                     <button type="submit" className="search-submit-btn" aria-label="Buscar">
                         <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,10 +109,11 @@ export function Header() {
         </div>
         
         <div className="category-nav-bar">
-            <Link to="/todas" className="category-nav-link" onClick={closeMenu}>Ver todas</Link>
-            <Link to="/arabe" className="category-nav-link" onClick={closeMenu}>Árabe</Link>
-            <Link to="/disenador" className="category-nav-link" onClick={closeMenu}>Diseñador</Link>
-            <Link to="/nicho" className="category-nav-link" onClick={closeMenu}>Nicho</Link>
+            <NavLink to="/todas" className="category-nav-link" onClick={closeMenu}>Ver todas</NavLink>
+            <NavLink to="/arabe" className="category-nav-link" onClick={closeMenu}>Árabe</NavLink>
+            <NavLink to="/disenador" className="category-nav-link" onClick={closeMenu}>Diseñador</NavLink>
+            <NavLink to="/nicho" className="category-nav-link" onClick={closeMenu}>Nicho</NavLink>
+            <NavLink to="/decants" className="category-nav-link" onClick={closeMenu}>Decants</NavLink>
         </div>
       </header>
 
@@ -114,6 +125,7 @@ export function Header() {
             <li><Link to="/arabe" className="nav-link" onClick={closeMenu}>Árabe</Link></li>
             <li><Link to="/disenador" className="nav-link" onClick={closeMenu}>Diseñador</Link></li>
             <li><Link to="/nicho" className="nav-link" onClick={closeMenu}>Nicho</Link></li>
+            <li><Link to="/decants" className="nav-link" onClick={closeMenu}>Decants</Link></li>
             <li><Link to="/faq" className="nav-link" onClick={closeMenu}>Preguntas Frecuentes</Link></li>
             <li><Link to="/sobre-nosotros" className="nav-link" onClick={closeMenu}>Sobre Nosotros</Link></li>
             <li><Link to="/contacto" className="nav-link" onClick={closeMenu}>Contacto</Link></li>

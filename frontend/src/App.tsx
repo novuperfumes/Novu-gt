@@ -4,8 +4,10 @@ import { CartModal } from './components/layout/CartModal';
 import { ProfileModal } from './components/layout/ProfileModal';
 import { CheckoutModal } from './components/layout/CheckoutModal';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { CampaniaBanner } from './components/layout/CampaniaBanner';
 import { Home } from './pages/Home';
 import { Arabe } from './pages/Arabe';
+import { Decants } from './pages/Decants';
 import { Disenador } from './pages/Disenador';
 import { Nicho } from './pages/Nicho';
 import { VerTodas } from './pages/VerTodas';
@@ -23,6 +25,7 @@ function App() {
   return (
     <>
       {!isHome && <Header />}
+      {!isHome && <CampaniaBanner />}
       <CartModal />
       <ProfileModal />
       <CheckoutModal />
@@ -31,6 +34,7 @@ function App() {
         <Route path="/arabe" element={<Arabe />} />
         <Route path="/disenador" element={<Disenador />} />
         <Route path="/nicho" element={<Nicho />} />
+        <Route path="/decants" element={<Decants />} />
         <Route path="/todas" element={<VerTodas />} />
         <Route path="/login" element={<Login />} />
         <Route path="/faq" element={<Faq />} />

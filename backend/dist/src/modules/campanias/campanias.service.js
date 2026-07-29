@@ -23,10 +23,10 @@ let CampaniasService = class CampaniasService {
         });
     }
     async findActiva() {
-        const campania = await this.prisma.campaniaDescuento.findFirst({
+        const campanias = await this.prisma.campaniaDescuento.findMany({
             where: { activa: true },
         });
-        return campania || null;
+        return campanias || [];
     }
     async create(dto) {
         return this.prisma.campaniaDescuento.create({
@@ -36,6 +36,7 @@ let CampaniasService = class CampaniasService {
                 descuento: dto.descuento,
                 categorias: dto.categorias ?? null,
                 perfume_ids: dto.perfume_ids ?? null,
+                imagen: dto.imagen ?? null,
                 fecha_inicio: dto.fecha_inicio ? new Date(dto.fecha_inicio) : null,
                 fecha_fin: dto.fecha_fin ? new Date(dto.fecha_fin) : null,
                 activa: false,
@@ -46,12 +47,6 @@ let CampaniasService = class CampaniasService {
         const existing = await this.prisma.campaniaDescuento.findUnique({ where: { id } });
         if (!existing)
             throw new common_1.NotFoundException(`Campaña #${id} no encontrada`);
-        if (data.activa === true) {
-            await this.prisma.campaniaDescuento.updateMany({
-                where: { id: { not: id } },
-                data: { activa: false },
-            });
-        }
         return this.prisma.campaniaDescuento.update({
             where: { id },
             data: {
@@ -60,6 +55,7 @@ let CampaniasService = class CampaniasService {
                 ...(data.descuento !== undefined && { descuento: data.descuento }),
                 ...(data.categorias !== undefined && { categorias: data.categorias }),
                 ...(data.perfume_ids !== undefined && { perfume_ids: data.perfume_ids }),
+                ...(data.imagen !== undefined && { imagen: data.imagen }),
                 ...(data.fecha_inicio !== undefined && { fecha_inicio: data.fecha_inicio ? new Date(data.fecha_inicio) : null }),
                 ...(data.fecha_fin !== undefined && { fecha_fin: data.fecha_fin ? new Date(data.fecha_fin) : null }),
                 ...(data.activa !== undefined && { activa: data.activa }),
@@ -70,12 +66,6 @@ let CampaniasService = class CampaniasService {
         const existing = await this.prisma.campaniaDescuento.findUnique({ where: { id } });
         if (!existing)
             throw new common_1.NotFoundException(`Campaña #${id} no encontrada`);
-        if (!existing.activa) {
-            await this.prisma.campaniaDescuento.updateMany({
-                where: { id: { not: id } },
-                data: { activa: false },
-            });
-        }
         return this.prisma.campaniaDescuento.update({
             where: { id },
             data: { activa: !existing.activa },

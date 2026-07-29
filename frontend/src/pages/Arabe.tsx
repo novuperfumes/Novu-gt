@@ -8,8 +8,8 @@ import { GuestBanner } from '../components/layout/GuestBanner';
 export function Arabe() {
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { perfumes, filterByCategory, loading } = usePerfumes();
-  const { campania, calcularPrecio } = useCampania();
+  const { perfumes, bestSellers, loading } = usePerfumes();
+  const { calcularPrecio } = useCampania();
   
   // --- Lógica del Carrusel Hero ---
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -47,14 +47,22 @@ export function Arabe() {
 
   // Filtrado de productos utilizando los datos del backend (ignorando mayúsculas/minúsculas)
   const categoryPerfumes = perfumes.filter(p => p.categoria.toLowerCase() === 'árabe' || p.categoria.toLowerCase() === 'arabe');
+  const categoryBestSellers = bestSellers.filter(p => p.categoria.toLowerCase() === 'árabe' || p.categoria.toLowerCase() === 'arabe');
 
-  const filteredSliderProducts = categoryPerfumes.filter(p => 
-    (p.subcategorias?.includes(activeTab)) && 
-    (activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex')
-  );
+  const filteredSliderProducts = activeTab === 'mas-vendidos'
+    ? categoryBestSellers.filter(p => 
+        activeGender === 'todos' || 
+        (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
+      )
+    : categoryPerfumes.filter(p => 
+      (p.subcategorias?.includes(activeTab)) && 
+      (activeGender === 'todos' || 
+       (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex')))
+    );
 
   const filteredGridProducts = categoryPerfumes.filter(p => 
-    activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex'
+    activeGender === 'todos' || 
+    (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
   );
 
   const handleVerMas = (id: number) => {
@@ -64,11 +72,6 @@ export function Arabe() {
   return (
     <>
       <GuestBanner />
-      {campania && (
-        <div className="campania-banner">
-          <span>✦</span> {campania.nombre} — {Number(campania.descuento)}% de descuento en perfumes seleccionados <span>✦</span>
-        </div>
-      )}
       <main className="arabe-main">
         {/* 1. Carrusel de Banners Hero */}
         <section className="hero-carousel-section" id="hero-carousel">
@@ -117,12 +120,12 @@ export function Arabe() {
         <section className="featured-tabs-section" id="novedades-section">
           <div className="section-container">
             <div className="gender-filter-container">
-              {['todos', 'el', 'ella'].map(g => (
+              {['todos', 'el', 'ella', 'decants'].map(g => (
                 <button 
                   key={g}
                   className={`gender-btn ${activeGender === g ? 'active' : ''}`} 
                   onClick={() => setActiveGender(g)}>
-                  {g === 'todos' ? 'TODOS' : `PARA ${g.toUpperCase()}`}
+                  {g === 'todos' ? 'TODOS' : g === 'decants' ? 'DECANTS' : `PARA ${g.toUpperCase()}`}
                 </button>
               ))}
             </div>
@@ -130,6 +133,7 @@ export function Arabe() {
             <div className="tabs-container">
               {[
                 { id: 'novedades', label: 'NOVEDADES' },
+                { id: 'mas-vendidos', label: 'MÁS VENDIDOS' },
                 { id: 'indispensables', label: 'INDISPENSABLES' },
                 { id: 'esenciales', label: 'ESENCIALES' },
                 { id: 'favoritas', label: 'FAVORITAS' }
@@ -186,9 +190,31 @@ export function Arabe() {
                     <img src={product.imagen || '/imagenes/logonovu.jpeg'} alt={product.nombre} className="grid-product-image" />
                   </div>
                   <div className="grid-card-details">
-                    <h3 className="grid-product-brand">{product.marca}</h3>
+                    <h3 
+                      className="grid-product-brand"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/todas?q=${encodeURIComponent(product.marca)}`);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ver todos los perfumes de ${product.marca}`}
+                    >
+                      {product.marca}
+                    </h3>
                     <p className="grid-product-name">{product.nombre}</p>
-                    <p className="grid-product-type">{product.categoria}</p>
+                    <p 
+                      className="grid-product-type"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const cat = (product.categoria || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        const path = cat.includes('nicho') ? '/nicho' : cat.includes('arabe') ? '/arabe' : '/disenador';
+                        navigate(path);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ir a la colección ${product.categoria}`}
+                    >
+                      {product.categoria}
+                    </p>
                     {tieneDescuento ? (
                       <div style={{ marginBottom: '12px' }}>
                         <span className="discount-badge">{porcentaje}% OFF</span>
@@ -206,6 +232,17 @@ export function Arabe() {
           </div>
         </section>
       </main>
+
+      <footer className="arabe-footer">
+        <div className="footer-socials">
+            <a href="https://www.instagram.com/novu_perfumes_gt/" target="_blank" className="social-link" aria-label="Instagram">
+                <svg className="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+            </a>
+        </div>
+        <p>&copy; 2026 Colecciones Exclusivas. Todos los derechos reservados.</p>
+      </footer>
     </>
   );
 }

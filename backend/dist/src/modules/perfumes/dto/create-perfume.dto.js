@@ -20,6 +20,7 @@ class CreatePerfumeDto {
     activo;
     tipo;
     genero;
+    galeria;
 }
 exports.CreatePerfumeDto = CreatePerfumeDto;
 __decorate([
@@ -62,4 +63,10 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePerfumeDto.prototype, "genero", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreatePerfumeDto.prototype, "galeria", void 0);
 //# sourceMappingURL=create-perfume.dto.js.map

@@ -23,6 +23,11 @@ export class PerfumesController {
     return this.perfumesService.findAllAdmin();
   }
 
+  @Get('best-sellers')
+  async getBestSellers() {
+    return this.perfumesService.getBestSellers();
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.perfumesService.findOne(id);

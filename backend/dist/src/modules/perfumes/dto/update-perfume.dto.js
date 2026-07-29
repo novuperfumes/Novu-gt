@@ -20,6 +20,7 @@ class UpdatePerfumeDto {
     activo;
     tipo;
     genero;
+    galeria;
     decant;
 }
 exports.UpdatePerfumeDto = UpdatePerfumeDto;
@@ -63,6 +64,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdatePerfumeDto.prototype, "genero", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdatePerfumeDto.prototype, "galeria", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)

@@ -9,8 +9,8 @@ export declare class BranchesService {
     constructor(prisma: PrismaService, redisService: RedisService);
     create(dto: CreateBranchDto): Promise<{
         id: number;
-        direccion: string;
         telefono: string | null;
+        direccion: string;
         departamento: string;
         municipio: string;
         nombre_sucursal: string;

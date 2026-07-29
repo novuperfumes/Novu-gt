@@ -11,9 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateReviewDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 class CreateReviewDto {
     calificacion;
     comentario;
+    compra_label;
 }
 exports.CreateReviewDto = CreateReviewDto;
 __decorate([
@@ -24,7 +26,15 @@ __decorate([
 ], CreateReviewDto.prototype, "calificacion", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(400, { message: 'El comentario no puede tener más de 400 caracteres' }),
+    (0, class_transformer_1.Transform)(({ value }) => typeof value === 'string'
+        ? value.replace(/<[^>]*>/g, '').replace(/['"`;\\]/g, '').trim()
+        : value),
     __metadata("design:type", String)
 ], CreateReviewDto.prototype, "comentario", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateReviewDto.prototype, "compra_label", void 0);
 //# sourceMappingURL=create-review.dto.js.map

@@ -4,6 +4,7 @@ export declare class CreateCampaniaDto {
     descuento: number;
     categorias?: string;
     perfume_ids?: string;
+    imagen?: string;
     fecha_inicio?: string;
     fecha_fin?: string;
 }

@@ -7,4 +7,5 @@ export declare class CreatePerfumeDto {
     activo?: boolean;
     tipo?: string;
     genero?: string;
+    galeria?: string[];
 }

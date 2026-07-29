@@ -6,8 +6,8 @@ import { GuestBanner } from '../components/layout/GuestBanner';
 
 export function Disenador() {
   const navigate = useNavigate();
-  const { perfumes, filterByCategory, loading } = usePerfumes();
-  const { campania, calcularPrecio } = useCampania();
+  const { perfumes, bestSellers, filterByCategory, loading } = usePerfumes();
+  const { calcularPrecio } = useCampania();
   
   // --- Lógica del Carrusel Hero ---
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -45,14 +45,22 @@ export function Disenador() {
 
   // Filtrado de productos utilizando los datos del backend
   const categoryPerfumes = perfumes.filter(p => p.categoria.toLowerCase() === 'diseñador' || p.categoria.toLowerCase() === 'disenador');
+  const categoryBestSellers = bestSellers.filter(p => p.categoria.toLowerCase() === 'diseñador' || p.categoria.toLowerCase() === 'disenador');
 
-  const filteredSliderProducts = categoryPerfumes.filter(p => 
-    (p.subcategorias?.includes(activeTab)) && 
-    (activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex')
-  );
+  const filteredSliderProducts = activeTab === 'mas-vendidos'
+    ? categoryBestSellers.filter(p => 
+        activeGender === 'todos' || 
+        (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
+      )
+    : categoryPerfumes.filter(p => 
+      (p.subcategorias?.includes(activeTab)) && 
+      (activeGender === 'todos' || 
+       (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex')))
+    );
 
   const filteredGridProducts = categoryPerfumes.filter(p => 
-    activeGender === 'todos' || p.genero === activeGender || p.genero === 'unisex'
+    activeGender === 'todos' || 
+    (activeGender === 'decants' ? (p.decant !== undefined && p.decant !== null) : (p.genero === activeGender || p.genero === 'unisex'))
   );
 
   const handleVerMas = (id: number) => {
@@ -62,11 +70,6 @@ export function Disenador() {
   return (
     <>
       <GuestBanner />
-      {campania && (
-        <div className="campania-banner">
-          <span>✦</span> {campania.nombre} — {Number(campania.descuento)}% de descuento en perfumes seleccionados <span>✦</span>
-        </div>
-      )}
       <main className="arabe-main">
         {/* 1. Carrusel de Banners Hero */}
         <section className="hero-carousel-section" id="hero-carousel">
@@ -115,12 +118,12 @@ export function Disenador() {
         <section className="featured-tabs-section" id="novedades-section">
           <div className="section-container">
             <div className="gender-filter-container">
-              {['todos', 'el', 'ella'].map(g => (
+              {['todos', 'el', 'ella', 'decants'].map(g => (
                 <button 
                   key={g}
                   className={`gender-btn ${activeGender === g ? 'active' : ''}`} 
                   onClick={() => setActiveGender(g)}>
-                  {g === 'todos' ? 'TODOS' : `PARA ${g.toUpperCase()}`}
+                  {g === 'todos' ? 'TODOS' : g === 'decants' ? 'DECANTS' : `PARA ${g.toUpperCase()}`}
                 </button>
               ))}
             </div>
@@ -128,6 +131,7 @@ export function Disenador() {
             <div className="tabs-container">
               {[
                 { id: 'novedades', label: 'NOVEDADES' },
+                { id: 'mas-vendidos', label: 'MÁS VENDIDOS' },
                 { id: 'indispensables', label: 'INDISPENSABLES' },
                 { id: 'esenciales', label: 'ESENCIALES' },
                 { id: 'favoritas', label: 'FAVORITAS' }
@@ -184,9 +188,31 @@ export function Disenador() {
                     <img src={product.imagen || '/imagenes/logonovu.jpeg'} alt={product.nombre} className="grid-product-image" />
                   </div>
                   <div className="grid-card-details">
-                    <h3 className="grid-product-brand">{product.marca}</h3>
+                    <h3 
+                      className="grid-product-brand"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/todas?q=${encodeURIComponent(product.marca)}`);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ver todos los perfumes de ${product.marca}`}
+                    >
+                      {product.marca}
+                    </h3>
                     <p className="grid-product-name">{product.nombre}</p>
-                    <p className="grid-product-type">{product.categoria}</p>
+                    <p 
+                      className="grid-product-type"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const cat = (product.categoria || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        const path = cat.includes('nicho') ? '/nicho' : cat.includes('arabe') ? '/arabe' : '/disenador';
+                        navigate(path);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                      title={`Ir a la colección ${product.categoria}`}
+                    >
+                      {product.categoria}
+                    </p>
                     {tieneDescuento ? (
                       <div style={{ marginBottom: '12px' }}>
                         <span className="discount-badge">{porcentaje}% OFF</span>
