@@ -6,31 +6,31 @@ export declare class FavoritesController {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         id_usuario: number;
         fecha_agregado: Date;
-        id_perfume: number;
     })[]>;
     addFavorite(req: any, perfumeId: number): Promise<{
         id: number;
+        id_perfume: number;
         id_usuario: number;
         fecha_agregado: Date;
-        id_perfume: number;
     }>;
     removeFavorite(req: any, perfumeId: number): Promise<{
         id: number;
+        id_perfume: number;
         id_usuario: number;
         fecha_agregado: Date;
-        id_perfume: number;
     }>;
 }

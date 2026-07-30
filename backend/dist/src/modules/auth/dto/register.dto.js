@@ -28,7 +28,8 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)({ message: 'La contraseña es requerida' }),
-    (0, class_validator_1.MinLength)(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+    (0, class_validator_1.MinLength)(8, { message: 'La contraseña debe tener al menos 8 caracteres' }),
+    (0, class_validator_1.Matches)(/^(?=.*[A-Za-z])(?=.*\d)/, { message: 'La contraseña debe incluir al menos una letra y un número' }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "contrasenia", void 0);
 __decorate([

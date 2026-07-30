@@ -52,11 +52,12 @@ let UsersService = class UsersService {
         this.prisma = prisma;
     }
     async onModuleInit() {
-        const adminEmail = 'admin@novugt.com';
+        const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@novugt.com';
         const exists = await this.findOneByCorreo(adminEmail);
         if (!exists) {
+            const defaultPassword = process.env.INITIAL_ADMIN_PASSWORD || 'NovuAdmin2026!SecurePass';
             const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash('admin123', salt);
+            const hashedPassword = await bcrypt.hash(defaultPassword, salt);
             await this.prisma.usuario.create({
                 data: {
                     correo: adminEmail,
@@ -66,7 +67,7 @@ let UsersService = class UsersService {
                     rol: 'ADMIN',
                 }
             });
-            console.log('Usuario Administrador creado por defecto');
+            console.log('Usuario Administrador inicial creado de forma segura');
         }
     }
     async create(data) {

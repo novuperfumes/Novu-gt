@@ -5,45 +5,45 @@ export declare class InventoryController {
     constructor(inventoryService: InventoryService);
     create(dto: CreateIngresoDto): Promise<{
         id: number;
-        id_presentacion: number;
         cantidad: number;
-        fecha_ingreso: Date;
+        id_presentacion: number;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;
         costo_total: import("@prisma/client-runtime-utils").Decimal;
+        fecha_ingreso: Date;
     }>;
     findAll(): Promise<({
         presentacion: {
             perfume: {
                 id: number;
                 nombre: string;
-                genero: string | null;
-                activo: boolean;
                 descripcion: string;
                 categoria: string;
                 tipo: string | null;
+                genero: string | null;
                 imagen: string;
                 galeria: string[];
                 marca: string;
+                activo: boolean;
             };
         } & {
             id: number;
-            id_perfume: number;
             tamanio: string;
             precio: import("@prisma/client-runtime-utils").Decimal;
             stock: number;
             costo: import("@prisma/client-runtime-utils").Decimal | null;
+            id_perfume: number;
         };
     } & {
         id: number;
-        id_presentacion: number;
         cantidad: number;
-        fecha_ingreso: Date;
+        id_presentacion: number;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;
         costo_total: import("@prisma/client-runtime-utils").Decimal;
+        fecha_ingreso: Date;
     })[]>;
     getStats(): Promise<{
         resumen: {

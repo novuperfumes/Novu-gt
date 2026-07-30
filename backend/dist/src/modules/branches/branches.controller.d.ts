@@ -5,9 +5,9 @@ export declare class BranchesController {
     constructor(branchesService: BranchesService);
     findAll(): Promise<any>;
     create(dto: CreateBranchDto): Promise<{
-        direccion: string;
         id: number;
         telefono: string | null;
+        direccion: string;
         departamento: string;
         municipio: string;
         nombre_sucursal: string;

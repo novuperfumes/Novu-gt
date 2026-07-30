@@ -22,6 +22,12 @@ async function bootstrap() {
   // Set pino-logger as NestJS system logger
   app.useLogger(app.get(Logger));
 
+  // Security check for production JWT secret
+  if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('fallback') || process.env.JWT_SECRET.includes('change_in_production'))) {
+    console.error('FATAL SECURITY ERROR: JWT_SECRET must be explicitly set to a strong secret in production mode.');
+    process.exit(1);
+  }
+
   // Ensure uploads directory exists
   const uploadsDir = join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadsDir)) {

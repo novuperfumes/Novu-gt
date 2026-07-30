@@ -377,7 +377,18 @@ export class OrdersService {
   async findAllAdmin() {
     return this.prisma.ordenCompra.findMany({
       include: {
-        usuario: true,
+        usuario: {
+          select: {
+            id: true,
+            correo: true,
+            nombre: true,
+            apellido: true,
+            telefono: true,
+            genero: true,
+            rol: true,
+            sellos: true,
+          },
+        },
         detalles: {
           include: {
             presentacion: {

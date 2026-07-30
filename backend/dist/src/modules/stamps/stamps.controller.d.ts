@@ -8,10 +8,10 @@ export declare class StampsController {
         remainingForFreePerfume: number;
         history: {
             id: number;
+            fecha: Date;
             id_usuario: number;
             tipo_operacion: string;
             cantidad_sellos: number;
-            fecha: Date;
             id_orden: number | null;
         }[];
     }>;
@@ -21,10 +21,10 @@ export declare class StampsController {
         remainingForFreePerfume: number;
         history: {
             id: number;
+            fecha: Date;
             id_usuario: number;
             tipo_operacion: string;
             cantidad_sellos: number;
-            fecha: Date;
             id_orden: number | null;
         }[];
     }>;

@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const auth_guard_1 = require("../auth/guards/auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
@@ -34,19 +36,13 @@ let UsersController = class UsersController {
         const userId = req.user.sub;
         return this.usersService.updateProfile(userId, dto);
     }
-    async getAdminMetrics(req) {
-        if (req.user.role !== 'ADMIN')
-            throw new common_1.NotFoundException('No autorizado');
+    async getAdminMetrics() {
         return this.usersService.getAdminMetrics();
     }
-    async searchUsers(req, q) {
-        if (req.user.role !== 'ADMIN')
-            throw new common_1.NotFoundException('No autorizado');
+    async searchUsers(q) {
         return this.usersService.searchUsers(q || '');
     }
-    async updateSellos(req, id, body) {
-        if (req.user.role !== 'ADMIN')
-            throw new common_1.NotFoundException('No autorizado');
+    async updateSellos(id, body) {
         return this.usersService.updateSellos(Number(id), body.sellos);
     }
 };
@@ -68,26 +64,29 @@ __decorate([
 ], UsersController.prototype, "updateProfile", null);
 __decorate([
     (0, common_1.Get)('admin/metrics'),
-    __param(0, (0, common_1.Req)()),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAdminMetrics", null);
 __decorate([
     (0, common_1.Get)('search'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Query)('q')),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "searchUsers", null);
 __decorate([
     (0, common_1.Patch)(':id/sellos'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Param)('id')),
-    __param(2, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateSellos", null);
 exports.UsersController = UsersController = __decorate([

@@ -5,8 +5,8 @@ export declare class ContactController {
     constructor(contactService: ContactService);
     create(dto: CreateMessageDto): Promise<{
         id: number;
-        correo: string;
         nombre: string;
+        correo: string;
         asunto: string;
         mensaje: string;
         fecha_creacion: Date;
@@ -14,8 +14,8 @@ export declare class ContactController {
     }>;
     findAll(): Promise<{
         id: number;
-        correo: string;
         nombre: string;
+        correo: string;
         asunto: string;
         mensaje: string;
         fecha_creacion: Date;
@@ -23,8 +23,8 @@ export declare class ContactController {
     }[]>;
     markAsRead(id: number): Promise<{
         id: number;
-        correo: string;
         nombre: string;
+        correo: string;
         asunto: string;
         mensaje: string;
         fecha_creacion: Date;

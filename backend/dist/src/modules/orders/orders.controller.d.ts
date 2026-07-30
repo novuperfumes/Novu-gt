@@ -6,7 +6,6 @@ export declare class OrdersController {
     create(req: any, dto: CreateOrderDto): Promise<{
         order: {
             id: number;
-            id_usuario: number;
             fecha: Date;
             total: import("@prisma/client-runtime-utils").Decimal;
             estado: string;
@@ -20,6 +19,7 @@ export declare class OrdersController {
             referencias_entrega: string | null;
             codigo_postal_entrega: string | null;
             costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+            id_usuario: number;
             id_sucursal: number | null;
             id_codigo_promocion: number | null;
             id_gift_card: number | null;
@@ -31,18 +31,17 @@ export declare class OrdersController {
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 ml_origen: number;
                 costo_original: import("@prisma/client-runtime-utils").Decimal;
                 precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -52,40 +51,40 @@ export declare class OrdersController {
                 costo_10ml: import("@prisma/client-runtime-utils").Decimal;
                 precio_10ml: import("@prisma/client-runtime-utils").Decimal;
                 stock_10ml: number;
+                id_perfume: number;
             }) | null;
             presentacion: ({
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 tamanio: string;
                 precio: import("@prisma/client-runtime-utils").Decimal;
                 stock: number;
                 costo: import("@prisma/client-runtime-utils").Decimal | null;
+                id_perfume: number;
             }) | null;
         } & {
             id: number;
-            id_orden: number;
-            id_presentacion: number | null;
-            id_decant: number | null;
             tipo_decant: string | null;
             cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
+            id_presentacion: number | null;
+            id_decant: number | null;
+            id_orden: number;
         })[];
     } & {
         id: number;
-        id_usuario: number;
         fecha: Date;
         total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
@@ -99,56 +98,55 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
     })[]>;
-    findAllAdmin(req: any): Promise<({
+    findAllAdmin(): Promise<({
         usuario: {
             id: number;
-            correo: string;
-            contrasenia: string;
-            rol: string;
             nombre: string;
+            genero: string | null;
+            correo: string;
+            rol: string;
             apellido: string;
             telefono: string | null;
-            genero: string | null;
             sellos: number;
         };
-        giftCard: {
-            id: number;
-            id_usuario: number;
-            codigo: string;
-            monto: import("@prisma/client-runtime-utils").Decimal;
-            activa: boolean;
-            es_bienvenida: boolean;
-        } | null;
         codigoPromocion: {
             id: number;
-            codigo: string;
-            estado: string;
-            tipo_descuento: string;
             descuento: import("@prisma/client-runtime-utils").Decimal;
             fecha_inicio: Date;
             fecha_fin: Date;
+            estado: string;
+            codigo: string;
+            tipo_descuento: string;
+        } | null;
+        giftCard: {
+            id: number;
+            activa: boolean;
+            id_usuario: number;
+            codigo: string;
+            monto: import("@prisma/client-runtime-utils").Decimal;
+            es_bienvenida: boolean;
         } | null;
         detalles: ({
             decant: ({
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 ml_origen: number;
                 costo_original: import("@prisma/client-runtime-utils").Decimal;
                 precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -158,40 +156,40 @@ export declare class OrdersController {
                 costo_10ml: import("@prisma/client-runtime-utils").Decimal;
                 precio_10ml: import("@prisma/client-runtime-utils").Decimal;
                 stock_10ml: number;
+                id_perfume: number;
             }) | null;
             presentacion: ({
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 tamanio: string;
                 precio: import("@prisma/client-runtime-utils").Decimal;
                 stock: number;
                 costo: import("@prisma/client-runtime-utils").Decimal | null;
+                id_perfume: number;
             }) | null;
         } & {
             id: number;
-            id_orden: number;
-            id_presentacion: number | null;
-            id_decant: number | null;
             tipo_decant: string | null;
             cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
+            id_presentacion: number | null;
+            id_decant: number | null;
+            id_orden: number;
         })[];
     } & {
         id: number;
-        id_usuario: number;
         fecha: Date;
         total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
@@ -205,16 +203,16 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
     })[]>;
-    updateStatus(req: any, id: number, body: {
+    updateStatus(id: number, body: {
         estado: string;
         costo_envio?: number;
     }): Promise<{
         id: number;
-        id_usuario: number;
         fecha: Date;
         total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
@@ -228,6 +226,7 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
@@ -238,18 +237,17 @@ export declare class OrdersController {
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 ml_origen: number;
                 costo_original: import("@prisma/client-runtime-utils").Decimal;
                 precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -259,40 +257,40 @@ export declare class OrdersController {
                 costo_10ml: import("@prisma/client-runtime-utils").Decimal;
                 precio_10ml: import("@prisma/client-runtime-utils").Decimal;
                 stock_10ml: number;
+                id_perfume: number;
             }) | null;
             presentacion: ({
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
-                id_perfume: number;
                 tamanio: string;
                 precio: import("@prisma/client-runtime-utils").Decimal;
                 stock: number;
                 costo: import("@prisma/client-runtime-utils").Decimal | null;
+                id_perfume: number;
             }) | null;
         } & {
             id: number;
-            id_orden: number;
-            id_presentacion: number | null;
-            id_decant: number | null;
             tipo_decant: string | null;
             cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
+            id_presentacion: number | null;
+            id_decant: number | null;
+            id_orden: number;
         })[];
     } & {
         id: number;
-        id_usuario: number;
         fecha: Date;
         total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
@@ -306,6 +304,7 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;

@@ -10,57 +10,57 @@ export declare class UsersService implements OnModuleInit {
     findOneById(id: number): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
             id_usuario: number;
             codigo: string;
             monto: Prisma.Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
         }[];
         id: number;
+        nombre: string;
+        genero: string | null;
         correo: string;
         rol: string;
-        nombre: string;
         apellido: string;
         telefono: string | null;
-        genero: string | null;
         sellos: number;
     } | null>;
     updateProfile(id: number, data: Prisma.UsuarioUpdateInput): Promise<Omit<Usuario, 'contrasenia'>>;
     searchUsers(query: string): Promise<{
         giftCards: {
             id: number;
+            activa: boolean;
             id_usuario: number;
             codigo: string;
             monto: Prisma.Decimal;
-            activa: boolean;
             es_bienvenida: boolean;
         }[];
         id: number;
+        nombre: string;
+        genero: string | null;
         correo: string;
         rol: string;
-        nombre: string;
         apellido: string;
         telefono: string | null;
-        genero: string | null;
         sellos: number;
     }[]>;
     updateSellos(id: number, sellos: number): Promise<{
         user: {
             giftCards: {
                 id: number;
+                activa: boolean;
                 id_usuario: number;
                 codigo: string;
                 monto: Prisma.Decimal;
-                activa: boolean;
                 es_bienvenida: boolean;
             }[];
             id: number;
+            nombre: string;
+            genero: string | null;
             correo: string;
             rol: string;
-            nombre: string;
             apellido: string;
             telefono: string | null;
-            genero: string | null;
             sellos: number;
         };
         giftCardCreated: any;

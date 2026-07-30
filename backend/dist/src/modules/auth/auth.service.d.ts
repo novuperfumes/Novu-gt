@@ -8,23 +8,23 @@ export declare class AuthService {
     constructor(usersService: UsersService, jwtService: JwtService);
     register(dto: RegisterDto): Promise<{
         id: number;
+        nombre: string;
+        genero: string | null;
         correo: string;
         rol: string;
-        nombre: string;
         apellido: string;
         telefono: string | null;
-        genero: string | null;
         sellos: number;
     }>;
     login(dto: LoginDto): Promise<{
         user: {
             id: number;
+            nombre: string;
+            genero: string | null;
             correo: string;
             rol: string;
-            nombre: string;
             apellido: string;
             telefono: string | null;
-            genero: string | null;
             sellos: number;
         };
         token: string;

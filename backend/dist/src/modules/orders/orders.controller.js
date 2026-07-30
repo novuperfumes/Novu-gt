@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const orders_service_1 = require("./orders.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const auth_guard_1 = require("../auth/guards/auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let OrdersController = class OrdersController {
     ordersService;
     constructor(ordersService) {
@@ -30,14 +32,10 @@ let OrdersController = class OrdersController {
         const userId = req.user.sub;
         return this.ordersService.findAllByUser(userId);
     }
-    async findAllAdmin(req) {
-        if (req.user.role !== 'ADMIN')
-            throw new common_1.NotFoundException('No autorizado');
+    async findAllAdmin() {
         return this.ordersService.findAllAdmin();
     }
-    async updateStatus(req, id, body) {
-        if (req.user.role !== 'ADMIN')
-            throw new common_1.NotFoundException('No autorizado');
+    async updateStatus(id, body) {
         return this.ordersService.updateStatus(id, body.estado, body.costo_envio);
     }
     async findOne(req, id) {
@@ -63,18 +61,20 @@ __decorate([
 ], OrdersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('admin/all'),
-    __param(0, (0, common_1.Req)()),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAllAdmin", null);
 __decorate([
     (0, common_1.Patch)('admin/:id/status'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(2, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Number, Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
 __decorate([
