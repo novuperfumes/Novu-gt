@@ -6,40 +6,40 @@ export declare class CampaniasService {
     findAll(): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }[]>;
     findActiva(): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }[]>;
     create(dto: CreateCampaniaDto): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     update(id: number, data: Partial<CreateCampaniaDto> & {
@@ -47,40 +47,40 @@ export declare class CampaniasService {
     }): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     toggleActiva(id: number): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     remove(id: number): Promise<{
         id: number;
         nombre: string;
+        activa: boolean;
         tipo: string;
         imagen: string | null;
-        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
 }

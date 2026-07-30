@@ -6,30 +6,30 @@ export declare class UsersController {
     getProfile(req: any): Promise<{
         giftCards: {
             id: number;
-            activa: boolean;
             id_usuario: number;
             codigo: string;
             monto: import("@prisma/client-runtime-utils").Decimal;
+            activa: boolean;
             es_bienvenida: boolean;
         }[];
         id: number;
-        nombre: string;
-        genero: string | null;
         correo: string;
         rol: string;
+        nombre: string;
         apellido: string;
         telefono: string | null;
+        genero: string | null;
         sellos: number;
     }>;
     updateProfile(req: any, dto: UpdateUserDto): Promise<Omit<{
         id: number;
-        nombre: string;
-        genero: string | null;
         correo: string;
         contrasenia: string;
         rol: string;
+        nombre: string;
         apellido: string;
         telefono: string | null;
+        genero: string | null;
         sellos: number;
     }, "contrasenia">>;
     getAdminMetrics(req: any): Promise<{
@@ -41,19 +41,19 @@ export declare class UsersController {
     searchUsers(req: any, q: string): Promise<{
         giftCards: {
             id: number;
-            activa: boolean;
             id_usuario: number;
             codigo: string;
             monto: import("@prisma/client-runtime-utils").Decimal;
+            activa: boolean;
             es_bienvenida: boolean;
         }[];
         id: number;
-        nombre: string;
-        genero: string | null;
         correo: string;
         rol: string;
+        nombre: string;
         apellido: string;
         telefono: string | null;
+        genero: string | null;
         sellos: number;
     }[]>;
     updateSellos(req: any, id: string, body: {
@@ -62,19 +62,19 @@ export declare class UsersController {
         user: {
             giftCards: {
                 id: number;
-                activa: boolean;
                 id_usuario: number;
                 codigo: string;
                 monto: import("@prisma/client-runtime-utils").Decimal;
+                activa: boolean;
                 es_bienvenida: boolean;
             }[];
             id: number;
-            nombre: string;
-            genero: string | null;
             correo: string;
             rol: string;
+            nombre: string;
             apellido: string;
             telefono: string | null;
+            genero: string | null;
             sellos: number;
         };
         giftCardCreated: any;

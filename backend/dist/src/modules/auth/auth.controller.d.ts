@@ -5,25 +5,26 @@ import { LoginDto } from './dto/login.dto';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
+    getCsrfToken(reply: fastify.FastifyReply): void;
     register(dto: RegisterDto): Promise<{
         id: number;
-        nombre: string;
-        genero: string | null;
         correo: string;
         rol: string;
+        nombre: string;
         apellido: string;
         telefono: string | null;
+        genero: string | null;
         sellos: number;
     }>;
     login(dto: LoginDto, response: fastify.FastifyReply): Promise<{
         user: {
             id: number;
-            nombre: string;
-            genero: string | null;
             correo: string;
             rol: string;
+            nombre: string;
             apellido: string;
             telefono: string | null;
+            genero: string | null;
             sellos: number;
         };
     }>;

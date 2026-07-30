@@ -6,6 +6,8 @@ import { Logger } from 'nestjs-pino';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
+import helmet from '@fastify/helmet';
+import fastifyCsrfProtection from '@fastify/csrf-protection';
 import { join } from 'path';
 import * as fs from 'fs';
 
@@ -44,9 +46,37 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
+  // Register Helmet for Security Headers
+  await app.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'res.cloudinary.com'],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+      },
+    },
+    crossOriginResourcePolicy: false, // For serving images across origins if needed
+  });
+
+  // Register CSRF Protection
+  await app.register(fastifyCsrfProtection, { cookieOpts: { signed: true } });
+
+  // Add global CSRF hook
+  const fastifyInstance = app.getHttpAdapter().getInstance() as any;
+  fastifyInstance.addHook('onRequest', async (req: any, reply: any) => {
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+      // Exclude routes that don't need CSRF or where token might not exist yet
+      const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];
+      if (!excludedRoutes.some(route => req.url.startsWith(route))) {
+        await fastifyInstance.csrfProtection(req, reply);
+      }
+    }
+  });
+
   // Enable CORS
   app.enableCors({
-    origin: true, // Configured for dev; restrict in production
+    origin: process.env.FRONTEND_URL ?? 'http://localhost:5173', // Restrict in production
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });

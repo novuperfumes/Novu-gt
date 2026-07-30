@@ -44,6 +44,8 @@ const nestjs_pino_1 = require("nestjs-pino");
 const cookie_1 = __importDefault(require("@fastify/cookie"));
 const multipart_1 = __importDefault(require("@fastify/multipart"));
 const static_1 = __importDefault(require("@fastify/static"));
+const helmet_1 = __importDefault(require("@fastify/helmet"));
+const csrf_protection_1 = __importDefault(require("@fastify/csrf-protection"));
 const path_1 = require("path");
 const fs = __importStar(require("fs"));
 async function bootstrap() {
@@ -67,8 +69,29 @@ async function bootstrap() {
         root: uploadsDir,
         prefix: '/uploads/',
     });
+    await app.register(helmet_1.default, {
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", 'data:', 'res.cloudinary.com'],
+                scriptSrc: ["'self'", "'unsafe-inline'"],
+            },
+        },
+        crossOriginResourcePolicy: false,
+    });
+    await app.register(csrf_protection_1.default, { cookieOpts: { signed: true } });
+    const fastifyInstance = app.getHttpAdapter().getInstance();
+    fastifyInstance.addHook('onRequest', async (req, reply) => {
+        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+            const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];
+            if (!excludedRoutes.some(route => req.url.startsWith(route))) {
+                await fastifyInstance.csrfProtection(req, reply);
+            }
+        }
+    });
     app.enableCors({
-        origin: true,
+        origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
         credentials: true,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     });

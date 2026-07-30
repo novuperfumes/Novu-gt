@@ -14,8 +14,10 @@ const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 const pg_1 = require("pg");
 const adapter_pg_1 = require("@prisma/adapter-pg");
+const prisma_field_encryption_1 = require("prisma-field-encryption");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     pool;
+    extendedClient;
     constructor() {
         const connectionString = process.env.DATABASE_URL;
         const pool = new pg_1.Pool({ connectionString });
@@ -25,6 +27,17 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
             log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
         });
         this.pool = pool;
+        this.extendedClient = this.$extends((0, prisma_field_encryption_1.fieldEncryptionExtension)({
+            encryptionKey: process.env.PRISMA_FIELD_ENCRYPTION_KEY
+        }));
+        return new Proxy(this, {
+            get: (target, prop) => {
+                if (prop === 'extendedClient' || prop === 'pool' || prop === 'onModuleInit' || prop === 'onModuleDestroy' || prop === '$connect' || prop === '$disconnect') {
+                    return target[prop];
+                }
+                return target.extendedClient[prop];
+            }
+        });
     }
     async onModuleInit() {
         await this.$connect();

@@ -8,17 +8,18 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
+            genero: string | null;
+            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
-            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
-            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         ml_origen: number;
         costo_original: import("@prisma/client-runtime-utils").Decimal;
         precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -28,23 +29,23 @@ export declare class DecantsService {
         costo_10ml: import("@prisma/client-runtime-utils").Decimal;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal;
         stock_10ml: number;
-        id_perfume: number;
     }>;
     findAll(): Promise<({
         perfume: {
             id: number;
             nombre: string;
+            genero: string | null;
+            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
-            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
-            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         ml_origen: number;
         costo_original: import("@prisma/client-runtime-utils").Decimal;
         precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -54,23 +55,23 @@ export declare class DecantsService {
         costo_10ml: import("@prisma/client-runtime-utils").Decimal;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal;
         stock_10ml: number;
-        id_perfume: number;
     })[]>;
     findOne(id: number): Promise<{
         perfume: {
             id: number;
             nombre: string;
+            genero: string | null;
+            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
-            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
-            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         ml_origen: number;
         costo_original: import("@prisma/client-runtime-utils").Decimal;
         precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -80,23 +81,23 @@ export declare class DecantsService {
         costo_10ml: import("@prisma/client-runtime-utils").Decimal;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal;
         stock_10ml: number;
-        id_perfume: number;
     }>;
     findByPerfume(perfumeId: number): Promise<{
         perfume: {
             id: number;
             nombre: string;
+            genero: string | null;
+            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
-            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
-            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         ml_origen: number;
         costo_original: import("@prisma/client-runtime-utils").Decimal;
         precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -106,23 +107,23 @@ export declare class DecantsService {
         costo_10ml: import("@prisma/client-runtime-utils").Decimal;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal;
         stock_10ml: number;
-        id_perfume: number;
     }>;
     update(id: number, dto: UpdateDecantDto): Promise<{
         perfume: {
             id: number;
             nombre: string;
+            genero: string | null;
+            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
-            genero: string | null;
             imagen: string;
             galeria: string[];
             marca: string;
-            activo: boolean;
         };
     } & {
         id: number;
+        id_perfume: number;
         ml_origen: number;
         costo_original: import("@prisma/client-runtime-utils").Decimal;
         precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -132,7 +133,6 @@ export declare class DecantsService {
         costo_10ml: import("@prisma/client-runtime-utils").Decimal;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal;
         stock_10ml: number;
-        id_perfume: number;
     }>;
     remove(id: number): Promise<{
         message: string;

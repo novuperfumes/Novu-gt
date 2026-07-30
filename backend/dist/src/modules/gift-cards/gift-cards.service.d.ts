@@ -8,33 +8,33 @@ export declare class GiftCardsService {
         monto: number;
     }): Promise<{
         id: number;
-        activa: boolean;
         id_usuario: number;
         codigo: string;
         monto: Prisma.Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
     }>;
     findAll(): Promise<({
         usuario: {
             id: number;
-            nombre: string;
             correo: string;
+            nombre: string;
             apellido: string;
         };
     } & {
         id: number;
-        activa: boolean;
         id_usuario: number;
         codigo: string;
         monto: Prisma.Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
     })[]>;
     validate(codigo: string, userId: number): Promise<{
         id: number;
-        activa: boolean;
         id_usuario: number;
         codigo: string;
         monto: Prisma.Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
     }>;
 }

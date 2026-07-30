@@ -9,6 +9,12 @@ import { AuthGuard } from './guards/auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Get('csrf')
+  getCsrfToken(@Res() reply: fastify.FastifyReply) {
+    const token = (reply as any).generateCsrf();
+    reply.send({ csrfToken: token });
+  }
+
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
