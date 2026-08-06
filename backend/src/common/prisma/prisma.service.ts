@@ -5,7 +5,7 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
-    const adapter = new PrismaMariaDb(process.env.DATABASE_URL || 'mysql://root:secret_password@localhost:3306/novu_db');
+    const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
     super({
       adapter,
       log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
@@ -20,3 +20,4 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect();
   }
 }
+

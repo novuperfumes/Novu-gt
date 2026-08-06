@@ -35,8 +35,10 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const client_1 = require("@prisma/client");
+const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
 const bcrypt = __importStar(require("bcrypt"));
-const prisma = new client_1.PrismaClient();
+const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL);
+const prisma = new client_1.PrismaClient({ adapter });
 async function main() {
     console.log('Creando nuevas cuentas admin y cliente...');
     const salt = await bcrypt.genSalt(10);

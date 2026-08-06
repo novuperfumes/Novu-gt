@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
+const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL);
+const prisma = new client_1.PrismaClient({ adapter });
 async function main() {
     console.log('Inyectando más perfumes...');
     const imgPerfume1 = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800&auto=format&fit=crop';

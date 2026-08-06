@@ -15,7 +15,7 @@ const client_1 = require("@prisma/client");
 const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor() {
-        const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL || 'mysql://root:secret_password@localhost:3306/novu_db');
+        const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL);
         super({
             adapter,
             log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
