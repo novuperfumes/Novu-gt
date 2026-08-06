@@ -34,12 +34,10 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const pg_1 = require("pg");
-const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
+const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
 const bcrypt = __importStar(require("bcrypt"));
-const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new adapter_pg_1.PrismaPg(pool);
+const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL || 'mysql://root:secret_password@localhost:3306/novu_db');
 const prisma = new client_1.PrismaClient({ adapter });
 async function main() {
     await prisma.reseniaPerfume.deleteMany();
@@ -364,6 +362,5 @@ main()
 })
     .finally(async () => {
     await prisma.$disconnect();
-    await pool.end();
 });
 //# sourceMappingURL=seed.js.map

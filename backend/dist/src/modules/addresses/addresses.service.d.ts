@@ -5,48 +5,48 @@ export declare class AddressesService {
     private prisma;
     constructor(prisma: PrismaService);
     create(userId: number, dto: CreateAddressDto): Promise<{
-        direccion: string;
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     findAllByUser(userId: number): Promise<{
-        direccion: string;
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }[]>;
     findOne(userId: number, addressId: number): Promise<{
-        direccion: string;
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     update(userId: number, addressId: number, dto: UpdateAddressDto): Promise<{
-        direccion: string;
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     remove(userId: number, addressId: number): Promise<{
-        direccion: string;
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
+        direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
 }

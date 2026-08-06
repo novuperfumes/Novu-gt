@@ -34,13 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const pg_1 = require("pg");
-const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
 const bcrypt = __importStar(require("bcrypt"));
-const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new adapter_pg_1.PrismaPg(pool);
-const prisma = new client_1.PrismaClient({ adapter });
+const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('Generating extra fake data...');
     const salt = await bcrypt.genSalt(10);
@@ -107,6 +103,5 @@ main()
 })
     .finally(async () => {
     await prisma.$disconnect();
-    await pool.end();
 });
 //# sourceMappingURL=fake-data.js.map

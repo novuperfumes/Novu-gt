@@ -39,13 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const client_1 = require("@prisma/client");
-const pg_1 = require("pg");
-const adapter_pg_1 = require("@prisma/adapter-pg");
 const bcrypt = __importStar(require("bcrypt"));
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:secret_password@localhost:5432/novu_db?schema=public';
-const pool = new pg_1.Pool({ connectionString });
-const adapter = new adapter_pg_1.PrismaPg(pool);
-const prisma = new client_1.PrismaClient({ adapter });
+const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('🌱 Iniciando la siembra de datos de prueba (Seed)...');
     const salt = await bcrypt.genSalt(10);
@@ -451,6 +446,5 @@ main()
 })
     .finally(async () => {
     await prisma.$disconnect();
-    await pool.end();
 });
 //# sourceMappingURL=seed-data.js.map

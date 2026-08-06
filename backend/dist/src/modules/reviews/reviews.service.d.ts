@@ -8,8 +8,8 @@ export declare class ReviewsService {
         existing: {
             id: number;
             id_usuario: number;
-            id_perfume: number;
             fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -20,8 +20,8 @@ export declare class ReviewsService {
     upsert(userId: number, perfumeId: number, dto: CreateReviewDto): Promise<{
         id: number;
         id_usuario: number;
-        id_perfume: number;
         fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;
@@ -35,8 +35,8 @@ export declare class ReviewsService {
         } & {
             id: number;
             id_usuario: number;
-            id_perfume: number;
             fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -47,8 +47,8 @@ export declare class ReviewsService {
     remove(userId: number, reviewId: number): Promise<{
         id: number;
         id_usuario: number;
-        id_perfume: number;
         fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;

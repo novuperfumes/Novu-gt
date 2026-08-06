@@ -1,12 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const pg_1 = require("pg");
-const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
-const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new adapter_pg_1.PrismaPg(pool);
-const prisma = new client_1.PrismaClient({ adapter });
+const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('Inyectando más perfumes...');
     const imgPerfume1 = 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=800&auto=format&fit=crop';
@@ -180,6 +176,5 @@ main()
 })
     .finally(async () => {
     await prisma.$disconnect();
-    await pool.end();
 });
 //# sourceMappingURL=more-perfumes.js.map

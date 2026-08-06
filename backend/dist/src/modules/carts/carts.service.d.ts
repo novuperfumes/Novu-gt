@@ -10,14 +10,14 @@ export declare class CartsService {
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
-                    galeria: string[];
+                    galeria: import("@prisma/client/runtime/client").JsonValue;
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -36,14 +36,14 @@ export declare class CartsService {
                 perfume: {
                     id: number;
                     nombre: string;
-                    genero: string | null;
-                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
+                    genero: string | null;
                     imagen: string;
-                    galeria: string[];
+                    galeria: import("@prisma/client/runtime/client").JsonValue;
                     marca: string;
+                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -55,11 +55,11 @@ export declare class CartsService {
             }) | null;
         } & {
             id: number;
-            id_presentacion: number | null;
-            id_decant: number | null;
             tipo_decant: string | null;
             cantidad: number;
             id_carrito_maestro: number;
+            id_presentacion: number | null;
+            id_decant: number | null;
         })[];
     } & {
         id: number;
@@ -67,19 +67,19 @@ export declare class CartsService {
     }>;
     addItem(userId: number, dto: AddItemDto): Promise<{
         id: number;
-        id_presentacion: number | null;
-        id_decant: number | null;
         tipo_decant: string | null;
         cantidad: number;
         id_carrito_maestro: number;
+        id_presentacion: number | null;
+        id_decant: number | null;
     }>;
     updateItem(userId: number, detailId: number, dto: UpdateItemDto): Promise<{
         id: number;
-        id_presentacion: number | null;
-        id_decant: number | null;
         tipo_decant: string | null;
         cantidad: number;
         id_carrito_maestro: number;
+        id_presentacion: number | null;
+        id_decant: number | null;
     }>;
     removeItem(userId: number, detailId: number): Promise<{
         message: string;

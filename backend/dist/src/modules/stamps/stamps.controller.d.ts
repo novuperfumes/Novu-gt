@@ -9,9 +9,9 @@ export declare class StampsController {
         history: {
             id: number;
             id_usuario: number;
+            fecha: Date;
             tipo_operacion: string;
             cantidad_sellos: number;
-            fecha: Date;
             id_orden: number | null;
         }[];
     }>;
@@ -22,9 +22,9 @@ export declare class StampsController {
         history: {
             id: number;
             id_usuario: number;
+            fecha: Date;
             tipo_operacion: string;
             cantidad_sellos: number;
-            fecha: Date;
             id_orden: number | null;
         }[];
     }>;

@@ -6,31 +6,31 @@ export declare class FavoritesController {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
         id_usuario: number;
-        fecha_agregado: Date;
         id_perfume: number;
+        fecha_agregado: Date;
     })[]>;
     addFavorite(req: any, perfumeId: number): Promise<{
         id: number;
         id_usuario: number;
-        fecha_agregado: Date;
         id_perfume: number;
+        fecha_agregado: Date;
     }>;
     removeFavorite(req: any, perfumeId: number): Promise<{
         id: number;
         id_usuario: number;
-        fecha_agregado: Date;
         id_perfume: number;
+        fecha_agregado: Date;
     }>;
 }

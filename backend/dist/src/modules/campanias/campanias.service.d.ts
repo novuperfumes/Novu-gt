@@ -6,9 +6,9 @@ export declare class CampaniasService {
     findAll(): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
@@ -19,9 +19,9 @@ export declare class CampaniasService {
     findActiva(): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
@@ -32,9 +32,9 @@ export declare class CampaniasService {
     create(dto: CreateCampaniaDto): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
@@ -47,9 +47,9 @@ export declare class CampaniasService {
     }): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
@@ -60,9 +60,9 @@ export declare class CampaniasService {
     toggleActiva(id: number): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
@@ -73,9 +73,9 @@ export declare class CampaniasService {
     remove(id: number): Promise<{
         id: number;
         nombre: string;
-        activa: boolean;
         tipo: string;
         imagen: string | null;
+        activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;

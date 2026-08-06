@@ -8,9 +8,9 @@ export declare class BranchesService {
     private readonly CACHE_TTL;
     constructor(prisma: PrismaService, redisService: RedisService);
     create(dto: CreateBranchDto): Promise<{
-        direccion: string;
         id: number;
         telefono: string | null;
+        direccion: string;
         departamento: string;
         municipio: string;
         nombre_sucursal: string;

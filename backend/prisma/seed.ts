@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import * as bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL || 'mysql://root:secret_password@localhost:3306/novu_db');
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Clear database to prevent unique constraints issues

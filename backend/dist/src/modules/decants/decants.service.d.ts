@@ -8,14 +8,14 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
@@ -34,14 +34,14 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
@@ -60,14 +60,14 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
@@ -86,14 +86,14 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;
@@ -112,14 +112,14 @@ export declare class DecantsService {
         perfume: {
             id: number;
             nombre: string;
-            genero: string | null;
-            activo: boolean;
             descripcion: string;
             categoria: string;
             tipo: string | null;
+            genero: string | null;
             imagen: string;
-            galeria: string[];
+            galeria: import("@prisma/client/runtime/client").JsonValue;
             marca: string;
+            activo: boolean;
         };
     } & {
         id: number;

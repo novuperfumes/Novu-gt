@@ -3,39 +3,39 @@ export declare class WhatsappOrdersService {
     private prisma;
     constructor(prisma: PrismaService);
     create(data: any): Promise<{
-        direccion: string | null;
         id: number;
         telefono: string;
         codigo: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }>;
     findAll(): Promise<{
-        direccion: string | null;
         id: number;
         telefono: string;
         codigo: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }[]>;
     confirmOrder(id: number): Promise<{
-        direccion: string | null;
         id: number;
         telefono: string;
         codigo: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
         estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }>;
 }
