@@ -7,11 +7,11 @@ export declare class GiftCardsController {
         monto: number;
     }): Promise<{
         id: number;
-        activa: boolean;
-        id_usuario: number;
         codigo: string;
         monto: import("@prisma/client-runtime-utils").Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
+        id_usuario: number;
     }>;
     findAll(): Promise<({
         usuario: {
@@ -22,18 +22,18 @@ export declare class GiftCardsController {
         };
     } & {
         id: number;
-        activa: boolean;
-        id_usuario: number;
         codigo: string;
         monto: import("@prisma/client-runtime-utils").Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
+        id_usuario: number;
     })[]>;
     validate(code: string, req: any): Promise<{
         id: number;
-        activa: boolean;
-        id_usuario: number;
         codigo: string;
         monto: import("@prisma/client-runtime-utils").Decimal;
+        activa: boolean;
         es_bienvenida: boolean;
+        id_usuario: number;
     }>;
 }

@@ -11,9 +11,9 @@ export declare class ReviewsController {
             };
         } & {
             id: number;
-            id_perfume: number;
-            fecha: Date;
             id_usuario: number;
+            fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -25,9 +25,9 @@ export declare class ReviewsController {
         canReview: boolean;
         existing: {
             id: number;
-            id_perfume: number;
-            fecha: Date;
             id_usuario: number;
+            fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -36,18 +36,18 @@ export declare class ReviewsController {
     }>;
     upsertReview(req: any, perfumeId: number, dto: CreateReviewDto): Promise<{
         id: number;
-        id_perfume: number;
-        fecha: Date;
         id_usuario: number;
+        fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;
     }>;
     removeReview(req: any, reviewId: number): Promise<{
         id: number;
-        id_perfume: number;
-        fecha: Date;
         id_usuario: number;
+        fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;

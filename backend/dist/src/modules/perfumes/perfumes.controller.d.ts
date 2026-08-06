@@ -9,6 +9,7 @@ export declare class PerfumesController {
     findAllAdmin(): Promise<({
         decant: {
             id: number;
+            id_perfume: number;
             ml_origen: number;
             costo_original: import("@prisma/client-runtime-utils").Decimal;
             precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -18,15 +19,14 @@ export declare class PerfumesController {
             costo_10ml: import("@prisma/client-runtime-utils").Decimal;
             precio_10ml: import("@prisma/client-runtime-utils").Decimal;
             stock_10ml: number;
-            id_perfume: number;
         } | null;
         presentaciones: {
             id: number;
+            id_perfume: number;
             tamanio: string;
             precio: import("@prisma/client-runtime-utils").Decimal;
             stock: number;
             costo: import("@prisma/client-runtime-utils").Decimal | null;
-            id_perfume: number;
         }[];
     } & {
         id: number;
@@ -43,14 +43,15 @@ export declare class PerfumesController {
     getBestSellers(): Promise<{
         presentaciones: {
             id: number;
+            id_perfume: number;
             tamanio: string;
             precio: import("@prisma/client-runtime-utils").Decimal;
             stock: number;
             costo: import("@prisma/client-runtime-utils").Decimal | null;
-            id_perfume: number;
         }[];
         decant: {
             id: number;
+            id_perfume: number;
             ml_origen: number;
             costo_original: import("@prisma/client-runtime-utils").Decimal;
             precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -60,7 +61,6 @@ export declare class PerfumesController {
             costo_10ml: import("@prisma/client-runtime-utils").Decimal;
             precio_10ml: import("@prisma/client-runtime-utils").Decimal;
             stock_10ml: number;
-            id_perfume: number;
         } | null;
         id: number;
         nombre: string;
@@ -88,11 +88,11 @@ export declare class PerfumesController {
     }>;
     addPresentacion(id: number, dto: CreatePresentacionDto): Promise<{
         id: number;
+        id_perfume: number;
         tamanio: string;
         precio: import("@prisma/client-runtime-utils").Decimal;
         stock: number;
         costo: import("@prisma/client-runtime-utils").Decimal | null;
-        id_perfume: number;
     }>;
     updatePresentacion(presId: number, dto: {
         tamanio?: string;
@@ -100,19 +100,19 @@ export declare class PerfumesController {
         stock?: number;
     }): Promise<{
         id: number;
+        id_perfume: number;
         tamanio: string;
         precio: import("@prisma/client-runtime-utils").Decimal;
         stock: number;
         costo: import("@prisma/client-runtime-utils").Decimal | null;
-        id_perfume: number;
     }>;
     removePresentacion(presId: number): Promise<{
         id: number;
+        id_perfume: number;
         tamanio: string;
         precio: import("@prisma/client-runtime-utils").Decimal;
         stock: number;
         costo: import("@prisma/client-runtime-utils").Decimal | null;
-        id_perfume: number;
     }>;
     update(id: number, dto: UpdatePerfumeDto): Promise<{
         id: number;

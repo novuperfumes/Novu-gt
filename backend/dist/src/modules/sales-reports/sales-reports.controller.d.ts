@@ -24,9 +24,10 @@ export declare class SalesReportsController {
                 };
             } & {
                 id: number;
-                fecha: Date;
-                total: import("@prisma/client-runtime-utils").Decimal;
+                id_usuario: number;
                 estado: string;
+                total: import("@prisma/client-runtime-utils").Decimal;
+                fecha: Date;
                 metodo_de_pago: string;
                 tipo_entrega: string;
                 nombre_recibe: string;
@@ -37,7 +38,6 @@ export declare class SalesReportsController {
                 referencias_entrega: string | null;
                 codigo_postal_entrega: string | null;
                 costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
-                id_usuario: number;
                 id_sucursal: number | null;
                 id_codigo_promocion: number | null;
                 id_gift_card: number | null;
@@ -46,9 +46,9 @@ export declare class SalesReportsController {
             id: number;
             tipo_decant: string | null;
             cantidad: number;
-            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_presentacion: number | null;
             id_decant: number | null;
+            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_orden: number;
         }) | null;
     } & {
@@ -56,8 +56,8 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
-        costo: import("@prisma/client-runtime-utils").Decimal | null;
         total: import("@prisma/client-runtime-utils").Decimal | null;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string | null;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;
@@ -97,9 +97,10 @@ export declare class SalesReportsController {
                 };
             } & {
                 id: number;
-                fecha: Date;
-                total: import("@prisma/client-runtime-utils").Decimal;
+                id_usuario: number;
                 estado: string;
+                total: import("@prisma/client-runtime-utils").Decimal;
+                fecha: Date;
                 metodo_de_pago: string;
                 tipo_entrega: string;
                 nombre_recibe: string;
@@ -110,7 +111,6 @@ export declare class SalesReportsController {
                 referencias_entrega: string | null;
                 codigo_postal_entrega: string | null;
                 costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
-                id_usuario: number;
                 id_sucursal: number | null;
                 id_codigo_promocion: number | null;
                 id_gift_card: number | null;
@@ -119,9 +119,9 @@ export declare class SalesReportsController {
             id: number;
             tipo_decant: string | null;
             cantidad: number;
-            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_presentacion: number | null;
             id_decant: number | null;
+            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_orden: number;
         }) | null;
     } & {
@@ -129,6 +129,7 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal | null;
         ml_origen: number | null;
         costo_original: import("@prisma/client-runtime-utils").Decimal | null;
         precio_original: import("@prisma/client-runtime-utils").Decimal | null;
@@ -136,7 +137,6 @@ export declare class SalesReportsController {
         precio_5ml: import("@prisma/client-runtime-utils").Decimal | null;
         costo_10ml: import("@prisma/client-runtime-utils").Decimal | null;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal | null;
-        total: import("@prisma/client-runtime-utils").Decimal | null;
         fecha_venta: Date;
         pago: string | null;
         total_cliente: import("@prisma/client-runtime-utils").Decimal;
@@ -151,9 +151,10 @@ export declare class SalesReportsController {
         ordenDetalle: ({
             orden: {
                 id: number;
-                fecha: Date;
-                total: import("@prisma/client-runtime-utils").Decimal;
+                id_usuario: number;
                 estado: string;
+                total: import("@prisma/client-runtime-utils").Decimal;
+                fecha: Date;
                 metodo_de_pago: string;
                 tipo_entrega: string;
                 nombre_recibe: string;
@@ -164,7 +165,6 @@ export declare class SalesReportsController {
                 referencias_entrega: string | null;
                 codigo_postal_entrega: string | null;
                 costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
-                id_usuario: number;
                 id_sucursal: number | null;
                 id_codigo_promocion: number | null;
                 id_gift_card: number | null;
@@ -173,9 +173,9 @@ export declare class SalesReportsController {
             id: number;
             tipo_decant: string | null;
             cantidad: number;
-            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_presentacion: number | null;
             id_decant: number | null;
+            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_orden: number;
         }) | null;
     } & {
@@ -183,6 +183,7 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal | null;
         ml_origen: number | null;
         costo_original: import("@prisma/client-runtime-utils").Decimal | null;
         precio_original: import("@prisma/client-runtime-utils").Decimal | null;
@@ -190,7 +191,6 @@ export declare class SalesReportsController {
         precio_5ml: import("@prisma/client-runtime-utils").Decimal | null;
         costo_10ml: import("@prisma/client-runtime-utils").Decimal | null;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal | null;
-        total: import("@prisma/client-runtime-utils").Decimal | null;
         fecha_venta: Date;
         pago: string | null;
         total_cliente: import("@prisma/client-runtime-utils").Decimal;
@@ -206,6 +206,7 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal | null;
         ml_origen: number | null;
         costo_original: import("@prisma/client-runtime-utils").Decimal | null;
         precio_original: import("@prisma/client-runtime-utils").Decimal | null;
@@ -213,7 +214,6 @@ export declare class SalesReportsController {
         precio_5ml: import("@prisma/client-runtime-utils").Decimal | null;
         costo_10ml: import("@prisma/client-runtime-utils").Decimal | null;
         precio_10ml: import("@prisma/client-runtime-utils").Decimal | null;
-        total: import("@prisma/client-runtime-utils").Decimal | null;
         fecha_venta: Date;
         pago: string | null;
         total_cliente: import("@prisma/client-runtime-utils").Decimal;
@@ -228,9 +228,10 @@ export declare class SalesReportsController {
         ordenDetalle: ({
             orden: {
                 id: number;
-                fecha: Date;
-                total: import("@prisma/client-runtime-utils").Decimal;
+                id_usuario: number;
                 estado: string;
+                total: import("@prisma/client-runtime-utils").Decimal;
+                fecha: Date;
                 metodo_de_pago: string;
                 tipo_entrega: string;
                 nombre_recibe: string;
@@ -241,7 +242,6 @@ export declare class SalesReportsController {
                 referencias_entrega: string | null;
                 codigo_postal_entrega: string | null;
                 costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
-                id_usuario: number;
                 id_sucursal: number | null;
                 id_codigo_promocion: number | null;
                 id_gift_card: number | null;
@@ -250,9 +250,9 @@ export declare class SalesReportsController {
             id: number;
             tipo_decant: string | null;
             cantidad: number;
-            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_presentacion: number | null;
             id_decant: number | null;
+            precio_unitario: import("@prisma/client-runtime-utils").Decimal;
             id_orden: number;
         }) | null;
     } & {
@@ -260,8 +260,8 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
-        costo: import("@prisma/client-runtime-utils").Decimal | null;
         total: import("@prisma/client-runtime-utils").Decimal | null;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string | null;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;
@@ -281,8 +281,8 @@ export declare class SalesReportsController {
         id: number;
         tipo: string | null;
         genero: string | null;
-        costo: import("@prisma/client-runtime-utils").Decimal | null;
         total: import("@prisma/client-runtime-utils").Decimal | null;
+        costo: import("@prisma/client-runtime-utils").Decimal | null;
         costo_compra: import("@prisma/client-runtime-utils").Decimal;
         tipo_traida: string | null;
         costo_traida: import("@prisma/client-runtime-utils").Decimal;

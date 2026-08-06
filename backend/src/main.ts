@@ -66,11 +66,18 @@ async function bootstrap() {
   });
 
   // Register CSRF Protection
-  await app.register(fastifyCsrfProtection, { cookieOpts: { signed: true } });
+  await app.register(fastifyCsrfProtection, { 
+    cookieOpts: { 
+      signed: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/'
+    } 
+  });
 
   // Add global CSRF hook
   const fastifyInstance = app.getHttpAdapter().getInstance() as any;
-  fastifyInstance.addHook('onRequest', async (req: any, reply: any) => {
+  fastifyInstance.addHook('preValidation', async (req: any, reply: any) => {
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
       // Exclude routes that don't need CSRF or where token might not exist yet
       const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];

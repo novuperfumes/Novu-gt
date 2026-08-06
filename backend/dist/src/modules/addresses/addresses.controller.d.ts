@@ -6,47 +6,47 @@ export declare class AddressesController {
     constructor(addressesService: AddressesService);
     create(req: any, dto: CreateAddressDto): Promise<{
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
         direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     findAll(req: any): Promise<{
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
         direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }[]>;
     findOne(req: any, id: number): Promise<{
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
         direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     update(req: any, id: number, dto: UpdateAddressDto): Promise<{
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
         direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
     remove(req: any, id: number): Promise<{
         id: number;
+        codigo_postal: string | null;
+        referencias: string | null;
         id_usuario: number;
         direccion: string;
         departamento: string;
         municipio: string;
-        referencias: string | null;
-        codigo_postal: string | null;
     }>;
 }

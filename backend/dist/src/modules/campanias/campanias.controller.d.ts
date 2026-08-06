@@ -10,10 +10,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }[]>;
     findAll(): Promise<{
@@ -23,10 +23,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }[]>;
     create(dto: CreateCampaniaDto): Promise<{
@@ -36,10 +36,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     update(id: number, body: any): Promise<{
@@ -49,10 +49,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     toggle(id: number): Promise<{
@@ -62,10 +62,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
     remove(id: number): Promise<{
@@ -75,10 +75,10 @@ export declare class CampaniasController {
         imagen: string | null;
         activa: boolean;
         descuento: import("@prisma/client-runtime-utils").Decimal;
-        categorias: string | null;
-        perfume_ids: string | null;
         fecha_inicio: Date | null;
         fecha_fin: Date | null;
+        categorias: string | null;
+        perfume_ids: string | null;
         creado_en: Date;
     }>;
 }

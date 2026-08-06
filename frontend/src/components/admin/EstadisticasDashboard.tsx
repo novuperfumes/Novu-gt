@@ -17,6 +17,7 @@ function getMonthName(monthStr: string) {
 
 export function EstadisticasDashboard() {
   const [data, setData] = useState<any>(null);
+  const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filtros
@@ -63,6 +64,13 @@ export function EstadisticasDashboard() {
       if (!res.ok) throw new Error('Network error');
       const json = await res.json();
       setData(json);
+
+      // Fetch best sellers
+      const resBest = await fetch('http://localhost:3000/perfumes/best-sellers');
+      if (resBest.ok) {
+        const bestData = await resBest.json();
+        setBestSellers(bestData);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -301,6 +309,43 @@ export function EstadisticasDashboard() {
                 </ResponsiveContainer>
               </div>
             </div>
+          </div>
+
+          {/* Fila 5: Top Perfumes Más Vendidos */}
+          <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+            <h3 style={{ textAlign: 'center', marginTop: 0, color: '#1c1a17', marginBottom: '20px' }}>Top Perfumes Más Vendidos</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f9f9f9', borderBottom: '2px solid #ddd' }}>
+                  <th style={{ padding: '12px' }}>#</th>
+                  <th style={{ padding: '12px' }}>Perfume</th>
+                  <th style={{ padding: '12px' }}>Marca</th>
+                  <th style={{ padding: '12px' }}>Categoría</th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>Unidades Vendidas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bestSellers.map((perfume, index) => (
+                  <tr key={perfume.id} style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={{ padding: '12px', fontWeight: 'bold', color: '#666' }}>{index + 1}</td>
+                    <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <img src={perfume.imagen} alt={perfume.nombre} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                      <span style={{ fontWeight: 600 }}>{perfume.nombre}</span>
+                    </td>
+                    <td style={{ padding: '12px' }}>{perfume.marca}</td>
+                    <td style={{ padding: '12px' }}>{perfume.categoria}</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontWeight: 'bold', color: '#C5A059', fontSize: '1.1rem' }}>
+                      {perfume.salesCount}
+                    </td>
+                  </tr>
+                ))}
+                {bestSellers.length === 0 && (
+                  <tr>
+                    <td colSpan={5} style={{ padding: '20px', textAlign: 'center', color: '#999' }}>No hay ventas registradas aún.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

@@ -16,18 +16,26 @@ let csrfToken = '';
 const originalFetch = window.fetch;
 
 window.fetch = async (input, init) => {
-  const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+  const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : input.toString());
+  let rewrittenUrl = url;
   
-  // Intercept requests to backend
-  if (url.startsWith('http://localhost:3000') || url.startsWith(import.meta.env.VITE_API_URL || '')) {
+  // Rewrite localhost:3000 (and configured API URL) to the local Vite proxy
+  if (url.startsWith('http://localhost:3000')) {
+    rewrittenUrl = url.replace('http://localhost:3000', '/api');
+  } else if (import.meta.env.VITE_API_URL && url.startsWith(import.meta.env.VITE_API_URL)) {
+    rewrittenUrl = url.replace(import.meta.env.VITE_API_URL, '/api');
+  }
+  
+  // Intercept requests to backend (now via proxy)
+  if (rewrittenUrl.startsWith('/api')) {
     init = init || {};
-    init.credentials = 'include';
+    init.credentials = 'same-origin'; // Use same-origin since it's proxied
     
     const method = init.method?.toUpperCase() || 'GET';
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
       if (!csrfToken) {
         try {
-          const res = await originalFetch('http://localhost:3000/auth/csrf', { credentials: 'include' });
+          const res = await originalFetch('/api/auth/csrf', { credentials: 'same-origin' });
           if (res.ok) {
             const data = await res.json();
             csrfToken = data.csrfToken;
@@ -44,11 +52,16 @@ window.fetch = async (input, init) => {
     }
   }
   
-  return originalFetch(input, init);
+  // If the input was a Request object, we must create a new one with the rewritten URL
+  if (input instanceof Request) {
+    return originalFetch(new Request(rewrittenUrl, { ...input, ...init }));
+  }
+  
+  return originalFetch(rewrittenUrl, init);
 };
 
 // Prefetch token on app start
-originalFetch('http://localhost:3000/auth/csrf', { credentials: 'include' })
+originalFetch('/api/auth/csrf', { credentials: 'same-origin' })
   .then(res => res.ok ? res.json() : null)
   .then(data => {
     if (data?.csrfToken) csrfToken = data.csrfToken;

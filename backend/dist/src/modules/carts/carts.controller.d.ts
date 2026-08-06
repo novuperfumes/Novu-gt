@@ -21,6 +21,7 @@ export declare class CartsController {
                 };
             } & {
                 id: number;
+                id_perfume: number;
                 ml_origen: number;
                 costo_original: import("@prisma/client-runtime-utils").Decimal;
                 precio_original: import("@prisma/client-runtime-utils").Decimal;
@@ -30,7 +31,6 @@ export declare class CartsController {
                 costo_10ml: import("@prisma/client-runtime-utils").Decimal;
                 precio_10ml: import("@prisma/client-runtime-utils").Decimal;
                 stock_10ml: number;
-                id_perfume: number;
             }) | null;
             presentacion: ({
                 perfume: {
@@ -47,19 +47,19 @@ export declare class CartsController {
                 };
             } & {
                 id: number;
+                id_perfume: number;
                 tamanio: string;
                 precio: import("@prisma/client-runtime-utils").Decimal;
                 stock: number;
                 costo: import("@prisma/client-runtime-utils").Decimal | null;
-                id_perfume: number;
             }) | null;
         } & {
             id: number;
             tipo_decant: string | null;
             cantidad: number;
+            id_carrito_maestro: number;
             id_presentacion: number | null;
             id_decant: number | null;
-            id_carrito_maestro: number;
         })[];
     } & {
         id: number;
@@ -69,17 +69,17 @@ export declare class CartsController {
         id: number;
         tipo_decant: string | null;
         cantidad: number;
+        id_carrito_maestro: number;
         id_presentacion: number | null;
         id_decant: number | null;
-        id_carrito_maestro: number;
     }>;
     updateItem(req: any, detailId: number, dto: UpdateItemDto): Promise<{
         id: number;
         tipo_decant: string | null;
         cantidad: number;
+        id_carrito_maestro: number;
         id_presentacion: number | null;
         id_decant: number | null;
-        id_carrito_maestro: number;
     }>;
     removeItem(req: any, detailId: number): Promise<{
         message: string;

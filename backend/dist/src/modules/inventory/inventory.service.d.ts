@@ -32,11 +32,11 @@ export declare class InventoryService {
             };
         } & {
             id: number;
+            id_perfume: number;
             tamanio: string;
             precio: import("@prisma/client-runtime-utils").Decimal;
             stock: number;
             costo: import("@prisma/client-runtime-utils").Decimal | null;
-            id_perfume: number;
         };
     } & {
         id: number;

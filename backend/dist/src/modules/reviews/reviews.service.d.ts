@@ -7,9 +7,9 @@ export declare class ReviewsService {
         canReview: boolean;
         existing: {
             id: number;
-            id_perfume: number;
-            fecha: Date;
             id_usuario: number;
+            fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -19,9 +19,9 @@ export declare class ReviewsService {
     private buildCompraLabel;
     upsert(userId: number, perfumeId: number, dto: CreateReviewDto): Promise<{
         id: number;
-        id_perfume: number;
-        fecha: Date;
         id_usuario: number;
+        fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;
@@ -34,9 +34,9 @@ export declare class ReviewsService {
             };
         } & {
             id: number;
-            id_perfume: number;
-            fecha: Date;
             id_usuario: number;
+            fecha: Date;
+            id_perfume: number;
             calificacion: number;
             comentario: string;
             compra_label: string | null;
@@ -46,9 +46,9 @@ export declare class ReviewsService {
     }>;
     remove(userId: number, reviewId: number): Promise<{
         id: number;
-        id_perfume: number;
-        fecha: Date;
         id_usuario: number;
+        fecha: Date;
+        id_perfume: number;
         calificacion: number;
         comentario: string;
         compra_label: string | null;

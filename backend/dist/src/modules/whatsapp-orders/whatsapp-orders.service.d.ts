@@ -5,37 +5,37 @@ export declare class WhatsappOrdersService {
     create(data: any): Promise<{
         id: number;
         telefono: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
-        estado: string;
-        direccion: string | null;
         codigo: string;
+        estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }>;
     findAll(): Promise<{
         id: number;
         telefono: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
-        estado: string;
-        direccion: string | null;
         codigo: string;
+        estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }[]>;
     confirmOrder(id: number): Promise<{
         id: number;
         telefono: string;
-        fecha: Date;
-        total: import("@prisma/client-runtime-utils").Decimal;
-        estado: string;
-        direccion: string | null;
         codigo: string;
+        estado: string;
         nombre_cliente: string;
+        direccion: string | null;
         nit: string | null;
+        total: import("@prisma/client-runtime-utils").Decimal;
         carrito_json: string;
+        fecha: Date;
     }>;
 }

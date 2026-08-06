@@ -4,14 +4,14 @@ export declare class FavoritesService {
     constructor(prisma: PrismaService);
     addFavorite(userId: number, perfumeId: number): Promise<{
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     }>;
     removeFavorite(userId: number, perfumeId: number): Promise<{
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     }>;
     getUserFavorites(userId: number): Promise<({
@@ -29,8 +29,8 @@ export declare class FavoritesService {
         };
     } & {
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     })[]>;
 }

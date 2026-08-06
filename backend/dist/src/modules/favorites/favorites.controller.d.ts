@@ -17,20 +17,20 @@ export declare class FavoritesController {
         };
     } & {
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     })[]>;
     addFavorite(req: any, perfumeId: number): Promise<{
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     }>;
     removeFavorite(req: any, perfumeId: number): Promise<{
         id: number;
-        id_perfume: number;
         id_usuario: number;
+        id_perfume: number;
         fecha_agregado: Date;
     }>;
 }

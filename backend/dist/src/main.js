@@ -84,9 +84,16 @@ async function bootstrap() {
         },
         crossOriginResourcePolicy: false,
     });
-    await app.register(csrf_protection_1.default, { cookieOpts: { signed: true } });
+    await app.register(csrf_protection_1.default, {
+        cookieOpts: {
+            signed: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            path: '/'
+        }
+    });
     const fastifyInstance = app.getHttpAdapter().getInstance();
-    fastifyInstance.addHook('onRequest', async (req, reply) => {
+    fastifyInstance.addHook('preValidation', async (req, reply) => {
         if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
             const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];
             if (!excludedRoutes.some(route => req.url.startsWith(route))) {
