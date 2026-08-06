@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 model Usuario {
@@ -45,7 +45,7 @@ model Perfume {
   tipo           String?
   genero         String?
   imagen         String
-  galeria        String[]              @default([])
+  galeria        Json                  @default("[]")
   marca          String
   activo         Boolean               @default(true)
   decant         Decant?

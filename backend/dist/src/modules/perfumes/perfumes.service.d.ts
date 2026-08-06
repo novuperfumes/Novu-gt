@@ -11,14 +11,14 @@ export declare class PerfumesService {
     create(dto: CreatePerfumeDto): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
     addPresentacion(perfumeId: number, dto: CreatePresentacionDto): Promise<{
         id: number;
@@ -74,14 +74,14 @@ export declare class PerfumesService {
         } | null;
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }[]>;
     findAllAdmin(): Promise<({
         decant: {
@@ -108,39 +108,39 @@ export declare class PerfumesService {
     } & {
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     })[]>;
     findOne(id: number): Promise<any>;
     update(id: number, dto: any): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
     remove(id: number): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
     private invalidateCatalogCache;
     private invalidatePerfumeCache;

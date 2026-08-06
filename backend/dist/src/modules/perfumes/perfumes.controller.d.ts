@@ -31,14 +31,14 @@ export declare class PerfumesController {
     } & {
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     })[]>;
     getBestSellers(): Promise<{
         presentaciones: {
@@ -64,27 +64,27 @@ export declare class PerfumesController {
         } | null;
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }[]>;
     findOne(id: number): Promise<any>;
     create(dto: CreatePerfumeDto): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
     addPresentacion(id: number, dto: CreatePresentacionDto): Promise<{
         id: number;
@@ -117,25 +117,25 @@ export declare class PerfumesController {
     update(id: number, dto: UpdatePerfumeDto): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
     remove(id: number): Promise<{
         id: number;
         nombre: string;
+        genero: string | null;
+        activo: boolean;
         descripcion: string;
         categoria: string;
         tipo: string | null;
-        genero: string | null;
         imagen: string;
         galeria: string[];
         marca: string;
-        activo: boolean;
     }>;
 }

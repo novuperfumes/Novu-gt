@@ -8,9 +8,9 @@ export declare class OrdersService {
         order: {
             id: number;
             id_usuario: number;
-            estado: string;
-            total: Prisma.Decimal;
             fecha: Date;
+            total: Prisma.Decimal;
+            estado: string;
             metodo_de_pago: string;
             tipo_entrega: string;
             nombre_recibe: string;
@@ -32,14 +32,14 @@ export declare class OrdersService {
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -58,14 +58,14 @@ export declare class OrdersService {
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -77,19 +77,19 @@ export declare class OrdersService {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: Prisma.Decimal;
-            id_orden: number;
         })[];
     } & {
         id: number;
         id_usuario: number;
-        estado: string;
-        total: Prisma.Decimal;
         fecha: Date;
+        total: Prisma.Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -110,14 +110,14 @@ export declare class OrdersService {
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -136,14 +136,14 @@ export declare class OrdersService {
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -155,19 +155,19 @@ export declare class OrdersService {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: Prisma.Decimal;
-            id_orden: number;
         })[];
     } & {
         id: number;
         id_usuario: number;
-        estado: string;
-        total: Prisma.Decimal;
         fecha: Date;
+        total: Prisma.Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -185,44 +185,44 @@ export declare class OrdersService {
     findAllAdmin(): Promise<({
         usuario: {
             id: number;
-            nombre: string;
-            genero: string | null;
             correo: string;
             rol: string;
+            nombre: string;
             apellido: string;
             telefono: string | null;
+            genero: string | null;
             sellos: number;
         };
         giftCard: {
             id: number;
+            id_usuario: number;
             codigo: string;
             monto: Prisma.Decimal;
             activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         } | null;
         codigoPromocion: {
             id: number;
             codigo: string;
+            estado: string;
             tipo_descuento: string;
             descuento: Prisma.Decimal;
             fecha_inicio: Date;
             fecha_fin: Date;
-            estado: string;
         } | null;
         detalles: ({
             decant: ({
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -241,14 +241,14 @@ export declare class OrdersService {
                 perfume: {
                     id: number;
                     nombre: string;
+                    genero: string | null;
+                    activo: boolean;
                     descripcion: string;
                     categoria: string;
                     tipo: string | null;
-                    genero: string | null;
                     imagen: string;
                     galeria: string[];
                     marca: string;
-                    activo: boolean;
                 };
             } & {
                 id: number;
@@ -260,19 +260,19 @@ export declare class OrdersService {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: Prisma.Decimal;
-            id_orden: number;
         })[];
     } & {
         id: number;
         id_usuario: number;
-        estado: string;
-        total: Prisma.Decimal;
         fecha: Date;
+        total: Prisma.Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -290,9 +290,9 @@ export declare class OrdersService {
     updateStatus(orderId: number, estado: string, costo_envio?: number): Promise<{
         id: number;
         id_usuario: number;
-        estado: string;
-        total: Prisma.Decimal;
         fecha: Date;
+        total: Prisma.Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;

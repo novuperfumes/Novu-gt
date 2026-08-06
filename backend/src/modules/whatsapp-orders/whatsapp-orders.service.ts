@@ -38,7 +38,7 @@ export class WhatsappOrdersService {
         // Buscar el perfume por su nombre exacto o aproximado
         // O nota: Podríamos usar item.brand y item.name
         const perfume = await tx.perfume.findFirst({
-          where: { nombre: { equals: item.name, mode: 'insensitive' } },
+          where: { nombre: { equals: item.name } },
           include: { presentaciones: true, decant: true },
         });
 
@@ -55,7 +55,7 @@ export class WhatsappOrdersService {
         let tipoTraida = 'N/A';
 
         if (isDecant) {
-          const decant = perfume.decant?.[0]; // asumiendo 1 decant config por perfume
+          const decant = perfume.decant; // relación uno-a-uno
           if (decant) {
             const is5ml = item.size.includes('5');
             // Restar inventario decant
@@ -82,10 +82,10 @@ export class WhatsappOrdersService {
                   perfume: perfume.nombre,
                   tipo: perfume.tipo,
                   genero: perfume.genero,
-                  costo_original: decant.costo_botella,
+                  costo_original: decant.costo_original,
                   costo_5ml: decant.costo_5ml,
                   costo_10ml: decant.costo_10ml,
-                  precio_original: decant.precio_botella,
+                  precio_original: decant.precio_original,
                   precio_5ml: decant.precio_5ml,
                   precio_10ml: decant.precio_10ml,
                   tamano_vendido: is5ml ? '5 ml' : '10 ml',

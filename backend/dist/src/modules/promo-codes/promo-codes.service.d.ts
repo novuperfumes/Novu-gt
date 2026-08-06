@@ -6,28 +6,28 @@ export declare class PromoCodesService {
     create(dto: CreatePromoDto): Promise<{
         id: number;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
-        estado: string;
     }>;
     validate(code: string): Promise<{
         id: number;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
-        estado: string;
     }>;
     findAll(): Promise<{
         id: number;
         codigo: string;
+        estado: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
-        estado: string;
     }[]>;
 }
