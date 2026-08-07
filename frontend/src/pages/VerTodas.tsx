@@ -81,7 +81,7 @@ export function VerTodas() {
               {slides.map((slide, index) => {
                 const imgUrl = slide.bgImage.startsWith('http') || slide.bgImage.startsWith('/imagenes') 
                   ? slide.bgImage 
-                  : `http://localhost:3000${slide.bgImage}`;
+                  : `${import.meta.env.VITE_API_URL}${slide.bgImage}`;
                 
                 return (
                 <div 

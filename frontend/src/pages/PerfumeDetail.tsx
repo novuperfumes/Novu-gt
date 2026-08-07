@@ -119,7 +119,7 @@ export function PerfumeDetail() {
   const fetchReviews = useCallback(async () => {
     if (!id) return;
     try {
-      const res = await fetch(`http://localhost:3000/reviews/perfume/${id}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews/perfume/${id}`);
       if (res.ok) setReviewsData(await res.json());
     } catch { /* ignore */ }
   }, [id]);
@@ -127,7 +127,7 @@ export function PerfumeDetail() {
   const fetchCanReview = useCallback(async () => {
     if (!id || !user) return;
     try {
-      const res = await fetch(`http://localhost:3000/reviews/can-review/${id}`, { credentials: 'include' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews/can-review/${id}`, { credentials: 'include' });
       if (res.ok) {
         const data: CanReviewData = await res.json();
         setCanReviewData(data);
@@ -149,7 +149,7 @@ export function PerfumeDetail() {
     if (reviewComment.length > 400) return;
     setSubmittingReview(true);
     try {
-      const res = await fetch(`http://localhost:3000/reviews/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

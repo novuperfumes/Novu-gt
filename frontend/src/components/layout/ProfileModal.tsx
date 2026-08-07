@@ -9,7 +9,7 @@ export function ProfileModal() {
   useEffect(() => {
     if (isProfileOpen && user) {
       // Fetch user profile with stamps and gift cards
-      fetch('http://localhost:3000/users/me', {
+      fetch(import.meta.env.VITE_API_URL + '/users/me', {
         credentials: 'include'
       })
       .then(res => res.json())
@@ -127,7 +127,7 @@ export function ProfileModal() {
                 className="profile-logout-btn" 
                 onClick={async () => {
                   try {
-                    await fetch('http://localhost:3000/auth/logout', { method: 'POST', credentials: 'include' });
+                    await fetch(import.meta.env.VITE_API_URL + '/auth/logout', { method: 'POST', credentials: 'include' });
                     logout();
                     closeProfile();
                     window.location.href = '/';

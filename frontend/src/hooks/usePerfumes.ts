@@ -54,7 +54,7 @@ export function usePerfumes() {
 
   const fetchPerfumes = async () => {
     try {
-      const response = await fetch('http://localhost:3000/perfumes');
+      const response = await fetch(import.meta.env.VITE_API_URL + '/perfumes');
       if (!response.ok) throw new Error('Error al obtener perfumes');
       const data = await response.json();
       
@@ -74,7 +74,7 @@ export function usePerfumes() {
 
   const fetchBestSellers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/perfumes/best-sellers');
+      const response = await fetch(import.meta.env.VITE_API_URL + '/perfumes/best-sellers');
       if (response.ok) {
         const data = await response.json();
         const enrichedData = data.map((p: any) => ({

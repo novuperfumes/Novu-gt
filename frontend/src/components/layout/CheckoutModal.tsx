@@ -77,13 +77,13 @@ export function CheckoutModal() {
     setValidatingDiscount(true);
     try {
       // Try Gift Card first
-      const resGC = await fetch(`http://localhost:3000/gift-cards/validate/${discountCode.trim()}`, { credentials: 'include' });
+      const resGC = await fetch(`${import.meta.env.VITE_API_URL}/gift-cards/validate/${discountCode.trim()}`, { credentials: 'include' });
       if (resGC.ok) {
         const data = await resGC.json();
         setAppliedDiscount({ code: discountCode.trim(), amount: Number(data.monto), type: 'gift_card' });
       } else {
         // Try Promo Code
-        const resPromo = await fetch(`http://localhost:3000/promo-codes/validate/${discountCode.trim()}`, { credentials: 'include' });
+        const resPromo = await fetch(`${import.meta.env.VITE_API_URL}/promo-codes/validate/${discountCode.trim()}`, { credentials: 'include' });
         if (resPromo.ok) {
            const data = await resPromo.json();
            let amount = 0;
@@ -108,9 +108,9 @@ export function CheckoutModal() {
 
   const saveOrderBackground = async (currentCart: any[], currentFormData: any, discount: any) => {
     try {
-      await fetch('http://localhost:3000/carts', { method: 'DELETE', credentials: 'include' });
+      await fetch(import.meta.env.VITE_API_URL + '/carts', { method: 'DELETE', credentials: 'include' });
       await Promise.all(currentCart.map(item => 
-        fetch('http://localhost:3000/carts/items', {
+        fetch(import.meta.env.VITE_API_URL + '/carts/items', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -122,7 +122,7 @@ export function CheckoutModal() {
           })
         })
       ));
-      await fetch('http://localhost:3000/orders', {
+      await fetch(import.meta.env.VITE_API_URL + '/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

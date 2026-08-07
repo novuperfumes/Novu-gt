@@ -99,7 +99,7 @@ function MetricsTab() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3000/users/admin/metrics', { credentials: 'include' })
+    fetch(import.meta.env.VITE_API_URL + '/users/admin/metrics', { credentials: 'include' })
       .then(res => {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -150,7 +150,7 @@ function LoyaltyTab() {
     e.preventDefault();
     if (!query) return;
     try {
-      const res = await fetch(`http://localhost:3000/users/search?q=${encodeURIComponent(query)}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/search?q=${encodeURIComponent(query)}`, {
         credentials: 'include'
       });
       const data = await res.json();
@@ -169,7 +169,7 @@ function LoyaltyTab() {
 
   const handleUpdateSellos = async (userId: number, sellos: number) => {
     try {
-      const res = await fetch(`http://localhost:3000/users/${userId}/sellos`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/sellos`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -355,7 +355,7 @@ function HistoryTab() {
   }, []);
 
   const fetchOrders = () => {
-    fetch('http://localhost:3000/orders/admin/all', { credentials: 'include' })
+    fetch(import.meta.env.VITE_API_URL + '/orders/admin/all', { credentials: 'include' })
       .then(res => {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -389,7 +389,7 @@ function HistoryTab() {
       if (costoEnvio !== undefined) {
         body.costo_envio = costoEnvio;
       }
-      const res = await fetch(`http://localhost:3000/orders/admin/${orderId}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/admin/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -542,7 +542,7 @@ function CatalogTab() {
   const handleUpdateSize = async (perfumeId: number, type: string, originalId: number) => {
     try {
       if (type === 'pres') {
-        const res = await fetch(`http://localhost:3000/perfumes/presentaciones/${originalId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/presentaciones/${originalId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -572,7 +572,7 @@ function CatalogTab() {
           }
         };
 
-        const res = await fetch(`http://localhost:3000/perfumes/${perfumeId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${perfumeId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -601,7 +601,7 @@ function CatalogTab() {
             stock_10ml: type === 'decant10' ? 0 : currentDecant.stock_10ml,
           }
         };
-        const res = await fetch(`http://localhost:3000/perfumes/${perfumeId}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${perfumeId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -637,12 +637,12 @@ function CatalogTab() {
       const formData = new FormData();
       formData.append('file', files[i]);
       try {
-        const res = await fetch('http://localhost:3000/uploads/image', {
+        const res = await fetch(import.meta.env.VITE_API_URL + '/uploads/image', {
           method: 'POST', credentials: 'include', body: formData
         });
         if (res.ok) {
           const data = await res.json();
-          newUrls.push("http://localhost:3000" + data.url);
+          newUrls.push(import.meta.env.VITE_API_URL + "" + data.url);
         }
       } catch (err) {
         console.error(err);
@@ -666,7 +666,7 @@ function CatalogTab() {
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://localhost:3000/uploads/image', {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/uploads/image', {
         method: 'POST',
         credentials: 'include',
         body: formData
@@ -674,8 +674,8 @@ function CatalogTab() {
       if (res.ok) {
         const data = await res.json();
         // data.url contains the path (e.g., /uploads/abcd.jpg)
-        const imageUrl = "http://localhost:3000" + data.url; // We should use absolute URL for development or relative if it's served on same host. Let's use absolute for now. Actually, let's keep it relative to the API host if needed, or absolute.
-        const finalUrl = "http://localhost:3000" + data.url;
+        const imageUrl = import.meta.env.VITE_API_URL + "" + data.url; // We should use absolute URL for development or relative if it's served on same host. Let's use absolute for now. Actually, let's keep it relative to the API host if needed, or absolute.
+        const finalUrl = import.meta.env.VITE_API_URL + "" + data.url;
         if (isEditForm) {
           setEditImagen(finalUrl);
         } else {
@@ -699,7 +699,7 @@ function CatalogTab() {
   }, []);
 
   const fetchPerfumes = () => {
-    fetch('http://localhost:3000/perfumes/admin/all', { credentials: 'include' })
+    fetch(import.meta.env.VITE_API_URL + '/perfumes/admin/all', { credentials: 'include' })
       .then(res => {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -722,7 +722,7 @@ function CatalogTab() {
   const handleAddPerfume = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/perfumes', {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/perfumes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -735,7 +735,7 @@ function CatalogTab() {
         if (tipoPresentacion === 'decant') {
           const sizeNum = parseInt(tamanio, 10);
           const is5 = sizeNum <= 5;
-          await fetch(`http://localhost:3000/perfumes/${newPerfume.id}`, {
+          await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${newPerfume.id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -752,7 +752,7 @@ function CatalogTab() {
           });
         } else {
           // Add presentation
-          await fetch(`http://localhost:3000/perfumes/${newPerfume.id}/presentaciones`, {
+          await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${newPerfume.id}/presentaciones`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -788,7 +788,7 @@ function CatalogTab() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3000/perfumes/${perfumeId}/presentaciones`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${perfumeId}/presentaciones`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -814,7 +814,7 @@ function CatalogTab() {
   const handleDeletePresentation = async (presId: number) => {
     if (!window.confirm('¿Deseas eliminar esta presentación de tamaño?')) return;
     try {
-      const res = await fetch(`http://localhost:3000/perfumes/presentaciones/${presId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/presentaciones/${presId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -830,13 +830,13 @@ function CatalogTab() {
     try {
       if (currentStatus) {
         // Soft delete (desactivar)
-        await fetch(`http://localhost:3000/perfumes/${id}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${id}`, {
           method: 'DELETE',
           credentials: 'include'
         });
       } else {
         // Reactivar (Patch)
-        await fetch(`http://localhost:3000/perfumes/${id}/status`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${id}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -891,7 +891,7 @@ function CatalogTab() {
     };
 
     try {
-      const res = await fetch(`http://localhost:3000/perfumes/${idToUpdate}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${idToUpdate}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -1262,14 +1262,14 @@ function CatalogTab() {
                               const payloadDec = is5 ?
                                 { precio_5ml: parseFloat(newPresPrecio), costo_5ml: parseFloat(newPresCosto || '0'), stock_5ml: parseInt(newPresStock, 10) } :
                                 { precio_10ml: parseFloat(newPresPrecio), costo_10ml: parseFloat(newPresCosto || '0'), stock_10ml: parseInt(newPresStock, 10) };
-                              await fetch(`http://localhost:3000/perfumes/${editingPerfumeModal.id}`, {
+                              await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${editingPerfumeModal.id}`, {
                                 method: 'PATCH',
                                 headers: { 'Content-Type': 'application/json' },
                                 credentials: 'include',
                                 body: JSON.stringify({ decant: { ...dec, ...payloadDec } })
                               });
                             } else {
-                              await fetch(`http://localhost:3000/perfumes/${editingPerfumeModal.id}/presentaciones`, {
+                              await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${editingPerfumeModal.id}/presentaciones`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 credentials: 'include',
@@ -1428,14 +1428,14 @@ function CatalogTab() {
                             const payloadDec = is5 ?
                               { precio_5ml: parseFloat(newPresPrecio), costo_5ml: parseFloat(newPresCosto || '0'), stock_5ml: parseInt(newPresStock, 10) } :
                               { precio_10ml: parseFloat(newPresPrecio), costo_10ml: parseFloat(newPresCosto || '0'), stock_10ml: parseInt(newPresStock, 10) };
-                            await fetch(`http://localhost:3000/perfumes/${p.id}`, {
+                            await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${p.id}`, {
                               method: 'PATCH',
                               headers: { 'Content-Type': 'application/json' },
                               credentials: 'include',
                               body: JSON.stringify({ decant: { ...dec, ...payloadDec } })
                             });
                           } else {
-                            await fetch(`http://localhost:3000/perfumes/${p.id}/presentaciones`, {
+                            await fetch(`${import.meta.env.VITE_API_URL}/perfumes/${p.id}/presentaciones`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               credentials: 'include',
@@ -1663,10 +1663,10 @@ function PromotionsTab() {
 
   const fetchData = async () => {
     try {
-      const pRes = await fetch('http://localhost:3000/promo-codes', { credentials: 'include' });
+      const pRes = await fetch(import.meta.env.VITE_API_URL + '/promo-codes', { credentials: 'include' });
       if (pRes.ok) setPromos(await pRes.json());
       
-      const gRes = await fetch('http://localhost:3000/gift-cards', { credentials: 'include' });
+      const gRes = await fetch(import.meta.env.VITE_API_URL + '/gift-cards', { credentials: 'include' });
       if (gRes.ok) setGiftCards(await gRes.json());
     } catch(err) {
       console.error(err);
@@ -1683,7 +1683,7 @@ function PromotionsTab() {
         fecha_inicio: newPromoInicio ? new Date(newPromoInicio + 'T00:00:00').toISOString() : new Date().toISOString(),
         fecha_fin: newPromoFin ? new Date(newPromoFin + 'T23:59:59').toISOString() : undefined,
       };
-      const res = await fetch('http://localhost:3000/promo-codes', {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/promo-codes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -1708,7 +1708,7 @@ function PromotionsTab() {
   const handleCreateGiftCard = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/gift-cards/manual', {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/gift-cards/manual', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -1772,7 +1772,7 @@ function PromotionsTab() {
               <button 
                 onClick={async () => {
                   if (confirm(`¿Seguro que deseas cambiar el estado de ${p.codigo}?`)) {
-                    const res = await fetch(`http://localhost:3000/promo-codes/${p.id}/toggle`, { method: 'POST', credentials: 'include' });
+                    const res = await fetch(`${import.meta.env.VITE_API_URL}/promo-codes/${p.id}/toggle`, { method: 'POST', credentials: 'include' });
                     if (res.ok) fetchData();
                   }
                 }}
@@ -1842,12 +1842,12 @@ function CampaniasTab() {
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://localhost:3000/uploads/image', {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/uploads/image', {
         method: 'POST', credentials: 'include', body: formData
       });
       if (res.ok) {
         const data = await res.json();
-        setImagen("http://localhost:3000" + data.url);
+        setImagen(import.meta.env.VITE_API_URL + "" + data.url);
       }
     } catch (err) {
       console.error(err);
@@ -1860,8 +1860,8 @@ function CampaniasTab() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:3000/campanias', { credentials: 'include' }).then(r => r.json()),
-      fetch('http://localhost:3000/perfumes/admin/all', { credentials: 'include' }).then(r => r.json()),
+      fetch(import.meta.env.VITE_API_URL + '/campanias', { credentials: 'include' }).then(r => r.json()),
+      fetch(import.meta.env.VITE_API_URL + '/perfumes/admin/all', { credentials: 'include' }).then(r => r.json()),
     ])
       .then(([c, p]) => {
         setCampanias(Array.isArray(c) ? c : []);
@@ -1872,7 +1872,7 @@ function CampaniasTab() {
   }, []);
 
   const refresh = () => {
-    fetch('http://localhost:3000/campanias', { credentials: 'include' })
+    fetch(import.meta.env.VITE_API_URL + '/campanias', { credentials: 'include' })
       .then(r => r.json())
       .then(c => setCampanias(Array.isArray(c) ? c : []))
       .catch(() => {});
@@ -1890,7 +1890,7 @@ function CampaniasTab() {
       if (fechaFin) body.fecha_fin = fechaFin;
       if (imagen) body.imagen = imagen;
 
-      await fetch('http://localhost:3000/campanias', {
+      await fetch(import.meta.env.VITE_API_URL + '/campanias', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -1905,7 +1905,7 @@ function CampaniasTab() {
   };
 
   const handleToggle = async (id: number) => {
-    await fetch(`http://localhost:3000/campanias/${id}/toggle`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/campanias/${id}/toggle`, {
       method: 'PATCH', credentials: 'include',
     });
     refresh();
@@ -1913,7 +1913,7 @@ function CampaniasTab() {
 
   const handleDelete = async (id: number) => {
     if (!confirm('¿Eliminar esta campaña?')) return;
-    await fetch(`http://localhost:3000/campanias/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/campanias/${id}`, {
       method: 'DELETE', credentials: 'include',
     });
     refresh();

@@ -58,7 +58,7 @@ export function EstadisticasDashboard() {
       if (endDate) params.append('endDate', endDate);
       if (gender !== 'todos') params.append('gender', gender);
 
-      const res = await fetch(`http://localhost:3000/sales-reports/dashboard-stats?${params.toString()}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/sales-reports/dashboard-stats?${params.toString()}`, {
         credentials: 'include'
       });
       if (!res.ok) throw new Error('Network error');
@@ -66,7 +66,7 @@ export function EstadisticasDashboard() {
       setData(json);
 
       // Fetch best sellers
-      const resBest = await fetch('http://localhost:3000/perfumes/best-sellers');
+      const resBest = await fetch(import.meta.env.VITE_API_URL + '/perfumes/best-sellers');
       if (resBest.ok) {
         const bestData = await resBest.json();
         setBestSellers(bestData);

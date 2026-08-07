@@ -20,8 +20,8 @@ window.fetch = async (input, init) => {
   let rewrittenUrl = url;
   
   // Rewrite localhost:3000 (and configured API URL) to the local Vite proxy
-  if (url.startsWith('http://localhost:3000')) {
-    rewrittenUrl = url.replace('http://localhost:3000', '/api');
+  if (url.startsWith(import.meta.env.VITE_API_URL + '')) {
+    rewrittenUrl = url.replace(import.meta.env.VITE_API_URL + '', '/api');
   } else if (import.meta.env.VITE_API_URL && url.startsWith(import.meta.env.VITE_API_URL)) {
     rewrittenUrl = url.replace(import.meta.env.VITE_API_URL, '/api');
   }

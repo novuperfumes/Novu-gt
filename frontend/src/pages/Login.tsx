@@ -40,7 +40,7 @@ export function Login() {
         ? { correo: email, contrasenia: password }
         : { correo: email, contrasenia: password, nombre, apellido };
 
-      const res = await fetch(`http://localhost:3000${endpoint}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

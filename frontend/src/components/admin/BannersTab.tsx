@@ -145,7 +145,7 @@ export function BannersTab() {
             <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} style={{ marginBottom: '10px', display: 'block' }} />
             {uploading && <span>Subiendo imagen...</span>}
             {form.bgImage && !uploading && (
-              <img src={form.bgImage.startsWith('http') ? form.bgImage : `http://localhost:3000${form.bgImage}`} alt="Preview" style={{ height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+              <img src={form.bgImage.startsWith('http') ? form.bgImage : `${import.meta.env.VITE_API_URL}${form.bgImage}`} alt="Preview" style={{ height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
             )}
           </div>
 
@@ -214,7 +214,7 @@ export function BannersTab() {
         <div style={{ display: 'grid', gap: '20px' }}>
           {banners.map(b => (
             <div key={b.id} style={{ display: 'flex', gap: '20px', border: '1px solid #eee', padding: '15px', borderRadius: '8px', alignItems: 'center', background: b.activo ? '#fff' : '#f9f9f9', opacity: b.activo ? 1 : 0.6 }}>
-              <img src={b.bgImage.startsWith('http') ? b.bgImage : `http://localhost:3000${b.bgImage}`} alt={b.title} style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+              <img src={b.bgImage.startsWith('http') ? b.bgImage : `${import.meta.env.VITE_API_URL}${b.bgImage}`} alt={b.title} style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
               <div style={{ flex: 1 }}>
                 <span style={{ fontSize: '0.7rem', background: '#eee', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>{b.page}</span>
                 <h4 style={{ margin: '5px 0' }}>{b.title}</h4>

@@ -27,7 +27,7 @@ export function useCampania() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3000/campanias/activa')
+    fetch(import.meta.env.VITE_API_URL + '/campanias/activa')
       .then(r => r.ok ? r.json() : [])
       .then(data => {
         if (Array.isArray(data)) setCampaniasActivas(data);

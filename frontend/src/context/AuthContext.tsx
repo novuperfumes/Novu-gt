@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if user is logged in via HttpOnly cookie by hitting /auth/me
     const fetchSession = async () => {
       try {
-        const res = await fetch('http://localhost:3000/auth/me', {
+        const res = await fetch(import.meta.env.VITE_API_URL + '/auth/me', {
           credentials: 'include'
         });
         if (res.ok) {
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:3000/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch(import.meta.env.VITE_API_URL + '/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (err) {
       console.error('Error logging out:', err);
     }
