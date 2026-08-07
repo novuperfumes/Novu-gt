@@ -51,6 +51,16 @@ let PromoCodesService = class PromoCodesService {
     async findAll() {
         return this.prisma.codigoPromocion.findMany();
     }
+    async toggleStatus(id) {
+        const promo = await this.prisma.codigoPromocion.findUnique({ where: { id } });
+        if (!promo)
+            throw new common_1.NotFoundException('Código no encontrado');
+        const newStatus = promo.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+        return this.prisma.codigoPromocion.update({
+            where: { id },
+            data: { estado: newStatus }
+        });
+    }
 };
 exports.PromoCodesService = PromoCodesService;
 exports.PromoCodesService = PromoCodesService = __decorate([

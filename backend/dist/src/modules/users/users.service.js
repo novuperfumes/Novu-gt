@@ -108,12 +108,14 @@ let UsersService = class UsersService {
         const users = await this.prisma.usuario.findMany({
             where: {
                 OR: [
-                    { correo: { contains: query, mode: 'insensitive' } },
+                    { correo: { contains: query } },
+                    { nombre: { contains: query } },
+                    { apellido: { contains: query } },
                     isNumber ? { id: Number(query) } : undefined,
                     {
                         giftCards: {
                             some: {
-                                codigo: { contains: query, mode: 'insensitive' }
+                                codigo: { contains: query }
                             }
                         }
                     }

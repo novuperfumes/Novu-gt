@@ -375,7 +375,7 @@ let OrdersService = class OrdersService {
         });
         if (!order)
             throw new common_1.NotFoundException('Orden no encontrada');
-        if (estado === 'CONFIRMADO' && order.estado !== 'CONFIRMADO') {
+        if (estado === 'PROCESADO' && order.estado !== 'PROCESADO' && order.estado !== 'ENTREGADO') {
             await this.prisma.$transaction(async (tx) => {
                 for (const item of order.detalles) {
                     if (item.id_presentacion) {
@@ -425,7 +425,7 @@ let OrdersService = class OrdersService {
                     });
                     let finalStamps = newStampsCount;
                     const redemptions = Math.floor(newStampsCount / 6);
-                    if (newStampsCount >= 6) {
+                    if (redemptions >= 1) {
                         finalStamps = newStampsCount % 6;
                         await tx.historialSellos.create({
                             data: {
@@ -436,13 +436,14 @@ let OrdersService = class OrdersService {
                             },
                         });
                         for (let i = 0; i < redemptions; i++) {
+                            const uniqueCode = `NOVU-${userId}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
                             await tx.giftCard.create({
                                 data: {
                                     id_usuario: userId,
-                                    codigo: 'GIFT-250-' + Math.floor(100000 + Math.random() * 900000),
+                                    codigo: uniqueCode,
                                     monto: 250.00,
                                     activa: true,
-                                    es_bienvenida: false
+                                    es_bienvenida: false,
                                 }
                             });
                         }

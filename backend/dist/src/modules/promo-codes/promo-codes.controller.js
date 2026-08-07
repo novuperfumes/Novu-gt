@@ -33,6 +33,9 @@ let PromoCodesController = class PromoCodesController {
     async validate(code) {
         return this.promoCodesService.validate(code);
     }
+    async toggleStatus(id) {
+        return this.promoCodesService.toggleStatus(+id);
+    }
 };
 exports.PromoCodesController = PromoCodesController;
 __decorate([
@@ -60,6 +63,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PromoCodesController.prototype, "validate", null);
+__decorate([
+    (0, common_1.Post)(':id/toggle'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], PromoCodesController.prototype, "toggleStatus", null);
 exports.PromoCodesController = PromoCodesController = __decorate([
     (0, common_1.Controller)('promo-codes'),
     __metadata("design:paramtypes", [promo_codes_service_1.PromoCodesService])

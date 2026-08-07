@@ -89,6 +89,8 @@ export function EstadisticasDashboard() {
   const monthlyData = data?.monthlyData || [];
   const summaryByCategory = data?.summaryByCategory || { Arabe: {}, Diseñador: {}, Nicho: {} };
   const summaryByGender = data?.summaryByGender || { Hombre: 0, Mujer: 0 };
+  const orderStatusCounts = data?.orderStatusCounts || { pendientes: 0, procesadas: 0, entregadas: 0, canceladas: 0 };
+  const topVendidos: any[] = data?.topVendidos || [];
 
   // Datos para gráficas (Global del periodo seleccionado)
   const chartCategoryData = [
@@ -222,7 +224,22 @@ export function EstadisticasDashboard() {
         <p>Cargando estadísticas...</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          
+
+          {/* Panel de Estado de Órdenes */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            {[
+              { label: 'Pendientes', count: orderStatusCounts.pendientes, color: '#F59E0B', bg: '#FFFBEB' },
+              { label: 'Procesadas', count: orderStatusCounts.procesadas, color: '#3B82F6', bg: '#EFF6FF' },
+              { label: 'Entregadas', count: orderStatusCounts.entregadas, color: '#10B981', bg: '#F0FDF4' },
+              { label: 'Canceladas', count: orderStatusCounts.canceladas, color: '#EF4444', bg: '#FEF2F2' },
+            ].map(({ label, count, color, bg }) => (
+              <div key={label} style={{ backgroundColor: bg, borderRadius: '12px', padding: '20px', border: `1px solid ${color}30`, textAlign: 'center' }}>
+                <div style={{ fontSize: '2.2rem', fontWeight: 800, color }}>{count}</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#555', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
           {/* Fila 1: Cantidad de Perfumes Vendidos */}
           <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
             <div style={{ flex: '0 0 350px' }}>{renderTableCategorias('cantidad')}</div>
@@ -325,23 +342,25 @@ export function EstadisticasDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {bestSellers.map((perfume, index) => (
-                  <tr key={perfume.id} style={{ borderBottom: '1px solid #eee' }}>
+                {topVendidos.length > 0 ? topVendidos.map((perfume: any, index: number) => (
+                  <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
                     <td style={{ padding: '12px', fontWeight: 'bold', color: '#666' }}>{index + 1}</td>
                     <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <img src={perfume.imagen} alt={perfume.nombre} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                      <span style={{ fontWeight: 600 }}>{perfume.nombre}</span>
+                      <img src={perfume.imagen} alt={perfume.nombre} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                      <div>
+                        <div style={{ fontWeight: 600 }}>{perfume.nombre}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#888' }}>{perfume.tamanio}</div>
+                      </div>
                     </td>
                     <td style={{ padding: '12px' }}>{perfume.marca}</td>
-                    <td style={{ padding: '12px' }}>{perfume.categoria}</td>
+                    <td style={{ padding: '12px' }}>—</td>
                     <td style={{ padding: '12px', textAlign: 'center', fontWeight: 'bold', color: '#C5A059', fontSize: '1.1rem' }}>
-                      {perfume.salesCount}
+                      {perfume.totalVendido}
                     </td>
                   </tr>
-                ))}
-                {bestSellers.length === 0 && (
+                )) : (
                   <tr>
-                    <td colSpan={5} style={{ padding: '20px', textAlign: 'center', color: '#999' }}>No hay ventas registradas aún.</td>
+                    <td colSpan={5} style={{ padding: '20px', textAlign: 'center', color: '#999' }}>No hay órdenes confirmadas aún.</td>
                   </tr>
                 )}
               </tbody>

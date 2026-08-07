@@ -21,11 +21,12 @@ import { PerfumeDetail } from './pages/PerfumeDetail';
 function App() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isAuthOrAdmin = location.pathname === '/login' || location.pathname.startsWith('/admin');
 
   return (
     <>
       {!isHome && <Header />}
-      {!isHome && <CampaniaBanner />}
+      {!isHome && !isAuthOrAdmin && <CampaniaBanner />}
       <CartModal />
       <ProfileModal />
       <CheckoutModal />

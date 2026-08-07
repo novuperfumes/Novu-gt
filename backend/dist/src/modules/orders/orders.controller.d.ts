@@ -5,11 +5,9 @@ export declare class OrdersController {
     constructor(ordersService: OrdersService);
     create(req: any, dto: CreateOrderDto): Promise<{
         order: {
-            id: number;
-            id_usuario: number;
-            estado: string;
-            total: import("@prisma/client-runtime-utils").Decimal;
             fecha: Date;
+            total: import("@prisma/client-runtime-utils").Decimal;
+            estado: string;
             metodo_de_pago: string;
             tipo_entrega: string;
             nombre_recibe: string;
@@ -20,6 +18,8 @@ export declare class OrdersController {
             referencias_entrega: string | null;
             codigo_postal_entrega: string | null;
             costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+            id: number;
+            id_usuario: number;
             id_sucursal: number | null;
             id_codigo_promocion: number | null;
             id_gift_card: number | null;
@@ -76,19 +76,17 @@ export declare class OrdersController {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
-            id_orden: number;
         })[];
     } & {
-        id: number;
-        id_usuario: number;
-        estado: string;
-        total: import("@prisma/client-runtime-utils").Decimal;
         fecha: Date;
+        total: import("@prisma/client-runtime-utils").Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -99,6 +97,8 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id: number;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
@@ -116,20 +116,20 @@ export declare class OrdersController {
         };
         giftCard: {
             id: number;
+            id_usuario: number;
             codigo: string;
             monto: import("@prisma/client-runtime-utils").Decimal;
             activa: boolean;
             es_bienvenida: boolean;
-            id_usuario: number;
         } | null;
         codigoPromocion: {
+            estado: string;
             id: number;
             codigo: string;
             tipo_descuento: string;
             descuento: import("@prisma/client-runtime-utils").Decimal;
             fecha_inicio: Date;
             fecha_fin: Date;
-            estado: string;
         } | null;
         detalles: ({
             decant: ({
@@ -181,19 +181,17 @@ export declare class OrdersController {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
-            id_orden: number;
         })[];
     } & {
-        id: number;
-        id_usuario: number;
-        estado: string;
-        total: import("@prisma/client-runtime-utils").Decimal;
         fecha: Date;
+        total: import("@prisma/client-runtime-utils").Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -204,6 +202,8 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id: number;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
@@ -212,11 +212,9 @@ export declare class OrdersController {
         estado: string;
         costo_envio?: number;
     }): Promise<{
-        id: number;
-        id_usuario: number;
-        estado: string;
-        total: import("@prisma/client-runtime-utils").Decimal;
         fecha: Date;
+        total: import("@prisma/client-runtime-utils").Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -227,6 +225,8 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id: number;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;
@@ -282,19 +282,17 @@ export declare class OrdersController {
             }) | null;
         } & {
             id: number;
-            tipo_decant: string | null;
-            cantidad: number;
+            id_orden: number;
             id_presentacion: number | null;
             id_decant: number | null;
+            tipo_decant: string | null;
+            cantidad: number;
             precio_unitario: import("@prisma/client-runtime-utils").Decimal;
-            id_orden: number;
         })[];
     } & {
-        id: number;
-        id_usuario: number;
-        estado: string;
-        total: import("@prisma/client-runtime-utils").Decimal;
         fecha: Date;
+        total: import("@prisma/client-runtime-utils").Decimal;
+        estado: string;
         metodo_de_pago: string;
         tipo_entrega: string;
         nombre_recibe: string;
@@ -305,6 +303,8 @@ export declare class OrdersController {
         referencias_entrega: string | null;
         codigo_postal_entrega: string | null;
         costo_envio: import("@prisma/client-runtime-utils").Decimal | null;
+        id: number;
+        id_usuario: number;
         id_sucursal: number | null;
         id_codigo_promocion: number | null;
         id_gift_card: number | null;

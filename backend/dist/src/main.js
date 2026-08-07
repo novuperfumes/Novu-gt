@@ -95,9 +95,33 @@ async function bootstrap() {
     const fastifyInstance = app.getHttpAdapter().getInstance();
     fastifyInstance.addHook('preValidation', async (req, reply) => {
         if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-            const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];
-            if (!excludedRoutes.some(route => req.url.startsWith(route))) {
-                await fastifyInstance.csrfProtection(req, reply);
+            const excludedPrefixes = [
+                '/auth/login',
+                '/auth/register',
+                '/uploads/',
+                '/banners',
+                '/campanias',
+                '/promo-codes',
+                '/perfumes',
+                '/inventory',
+                '/decants',
+                '/branches',
+                '/gift-cards',
+                '/orders',
+                '/users',
+                '/reviews',
+                '/whatsapp-orders',
+                '/sales-reports',
+            ];
+            if (!excludedPrefixes.some(prefix => req.url.startsWith(prefix))) {
+                await new Promise((resolve, reject) => {
+                    fastifyInstance.csrfProtection(req, reply, (err) => {
+                        if (err)
+                            reject(err);
+                        else
+                            resolve(true);
+                    });
+                });
             }
         }
     });

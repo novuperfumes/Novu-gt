@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
+import { useBanners } from '../hooks/useBanners';
 
 export function VerTodas() {
   const navigate = useNavigate();
@@ -9,8 +10,31 @@ export function VerTodas() {
   const searchQuery = searchParams.get('q') || '';
   const { perfumes, loading } = usePerfumes();
   const { calcularPrecio } = useCampania();
+  const { banners: dynamicBanners } = useBanners('');
   
   const [activeGender, setActiveGender] = useState('todos');
+
+  // --- Lógica del Carrusel Hero ---
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const defaultSlides = [
+    {
+      bgImage: "/imagenes/banner1.png",
+      tag: "COLECCIÓN COMPLETA",
+      title: "TODOS LOS PERFUMES",
+      desc: "Explora nuestra colección completa de fragancias de diseñador, árabes y nicho.",
+      link: "#grid-section",
+      btnText: "VER CATÁLOGO"
+    }
+  ];
+  const slides = dynamicBanners.length > 0 ? dynamicBanners : defaultSlides;
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
   useEffect(() => {
     if (searchQuery) {
@@ -51,20 +75,51 @@ export function VerTodas() {
   return (
     <>
       <main className="arabe-main">
-        {/* Banner estático para Todas */}
         <section className="hero-carousel-section" id="hero-carousel" style={{ height: '400px' }}>
           <div className="carousel-track-container">
             <div className="carousel-track">
-              <div 
-                className="carousel-slide active" 
-                style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('/imagenes/banner1.png')`, height: '400px' }}>
-                <div className="slide-content">
-                  <span className="slide-tag">COLECCIÓN COMPLETA</span>
-                  <h1 className="slide-title">TODOS LOS PERFUMES</h1>
-                  <p className="slide-description">Explora nuestra colección completa de fragancias de diseñador, árabes y nicho.</p>
+              {slides.map((slide, index) => {
+                const imgUrl = slide.bgImage.startsWith('http') || slide.bgImage.startsWith('/imagenes') 
+                  ? slide.bgImage 
+                  : `http://localhost:3000${slide.bgImage}`;
+                
+                return (
+                <div 
+                  key={index} 
+                  className={`carousel-slide ${index === currentSlide ? 'active' : ''}`} 
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('${imgUrl}')`, height: '400px' }}>
+                  <div className="slide-content">
+                    {slide.tag && <span className="slide-tag">{slide.tag}</span>}
+                    <h1 className="slide-title">{slide.title}</h1>
+                    {slide.desc && <p className="slide-description">{slide.desc}</p>}
+                    {slide.btnText && slide.link && <a href={slide.link} className="slide-btn">{slide.btnText}</a>}
+                  </div>
                 </div>
-              </div>
+                );
+              })}
             </div>
+          </div>
+          
+          <button className="carousel-arrow prev" aria-label="Slide anterior" onClick={prevSlide}>
+            <svg className="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button className="carousel-arrow next" aria-label="Siguiente slide" onClick={nextSlide}>
+            <svg className="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          
+          <div className="carousel-nav">
+            {slides.map((_, index) => (
+              <button 
+                key={index}
+                className={`carousel-indicator ${index === currentSlide ? 'active' : ''}`} 
+                aria-label={`Slide ${index + 1}`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
           </div>
         </section>
 
@@ -110,7 +165,17 @@ export function VerTodas() {
             <div className="products-grid">
               {loading && <p style={{ color: '#C5A059', textAlign: 'center', width: '100%', padding: '20px' }}>Cargando productos...</p>}
               {!loading && filteredGridProducts.map(product => {
-                const price = product.presentaciones?.length ? Number(product.presentaciones[0].precio) : 0;
+                const isDecantsTab = activeGender === 'decants';
+                let price = 0;
+                let isDecantPrice = false;
+
+                if (isDecantsTab && product.decant && Number(product.decant.precio_5ml) > 0) {
+                  price = Number(product.decant.precio_5ml);
+                  isDecantPrice = true;
+                } else {
+                  price = product.presentaciones?.length ? Number(product.presentaciones[0].precio) : 0;
+                }
+
                 const { precioFinal, tieneDescuento, porcentaje } = calcularPrecio(product, price);
                 return (
                 <div className="grid-product-card" key={product.id} onClick={() => handleVerMas(product.id)} style={{ cursor: 'pointer' }}>
@@ -143,6 +208,7 @@ export function VerTodas() {
                     >
                       {product.categoria}
                     </p>
+                    {isDecantPrice && <span style={{ fontSize: '0.75rem', color: '#666', display: 'block', marginBottom: '2px', fontStyle: 'italic' }}>Decants desde:</span>}
                     {tieneDescuento ? (
                       <div style={{ marginBottom: '12px' }}>
                         <span className="discount-badge">{porcentaje}% OFF</span>
@@ -150,7 +216,7 @@ export function VerTodas() {
                         <span className="price-discount">Q {precioFinal.toFixed(2)}</span>
                       </div>
                     ) : (
-                      <p className="grid-product-price">Q {price.toFixed(2)}</p>
+                      <p className="grid-product-price" style={{ marginTop: isDecantPrice ? '0' : '8px' }}>Q {price.toFixed(2)}</p>
                     )}
                     <button className="ver-mas-btn" onClick={(e) => { e.stopPropagation(); handleVerMas(product.id); }}>VER MÁS</button>
                   </div>

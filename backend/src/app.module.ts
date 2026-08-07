@@ -26,6 +26,7 @@ import { SalesReportsModule } from './modules/sales-reports/sales-reports.module
 import { WhatsappOrdersModule } from './modules/whatsapp-orders/whatsapp-orders.module';
 import { GiftCardsModule } from './modules/gift-cards/gift-cards.module';
 import { CampaniasModule } from './modules/campanias/campanias.module';
+import { BannersModule } from './modules/banners/banners.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { CampaniasModule } from './modules/campanias/campanias.module';
     WhatsappOrdersModule,
     GiftCardsModule,
     CampaniasModule,
+    BannersModule,
   ],
   controllers: [AppController],
   providers: [

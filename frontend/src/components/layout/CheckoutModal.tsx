@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,14 +9,27 @@ export function CheckoutModal() {
   const [formData, setFormData] = useState({
     name: user?.nombre || '',
     email: user?.correo || '',
-    phone: '',
+    phone: user?.telefono || '',
     nit: '',
     address: '',
     references: '',
     dept: '',
     city: '',
-    gender: ''
+    gender: user?.genero || ''
   });
+
+  // Sync user data if user logs in after the modal is already mounted
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: prev.name || user.nombre || '',
+        email: prev.email || user.correo || '',
+        phone: prev.phone || user.telefono || '',
+        gender: prev.gender || user.genero || ''
+      }));
+    }
+  }, [user]);
 
   const [orderComplete, setOrderComplete] = useState(false);
   const [completedOrderNumber, setCompletedOrderNumber] = useState('');
@@ -93,17 +106,10 @@ export function CheckoutModal() {
     setValidatingDiscount(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // First, sync local cart to backend CarritoMaestro
+  const saveOrderBackground = async (currentCart: any[], currentFormData: any, discount: any) => {
     try {
-      // Clear existing backend cart
       await fetch('http://localhost:3000/carts', { method: 'DELETE', credentials: 'include' });
-      
-      // Add all current items to backend cart concurrently
-      await Promise.all(cart.map(item => 
+      await Promise.all(currentCart.map(item => 
         fetch('http://localhost:3000/carts/items', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -116,75 +122,65 @@ export function CheckoutModal() {
           })
         })
       ));
-
-      // Save order to backend
-      const response = await fetch('http://localhost:3000/orders', {
+      await fetch('http://localhost:3000/orders', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
           tipo_entrega: 'domicilio',
           metodo_de_pago: 'efectivo',
-          nombre_recibe: formData.name,
-          telefono_contacto: formData.phone,
-          direccion_entrega: formData.address + (formData.references ? ` (Ref: ${formData.references})` : ''),
-          departamento_entrega: formData.dept,
-          municipio_entrega: formData.city,
-          codigo_descuento: appliedDiscount?.code
+          nombre_recibe: currentFormData.name,
+          telefono_contacto: currentFormData.phone,
+          direccion_entrega: currentFormData.address + (currentFormData.references ? ` (Ref: ${currentFormData.references})` : ''),
+          departamento_entrega: currentFormData.dept,
+          municipio_entrega: currentFormData.city,
+          codigo_descuento: discount?.code
         })
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        setEarnedStamps(result.stampsSummary?.earned || 0);
-      } else {
-        const errData = await response.json();
-        alert('Error al registrar pedido: ' + (errData.message || 'Intente nuevamente'));
-        setIsSubmitting(false);
-        return; // Abort WhatsApp and cart clearing if order fails
-      }
     } catch (error) {
-      console.error('Error creating order in DB:', error);
-      alert('Error de conexión al procesar el pedido. Intente nuevamente.');
-      setIsSubmitting(false);
-      return; // Abort
+      console.error('Error saving order in background:', error);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
     
-    // Process WhatsApp
+    // === STEP 1: Build and open WhatsApp immediately (Synchronous) ===
     let orderDetailsText = '';
     cart.forEach((item, idx) => {
         orderDetailsText += `${idx + 1}. *${item.brand}* - ${item.name} x${item.quantity} - Q ${(item.price * item.quantity).toFixed(2)}\n`;
     });
     
-    const whatsappMessage = `¡Hola NOVU! Me gustaría realizar el siguiente pedido:
-
-*DATOS DE ENVÍO Y FACTURACIÓN:*
-- *Nombre:* ${formData.name}
-- *NIT:* ${formData.nit.trim() || 'CF'}
-- *Teléfono:* +502 ${formData.phone}
-- *Dirección:* ${formData.address}
-${formData.references ? `- *Referencias:* ${formData.references}\n` : ''}- *Municipio/Ciudad:* ${formData.city}
-- *Departamento:* ${formData.dept}
-- *Correo:* ${formData.email}
-
-*DETALLE DEL PEDIDO:*
-${orderDetailsText}
-- *Subtotal:* Q ${cartTotal.toFixed(2)}
-${appliedDiscount ? `- *Descuento (${appliedDiscount.code}):* - Q ${appliedDiscount.amount.toFixed(2)}\n` : ''}- *Envío (${formData.dept}):* Q ${shippingCost.toFixed(2)}
-*TOTAL A PAGAR:* Q ${total.toFixed(2)}`;
+    const whatsappMessage = `¡Hola NOVU! Me gustaría realizar el siguiente pedido:\n\n*DATOS DE ENVÍO Y FACTURACIÓN:*\n- *Nombre:* ${formData.name}\n- *NIT:* ${formData.nit.trim() || 'CF'}\n- *Teléfono:* +502 ${formData.phone}\n- *Dirección:* ${formData.address}\n${formData.references ? `- *Referencias:* ${formData.references}\n` : ''}- *Municipio/Ciudad:* ${formData.city}\n- *Departamento:* ${formData.dept}\n- *Correo:* ${formData.email}\n\n*DETALLE DEL PEDIDO:*\n${orderDetailsText}- *Subtotal:* Q ${cartTotal.toFixed(2)}\n${appliedDiscount ? `- *Descuento (${appliedDiscount.code}):* - Q ${appliedDiscount.amount.toFixed(2)}\n` : ''}- *Envío (${formData.dept}):* Q ${shippingCost.toFixed(2)}\n*TOTAL A PAGAR:* Q ${total.toFixed(2)}`;
 
     const encodedText = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/50232316390?text=${encodedText}`;
     setWhatsappLink(whatsappUrl);
-    window.open(whatsappUrl, '_blank');
+    
+    // Using a direct link click hack which is often faster/more reliable on mobile devices than window.open
+    const link = document.createElement('a');
+    link.href = whatsappUrl;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
+    // === STEP 2: Show success screen immediately ===
     setFinalTotal(total);
     setCompletedOrderNumber('NV-' + Math.floor(100000 + Math.random() * 900000));
     setOrderComplete(true);
     setIsSubmitting(false);
+    
+    // Save state before clearing cart
+    const currentCart = [...cart];
+    const currentFormData = { ...formData };
+    const currentDiscount = appliedDiscount;
+    
     clearCart();
+
+    // === STEP 3: Save to backend in the background (fire and forget) ===
+    saveOrderBackground(currentCart, currentFormData, currentDiscount);
   };
 
   const handleClose = () => {

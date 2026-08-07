@@ -3,17 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
 import { GuestBanner } from '../components/layout/GuestBanner';
+import { useBanners } from '../hooks/useBanners';
 
 export function Nicho() {
   const navigate = useNavigate();
   const { perfumes, bestSellers, filterByCategory, loading } = usePerfumes();
   const { calcularPrecio } = useCampania();
+  const { banners: dynamicBanners } = useBanners('nicho');
 
   // --- Lógica del Carrusel Hero ---
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [
+  const defaultSlides = [
     {
-      bgImage: "url('/imagenes/banner_nicho1.jpg')",
+      bgImage: "/imagenes/banner_nicho1.jpg",
       tag: "ARISTOCRACIA EN FRAGANCIAS",
       title: "CREED AVENTUS",
       desc: "Un aroma legendario que celebra la fuerza, el poder y el éxito, con una sofisticada combinación de notas frutales y ahumadas.",
@@ -21,7 +23,7 @@ export function Nicho() {
       btnText: "EXPLORAR AVENTUS"
     },
     {
-      bgImage: "url('/imagenes/banner_nicho2.jpg')",
+      bgImage: "/imagenes/banner_nicho2.jpg",
       tag: "OBRA MAESTRA",
       title: "LAYTON BY MARLY",
       desc: "Una fragancia seductora oriental-floral de Parfums de Marly con una firma olfativa intensa y distinguida.",
@@ -29,6 +31,8 @@ export function Nicho() {
       btnText: "DESCUBRIR MARCA"
     }
   ];
+
+  const slides = dynamicBanners.length > 0 ? dynamicBanners : defaultSlides;
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
@@ -75,19 +79,25 @@ export function Nicho() {
         <section className="hero-carousel-section" id="hero-carousel">
           <div className="carousel-track-container">
             <div className="carousel-track">
-              {slides.map((slide, index) => (
+              {slides.map((slide, index) => {
+                const imgUrl = slide.bgImage.startsWith('http') || slide.bgImage.startsWith('/imagenes') 
+                  ? slide.bgImage 
+                  : `http://localhost:3000${slide.bgImage}`;
+                
+                return (
                 <div 
                   key={index} 
                   className={`carousel-slide ${index === currentSlide ? 'active' : ''}`} 
-                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), ${slide.bgImage}` }}>
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('${imgUrl}')` }}>
                   <div className="slide-content">
-                    <span className="slide-tag">{slide.tag}</span>
+                    {slide.tag && <span className="slide-tag">{slide.tag}</span>}
                     <h1 className="slide-title">{slide.title}</h1>
-                    <p className="slide-description">{slide.desc}</p>
-                    <a href={slide.link} className="slide-btn">{slide.btnText}</a>
+                    {slide.desc && <p className="slide-description">{slide.desc}</p>}
+                    {slide.btnText && slide.link && <a href={slide.link} className="slide-btn">{slide.btnText}</a>}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           
@@ -180,7 +190,17 @@ export function Nicho() {
             <div className="products-grid">
               {loading && <p style={{ color: '#C5A059', textAlign: 'center', width: '100%', padding: '20px' }}>Cargando productos...</p>}
               {!loading && filteredGridProducts.map(product => {
-                const price = product.presentaciones?.length ? Number(product.presentaciones[0].precio) : 0;
+                const isDecantsTab = activeGender === 'decants';
+                let price = 0;
+                let isDecantPrice = false;
+
+                if (isDecantsTab && product.decant && Number(product.decant.precio_5ml) > 0) {
+                  price = Number(product.decant.precio_5ml);
+                  isDecantPrice = true;
+                } else {
+                  price = product.presentaciones?.length ? Number(product.presentaciones[0].precio) : 0;
+                }
+
                 const { precioFinal, tieneDescuento, porcentaje } = calcularPrecio(product, price);
                 return (
                 <div className="grid-product-card" key={product.id} onClick={() => handleVerMas(product.id)} style={{ cursor: 'pointer' }}>
@@ -213,6 +233,7 @@ export function Nicho() {
                     >
                       {product.categoria}
                     </p>
+                    {isDecantPrice && <span style={{ fontSize: '0.75rem', color: '#666', display: 'block', marginBottom: '2px', fontStyle: 'italic' }}>Decants desde:</span>}
                     {tieneDescuento ? (
                       <div style={{ marginBottom: '12px' }}>
                         <span className="discount-badge">{porcentaje}% OFF</span>
@@ -220,7 +241,7 @@ export function Nicho() {
                         <span className="price-discount">Q {precioFinal.toFixed(2)}</span>
                       </div>
                     ) : (
-                      <p className="grid-product-price">Q {price.toFixed(2)}</p>
+                      <p className="grid-product-price" style={{ marginTop: isDecantPrice ? '0' : '8px' }}>Q {price.toFixed(2)}</p>
                     )}
                     <button className="ver-mas-btn" onClick={(e) => { e.stopPropagation(); handleVerMas(product.id); }}>VER MÁS</button>
                   </div>

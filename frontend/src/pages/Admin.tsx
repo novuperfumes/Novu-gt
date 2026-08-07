@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { EstadisticasDashboard } from '../components/admin/EstadisticasDashboard';
+import { BannersTab } from '../components/admin/BannersTab';
 
 export function Admin() {
   const [activeTab, setActiveTab] = useState('metrics');
@@ -56,6 +57,12 @@ export function Admin() {
             </svg>
             Estadísticas
           </button>
+          <button className={`admin-nav-item ${activeTab === 'banners' ? 'active' : ''}`} onClick={() => setActiveTab('banners')}>
+            <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Banners Carrusel
+          </button>
         </nav>
         <div className="admin-sidebar-footer" style={{ padding: '25px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', textAlign: 'center' }}>
           <Link to="/" className="admin-logout-btn" style={{ textAlign: 'center', textDecoration: 'none', display: 'block', boxSizing: 'border-box' }}>VOLVER A LA TIENDA</Link>
@@ -72,6 +79,7 @@ export function Admin() {
           {activeTab === 'promotions' && 'Promociones y Gift Cards'}
           {activeTab === 'campanias' && 'Campañas de Descuento'}
           {activeTab === 'estadisticas' && 'Estadísticas Avanzadas'}
+          {activeTab === 'banners' && 'Banners Principales'}
         </h2>
         {activeTab === 'metrics' && <MetricsTab />}
         {activeTab === 'loyalty' && <LoyaltyTab />}
@@ -80,6 +88,7 @@ export function Admin() {
         {activeTab === 'promotions' && <PromotionsTab />}
         {activeTab === 'campanias' && <CampaniasTab />}
         {activeTab === 'estadisticas' && <EstadisticasDashboard />}
+        {activeTab === 'banners' && <BannersTab />}
       </main>
     </div>
   );
@@ -354,6 +363,14 @@ function HistoryTab() {
       .then(data => {
         if (Array.isArray(data)) {
           setOrders(data);
+          // Pre-fill shipping costs from saved order data
+          const costs: Record<number, string> = {};
+          data.forEach((o: any) => {
+            if (o.costo_envio !== undefined && o.costo_envio !== null) {
+              costs[o.id] = String(Number(o.costo_envio));
+            }
+          });
+          setShippingCosts(prev => ({ ...costs, ...prev }));
         } else {
           setOrders([]);
         }
@@ -1292,7 +1309,9 @@ function CatalogTab() {
                 <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginBottom: '14px' }}>
                   <img src={p.imagen} alt={p.nombre} style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #eee' }} onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/70'; }} />
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: '1.05rem', color: '#121212', fontWeight: 700 }}>{p.nombre}</h4>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '1.05rem', color: '#121212', fontWeight: 700 }}>
+                      {p.nombre} <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 'normal' }}>(ID: {p.id})</span>
+                    </h4>
                     <p style={{ margin: '0 0 6px 0', fontSize: '0.8rem', color: '#666' }}>{p.marca} | <span style={{ textTransform: 'capitalize', fontWeight: 600, color: '#C5A059' }}>{p.categoria}</span></p>
                     <button
                       onClick={() => handleToggleStatus(p.id, p.activo)}
@@ -1472,7 +1491,9 @@ function CatalogTab() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <img src={p.imagen} alt="" style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #eee' }} />
                       <div>
-                        <strong style={{ display: 'block', color: '#121212', fontSize: '0.9rem' }}>{p.nombre}</strong>
+                        <strong style={{ display: 'block', color: '#121212', fontSize: '0.9rem' }}>
+                          {p.nombre} <span style={{ color: '#888', fontWeight: 'normal', fontSize: '0.75rem' }}>(ID: {p.id})</span>
+                        </strong>
                         <span style={{ fontSize: '0.75rem', color: '#666' }}>{p.marca}</span>
                       </div>
                     </div>
@@ -1629,6 +1650,7 @@ function PromotionsTab() {
   const [newPromoCode, setNewPromoCode] = useState('');
   const [newPromoDesc, setNewPromoDesc] = useState('porcentaje');
   const [newPromoMonto, setNewPromoMonto] = useState('');
+  const [newPromoInicio, setNewPromoInicio] = useState('');
   const [newPromoFin, setNewPromoFin] = useState('');
 
   // Nueva Gift Card
@@ -1658,7 +1680,8 @@ function PromotionsTab() {
         codigo: newPromoCode,
         tipo_descuento: newPromoDesc,
         descuento: Number(newPromoMonto),
-        fecha_fin: newPromoFin ? new Date(newPromoFin).toISOString() : undefined,
+        fecha_inicio: newPromoInicio ? new Date(newPromoInicio + 'T00:00:00').toISOString() : new Date().toISOString(),
+        fecha_fin: newPromoFin ? new Date(newPromoFin + 'T23:59:59').toISOString() : undefined,
       };
       const res = await fetch('http://localhost:3000/promo-codes', {
         method: 'POST',
@@ -1670,7 +1693,12 @@ function PromotionsTab() {
         alert('Código promocional creado');
         setNewPromoCode('');
         setNewPromoMonto('');
+        setNewPromoInicio('');
+        setNewPromoFin('');
         fetchData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert('Error: ' + (err.message || 'No se pudo crear el código'));
       }
     } catch(err) {
       console.error(err);
@@ -1719,15 +1747,39 @@ function PromotionsTab() {
             </select>
             <input type="number" placeholder="Valor" value={newPromoMonto} onChange={e => setNewPromoMonto(e.target.value)} required style={{ flex: 1, padding: '8px' }} />
           </div>
-          <input type="date" value={newPromoFin} onChange={e => setNewPromoFin(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '8px', boxSizing: 'border-box' }} title="Fecha de Vencimiento" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px', color: '#555' }}>Válido desde</label>
+              <input type="date" value={newPromoInicio} onChange={e => setNewPromoInicio(e.target.value)} required style={{ display: 'block', width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px', color: '#555' }}>Válido hasta</label>
+              <input type="date" value={newPromoFin} onChange={e => setNewPromoFin(e.target.value)} required style={{ display: 'block', width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }} />
+            </div>
+          </div>
           <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#1c1a17', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Crear Código</button>
         </form>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {promos.map(p => (
-            <div key={p.id} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
-              <strong>{p.codigo}</strong> - {p.tipo_descuento === 'porcentaje' ? `${p.descuento}%` : `Q${p.descuento}`}
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>Expira: {new Date(p.fecha_fin).toLocaleDateString()} | Estado: {p.estado}</div>
+            <div key={p.id} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: p.estado === 'ACTIVO' ? 1 : 0.6 }}>
+              <div>
+                <strong>{p.codigo}</strong> - {p.tipo_descuento === 'porcentaje' ? `${p.descuento}%` : `Q${p.descuento}`}
+                <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                  {new Date(p.fecha_inicio).toLocaleDateString()} → {new Date(p.fecha_fin).toLocaleDateString()} | Estado: <strong>{p.estado}</strong>
+                </div>
+              </div>
+              <button 
+                onClick={async () => {
+                  if (confirm(`¿Seguro que deseas cambiar el estado de ${p.codigo}?`)) {
+                    const res = await fetch(`http://localhost:3000/promo-codes/${p.id}/toggle`, { method: 'POST', credentials: 'include' });
+                    if (res.ok) fetchData();
+                  }
+                }}
+                style={{ padding: '6px 12px', backgroundColor: p.estado === 'ACTIVO' ? '#f44336' : '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}
+              >
+                {p.estado === 'ACTIVO' ? 'Desactivar' : 'Activar'}
+              </button>
             </div>
           ))}
         </div>

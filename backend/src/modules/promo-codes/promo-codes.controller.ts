@@ -28,4 +28,11 @@ export class PromoCodesController {
   async validate(@Param('code') code: string) {
     return this.promoCodesService.validate(code);
   }
+
+  @Post(':id/toggle')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async toggleStatus(@Param('id') id: string) {
+    return this.promoCodesService.toggleStatus(+id);
+  }
 }

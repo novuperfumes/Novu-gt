@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
 import { GuestBanner } from '../components/layout/GuestBanner';
+import { useBanners } from '../hooks/useBanners';
 import '../assets/styles/decants.css';
 
 export function Decants() {
@@ -11,12 +12,13 @@ export function Decants() {
   const navigate = useNavigate();
   const { perfumes, bestSellers, loading } = usePerfumes();
   const { calcularPrecio } = useCampania();
+  const { banners: dynamicBanners } = useBanners('decants');
   
   // --- Lógica del Carrusel Hero ---
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [
+  const defaultSlides = [
     {
-      bgImage: "url('/imagenes/banner1.png')",
+      bgImage: "/imagenes/banner1.png",
       tag: "DECANTS ORIGINALES",
       title: "PRUEBA ANTES DE COMPRAR",
       desc: "Descubre nuevas fragancias con nuestros decants 100% originales.",
@@ -24,6 +26,8 @@ export function Decants() {
       btnText: "EXPLORAR DECANTS"
     }
   ];
+
+  const slides = dynamicBanners.length > 0 ? dynamicBanners : defaultSlides;
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
@@ -64,19 +68,25 @@ export function Decants() {
         <section className="hero-carousel-section" id="hero-carousel">
           <div className="carousel-track-container">
             <div className="carousel-track">
-              {slides.map((slide, index) => (
+              {slides.map((slide, index) => {
+                const imgUrl = slide.bgImage.startsWith('http') || slide.bgImage.startsWith('/imagenes') 
+                  ? slide.bgImage 
+                  : `http://localhost:3000${slide.bgImage}`;
+                
+                return (
                 <div 
                   key={index} 
                   className={`carousel-slide ${index === currentSlide ? 'active' : ''}`} 
-                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), ${slide.bgImage}` }}>
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('${imgUrl}')` }}>
                   <div className="slide-content">
-                    <span className="slide-tag">{slide.tag}</span>
+                    {slide.tag && <span className="slide-tag">{slide.tag}</span>}
                     <h1 className="slide-title">{slide.title}</h1>
-                    <p className="slide-description">{slide.desc}</p>
-                    <a href={slide.link} className="slide-btn">{slide.btnText}</a>
+                    {slide.desc && <p className="slide-description">{slide.desc}</p>}
+                    {slide.btnText && slide.link && <a href={slide.link} className="slide-btn">{slide.btnText}</a>}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           

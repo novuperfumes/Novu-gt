@@ -44,17 +44,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadsController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/guards/auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
-const fs = __importStar(require("fs"));
+const config_1 = require("@nestjs/config");
 const path = __importStar(require("path"));
-const promises_1 = require("stream/promises");
 const uuid_1 = require("uuid");
+const imagekit_1 = __importDefault(require("imagekit"));
 let UploadsController = class UploadsController {
+    configService;
+    imagekit;
+    constructor(configService) {
+        this.configService = configService;
+        this.imagekit = new imagekit_1.default({
+            publicKey: this.configService.get('IMAGEKIT_PUBLIC_KEY') || '',
+            privateKey: this.configService.get('IMAGEKIT_PRIVATE_KEY') || '',
+            urlEndpoint: this.configService.get('IMAGEKIT_URL_ENDPOINT') || '',
+        });
+    }
     async uploadImage(req) {
         const data = await req.file();
         if (!data) {
@@ -66,11 +79,14 @@ let UploadsController = class UploadsController {
         }
         const ext = path.extname(data.filename) || '.jpg';
         const filename = `${(0, uuid_1.v4)()}${ext}`;
-        const uploadsDir = path.join(process.cwd(), 'uploads');
-        const saveTo = path.join(uploadsDir, filename);
-        await (0, promises_1.pipeline)(data.file, fs.createWriteStream(saveTo));
+        const fileBuffer = await data.toBuffer();
+        const uploadResponse = await this.imagekit.upload({
+            file: fileBuffer,
+            fileName: filename,
+            folder: '/novu-gt',
+        });
         return {
-            url: `/uploads/${filename}`
+            url: uploadResponse.url
         };
     }
 };
@@ -85,6 +101,7 @@ __decorate([
 ], UploadsController.prototype, "uploadImage", null);
 exports.UploadsController = UploadsController = __decorate([
     (0, common_1.Controller)('uploads'),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard)
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:paramtypes", [config_1.ConfigService])
 ], UploadsController);
 //# sourceMappingURL=uploads.controller.js.map

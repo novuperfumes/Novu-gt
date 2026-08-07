@@ -35,6 +35,7 @@ const sales_reports_module_1 = require("./modules/sales-reports/sales-reports.mo
 const whatsapp_orders_module_1 = require("./modules/whatsapp-orders/whatsapp-orders.module");
 const gift_cards_module_1 = require("./modules/gift-cards/gift-cards.module");
 const campanias_module_1 = require("./modules/campanias/campanias.module");
+const banners_module_1 = require("./modules/banners/banners.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -72,6 +73,7 @@ exports.AppModule = AppModule = __decorate([
             whatsapp_orders_module_1.WhatsappOrdersModule,
             gift_cards_module_1.GiftCardsModule,
             campanias_module_1.CampaniasModule,
+            banners_module_1.BannersModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

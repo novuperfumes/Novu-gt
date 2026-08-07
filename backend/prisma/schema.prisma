@@ -319,3 +319,18 @@ model CampaniaDescuento {
   fecha_fin    DateTime?
   creado_en    DateTime  @default(now())
 }
+
+model Banner {
+  id          Int      @id @default(autoincrement())
+  page        String
+  bgImage     String
+  tag         String?
+  title       String
+  desc        String?  @db.Text
+  link        String?
+  btnText     String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

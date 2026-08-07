@@ -249,6 +249,35 @@ let SalesReportsService = class SalesReportsService {
         };
         ventasPerfumes.forEach(procesarVenta);
         ventasDecants.forEach(procesarVenta);
+        const [pendientes, procesadas, entregadas, canceladas] = await Promise.all([
+            this.prisma.ordenCompra.count({ where: { estado: 'PENDIENTE' } }),
+            this.prisma.ordenCompra.count({ where: { estado: 'PROCESADO' } }),
+            this.prisma.ordenCompra.count({ where: { estado: 'ENTREGADO' } }),
+            this.prisma.ordenCompra.count({ where: { estado: 'CANCELADO' } }),
+        ]);
+        const topVendidosRaw = await this.prisma.ordenDetalle.groupBy({
+            by: ['id_presentacion'],
+            where: {
+                id_presentacion: { not: null },
+                orden: { estado: { in: ['PROCESADO', 'ENTREGADO'] } },
+            },
+            _sum: { cantidad: true },
+            orderBy: { _sum: { cantidad: 'desc' } },
+            take: 5,
+        });
+        const topVendidos = await Promise.all(topVendidosRaw.map(async (row) => {
+            const pres = await this.prisma.presentacionPerfume.findUnique({
+                where: { id: row.id_presentacion },
+                include: { perfume: true },
+            });
+            return {
+                nombre: pres?.perfume?.nombre || 'Desconocido',
+                marca: pres?.perfume?.marca || '',
+                imagen: pres?.perfume?.imagen || '',
+                tamanio: pres?.tamanio || '',
+                totalVendido: row._sum.cantidad || 0,
+            };
+        }));
         return {
             kpis: {
                 totalVendido,
@@ -257,7 +286,14 @@ let SalesReportsService = class SalesReportsService {
             },
             summaryByCategory,
             summaryByGender,
-            monthlyData: Object.values(monthlyData).sort((a, b) => a.month.localeCompare(b.month))
+            monthlyData: Object.values(monthlyData).sort((a, b) => a.month.localeCompare(b.month)),
+            orderStatusCounts: {
+                pendientes,
+                procesadas,
+                entregadas,
+                canceladas,
+            },
+            topVendidos,
         };
     }
 };

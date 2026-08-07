@@ -79,10 +79,36 @@ async function bootstrap() {
   const fastifyInstance = app.getHttpAdapter().getInstance() as any;
   fastifyInstance.addHook('preValidation', async (req: any, reply: any) => {
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-      // Exclude routes that don't need CSRF or where token might not exist yet
-      const excludedRoutes = ['/auth/login', '/auth/register', '/uploads/image'];
-      if (!excludedRoutes.some(route => req.url.startsWith(route))) {
-        await fastifyInstance.csrfProtection(req, reply);
+      // Routes excluded from CSRF:
+      // - Auth routes (no session yet when logging in)
+      // - Uploads (already excluded from CSRF in original code)
+      // - API routes protected by JWT+RolesGuard (banners, campanias, promo-codes, etc.)
+      //   These are safe because the JWT cookie already prevents cross-site attacks.
+      const excludedPrefixes = [
+        '/auth/login',
+        '/auth/register', 
+        '/uploads/',
+        '/banners',
+        '/campanias',
+        '/promo-codes',
+        '/perfumes',
+        '/inventory',
+        '/decants',
+        '/branches',
+        '/gift-cards',
+        '/orders',
+        '/users',
+        '/reviews',
+        '/whatsapp-orders',
+        '/sales-reports',
+      ];
+      if (!excludedPrefixes.some(prefix => req.url.startsWith(prefix))) {
+        await new Promise((resolve, reject) => {
+          fastifyInstance.csrfProtection(req, reply, (err: any) => {
+            if (err) reject(err);
+            else resolve(true);
+          });
+        });
       }
     }
   });

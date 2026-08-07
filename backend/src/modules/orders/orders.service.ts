@@ -417,8 +417,8 @@ export class OrdersService {
     });
     if (!order) throw new NotFoundException('Orden no encontrada');
 
-    // Deduct stock if status changes to CONFIRMADO
-    if (estado === 'CONFIRMADO' && order.estado !== 'CONFIRMADO') {
+    // Deduct stock if status changes to PROCESADO (confirmed by admin)
+    if (estado === 'PROCESADO' && order.estado !== 'PROCESADO' && order.estado !== 'ENTREGADO') {
       await this.prisma.$transaction(async (tx) => {
         for (const item of order.detalles) {
           if (item.id_presentacion) {
@@ -452,7 +452,9 @@ export class OrdersService {
           }
         }
         
-        // --- Virtual Stamp Loyalty Cards System ---
+        // --- Virtual Stamp Loyalty Card System ---
+        // Rule: 1 item (perfume or decant) = 1 stamp. Every 6 stamps = Q250 gift card.
+        // New users start with 1 stamp (welcome stamp) via auth.service.ts registration.
         const totalItemsPurchased = order.detalles.reduce((sum, d) => sum + d.cantidad, 0);
         
         if (totalItemsPurchased > 0) {
@@ -460,7 +462,7 @@ export class OrdersService {
           const user = await tx.usuario.findUnique({ where: { id: userId } });
           const currentStamps = user?.sellos || 0;
   
-          // Add earned stamps
+          // Add earned stamps (1 per item, perfumes and decants both count)
           const newStampsCount = currentStamps + totalItemsPurchased;
           
           // Log stamps earning transaction
@@ -473,10 +475,10 @@ export class OrdersService {
             },
           });
   
-          // If they get 6 or more stamps, process loyalty redemptions (resets every 6 stamps)
+          // Every 6 stamps = 1 loyalty gift card (Q250). Reset remainder.
           let finalStamps = newStampsCount;
           const redemptions = Math.floor(newStampsCount / 6);
-          if (newStampsCount >= 6) {
+          if (redemptions >= 1) {
             finalStamps = newStampsCount % 6;
   
             // Log stamps redemption transaction
@@ -489,21 +491,23 @@ export class OrdersService {
               },
             });
   
-            // Create the actual GiftCards
+            // Create one unique gift card per card completed
+            // Code format: NOVU-{userId}-{timestamp}-{random} — guaranteed unique per user
             for (let i = 0; i < redemptions; i++) {
+              const uniqueCode = `NOVU-${userId}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
               await tx.giftCard.create({
                 data: {
                   id_usuario: userId,
-                  codigo: 'GIFT-250-' + Math.floor(100000 + Math.random() * 900000),
+                  codigo: uniqueCode,
                   monto: 250.00,
                   activa: true,
-                  es_bienvenida: false
+                  es_bienvenida: false,
                 }
               });
             }
           }
   
-          // Update the user stamps
+          // Update the user stamps count
           await tx.usuario.update({
             where: { id: userId },
             data: { sellos: finalStamps },

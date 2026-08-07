@@ -47,4 +47,16 @@ export class PromoCodesService {
   async findAll() {
     return this.prisma.codigoPromocion.findMany();
   }
+
+  async toggleStatus(id: number) {
+    const promo = await this.prisma.codigoPromocion.findUnique({ where: { id } });
+    if (!promo) throw new NotFoundException('Código no encontrado');
+    
+    const newStatus = promo.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+    
+    return this.prisma.codigoPromocion.update({
+      where: { id },
+      data: { estado: newStatus }
+    });
+  }
 }
