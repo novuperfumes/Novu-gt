@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+import * as mariadb from 'mariadb';
+const pool = mariadb.createPool(process.env.DATABASE_URL!);
+const adapter = new PrismaMariaDb(pool);
 const prisma = new PrismaClient({ adapter });
 async function main() {
   const perfumes = await prisma.perfume.findMany({ include: { presentaciones: true, decant: true } });
