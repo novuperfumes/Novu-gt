@@ -4,39 +4,39 @@ export declare class PromoCodesController {
     private readonly promoCodesService;
     constructor(promoCodesService: PromoCodesService);
     create(dto: CreatePromoDto): Promise<{
+        id: number;
         codigo: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
         estado: string;
-        id: number;
     }>;
     findAll(): Promise<{
+        id: number;
         codigo: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
         estado: string;
-        id: number;
     }[]>;
     validate(code: string): Promise<{
+        id: number;
         codigo: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
         estado: string;
-        id: number;
     }>;
     toggleStatus(id: string): Promise<{
+        id: number;
         codigo: string;
         tipo_descuento: string;
         descuento: import("@prisma/client-runtime-utils").Decimal;
         fecha_inicio: Date;
         fecha_fin: Date;
         estado: string;
-        id: number;
     }>;
 }

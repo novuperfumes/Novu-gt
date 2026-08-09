@@ -37,7 +37,7 @@ require("dotenv/config");
 const client_1 = require("@prisma/client");
 const adapter_mariadb_1 = require("@prisma/adapter-mariadb");
 const bcrypt = __importStar(require("bcrypt"));
-const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL);
+const adapter = new adapter_mariadb_1.PrismaMariaDb(process.env.DATABASE_URL || '');
 const prisma = new client_1.PrismaClient({ adapter });
 async function main() {
     console.log('Creando nuevas cuentas admin y cliente...');
