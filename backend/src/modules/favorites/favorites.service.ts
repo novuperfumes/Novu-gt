@@ -6,7 +6,9 @@ export class FavoritesService {
   constructor(private prisma: PrismaService) {}
 
   async addFavorite(userId: number, perfumeId: number) {
-    const perfume = await this.prisma.perfume.findUnique({ where: { id: perfumeId } });
+    const perfume = await this.prisma.perfume.findUnique({
+      where: { id: perfumeId },
+    });
     if (!perfume) throw new NotFoundException('Perfume no encontrado');
 
     const existingFavorite = await this.prisma.favorito.findFirst({

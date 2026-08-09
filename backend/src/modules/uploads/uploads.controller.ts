@@ -1,4 +1,10 @@
-import { Controller, Post, Req, UseGuards, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,10 +24,11 @@ export class UploadsController {
     this.imagekit = new ImageKit({
       publicKey: this.configService.get<string>('IMAGEKIT_PUBLIC_KEY') || '',
       privateKey: this.configService.get<string>('IMAGEKIT_PRIVATE_KEY') || '',
-      urlEndpoint: this.configService.get<string>('IMAGEKIT_URL_ENDPOINT') || '',
+      urlEndpoint:
+        this.configService.get<string>('IMAGEKIT_URL_ENDPOINT') || '',
     });
   }
-  
+
   @Post('image')
   @Roles('ADMIN')
   async uploadImage(@Req() req: FastifyRequest) {
@@ -49,7 +56,7 @@ export class UploadsController {
     });
 
     return {
-      url: uploadResponse.url
+      url: uploadResponse.url,
     };
   }
 }

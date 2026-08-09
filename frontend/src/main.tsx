@@ -4,11 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.tsx'
 import { CartProvider } from './context/CartContext.tsx'
 import './index.css'
-import './assets/css/styles.css'
-import './assets/css/cart-modal.css'
-import './assets/css/arabe.css'
-import './assets/css/disenador.css'
-import './assets/css/nicho.css'
+
 import App from './App.tsx'
 
 // Global fetch interceptor for CSRF

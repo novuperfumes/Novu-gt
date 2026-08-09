@@ -15,7 +15,6 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-
 @Controller('campanias')
 export class CampaniasController {
   constructor(private readonly campaniasService: CampaniasService) {}
@@ -66,4 +65,3 @@ export class CampaniasController {
     return this.campaniasService.remove(id);
   }
 }
-

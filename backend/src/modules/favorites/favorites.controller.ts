@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Delete, Param, UseGuards, Req, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  UseGuards,
+  Req,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
 
@@ -14,14 +25,20 @@ export class FavoritesController {
   }
 
   @Post(':perfumeId')
-  async addFavorite(@Req() req: any, @Param('perfumeId', ParseIntPipe) perfumeId: number) {
+  async addFavorite(
+    @Req() req: any,
+    @Param('perfumeId', ParseIntPipe) perfumeId: number,
+  ) {
     const userId = req.user.sub;
     return this.favoritesService.addFavorite(userId, perfumeId);
   }
 
   @Delete(':perfumeId')
   @HttpCode(HttpStatus.OK)
-  async removeFavorite(@Req() req: any, @Param('perfumeId', ParseIntPipe) perfumeId: number) {
+  async removeFavorite(
+    @Req() req: any,
+    @Param('perfumeId', ParseIntPipe) perfumeId: number,
+  ) {
     const userId = req.user.sub;
     return this.favoritesService.removeFavorite(userId, perfumeId);
   }

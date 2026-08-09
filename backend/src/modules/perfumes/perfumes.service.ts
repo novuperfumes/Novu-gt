@@ -24,7 +24,9 @@ export class PerfumesService {
   }
 
   async addPresentacion(perfumeId: number, dto: CreatePresentacionDto) {
-    const perfume = await this.prisma.perfume.findUnique({ where: { id: perfumeId } });
+    const perfume = await this.prisma.perfume.findUnique({
+      where: { id: perfumeId },
+    });
     if (!perfume) throw new NotFoundException('Perfume no encontrado.');
 
     const presentacion = await this.prisma.presentacionPerfume.create({
@@ -42,8 +44,13 @@ export class PerfumesService {
     return presentacion;
   }
 
-  async updatePresentacion(presId: number, dto: { tamanio?: string; costo?: number; precio?: number; stock?: number }) {
-    const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+  async updatePresentacion(
+    presId: number,
+    dto: { tamanio?: string; costo?: number; precio?: number; stock?: number },
+  ) {
+    const pres = await this.prisma.presentacionPerfume.findUnique({
+      where: { id: presId },
+    });
     if (!pres) throw new NotFoundException('Presentación no encontrada.');
 
     const updated = await this.prisma.presentacionPerfume.update({
@@ -57,7 +64,9 @@ export class PerfumesService {
   }
 
   async removePresentacion(presId: number) {
-    const pres = await this.prisma.presentacionPerfume.findUnique({ where: { id: presId } });
+    const pres = await this.prisma.presentacionPerfume.findUnique({
+      where: { id: presId },
+    });
     if (!pres) throw new NotFoundException('Presentación no encontrada.');
 
     const deleted = await this.prisma.presentacionPerfume.delete({
@@ -86,7 +95,11 @@ export class PerfumesService {
     });
 
     // Write Cache
-    await this.redisService.set(this.CATALOG_CACHE_KEY, JSON.stringify(perfumes), this.CACHE_TTL);
+    await this.redisService.set(
+      this.CATALOG_CACHE_KEY,
+      JSON.stringify(perfumes),
+      this.CACHE_TTL,
+    );
     return perfumes;
   }
 
@@ -95,29 +108,41 @@ export class PerfumesService {
       where: { activo: true },
       include: {
         presentaciones: { include: { ordenDetalles: true } },
-        decant: { include: { ordenDetalles: true } }
-      }
+        decant: { include: { ordenDetalles: true } },
+      },
     });
 
-    const withSales = perfumes.map(p => {
+    const withSales = perfumes.map((p) => {
       let salesCount = 0;
-      p.presentaciones.forEach(pres => {
-        pres.ordenDetalles.forEach(od => { salesCount += od.cantidad; });
+      p.presentaciones.forEach((pres) => {
+        pres.ordenDetalles.forEach((od) => {
+          salesCount += od.cantidad;
+        });
       });
       if (p.decant) {
-        p.decant.ordenDetalles.forEach(od => { salesCount += od.cantidad; });
+        p.decant.ordenDetalles.forEach((od) => {
+          salesCount += od.cantidad;
+        });
       }
       return { ...p, salesCount };
     });
 
     withSales.sort((a, b) => b.salesCount - a.salesCount);
 
-    const cleaned = withSales.map(p => {
+    const cleaned = withSales.map((p) => {
       const { salesCount, presentaciones, decant, ...rest } = p;
       return {
         ...rest,
-        presentaciones: presentaciones.map(pr => { const { ordenDetalles, ...prRest } = pr; return prRest; }),
-        decant: decant ? (() => { const { ordenDetalles, ...dRest } = decant; return dRest; })() : null
+        presentaciones: presentaciones.map((pr) => {
+          const { ordenDetalles, ...prRest } = pr;
+          return prRest;
+        }),
+        decant: decant
+          ? (() => {
+              const { ordenDetalles, ...dRest } = decant;
+              return dRest;
+            })()
+          : null,
       };
     });
 
@@ -130,13 +155,13 @@ export class PerfumesService {
         presentaciones: true,
         decant: true,
       },
-      orderBy: { id: 'desc' }
+      orderBy: { id: 'desc' },
     });
   }
 
   async findOne(id: number) {
     const cacheKey = `perfume:${id}`;
-    
+
     // Check Redis Cache
     const cached = await this.redisService.get(cacheKey);
     if (cached) {
@@ -157,7 +182,11 @@ export class PerfumesService {
     }
 
     // Write Cache
-    await this.redisService.set(cacheKey, JSON.stringify(perfume), this.CACHE_TTL);
+    await this.redisService.set(
+      cacheKey,
+      JSON.stringify(perfume),
+      this.CACHE_TTL,
+    );
     return perfume;
   }
 
@@ -174,7 +203,9 @@ export class PerfumesService {
     });
 
     if (decant) {
-      const existingDecant = await this.prisma.decant.findFirst({ where: { id_perfume: id } });
+      const existingDecant = await this.prisma.decant.findFirst({
+        where: { id_perfume: id },
+      });
       if (existingDecant) {
         await this.prisma.decant.update({
           where: { id: existingDecant.id },
@@ -198,7 +229,7 @@ export class PerfumesService {
             stock_5ml: decant.stock_5ml,
             precio_10ml: decant.precio_10ml,
             stock_10ml: decant.stock_10ml,
-          }
+          },
         });
       }
     }
@@ -207,8 +238,6 @@ export class PerfumesService {
     await this.invalidatePerfumeCache(id);
     return updated;
   }
-
-
 
   async remove(id: number) {
     const existing = await this.prisma.perfume.findUnique({ where: { id } });

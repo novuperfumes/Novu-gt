@@ -1,4 +1,13 @@
-import { Controller, Get, Body, Patch, Param, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { SalesReportsService } from './sales-reports.service';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -17,7 +26,11 @@ export class SalesReportsController {
     @Query('endDate') endDate?: string,
     @Query('gender') gender?: string,
   ) {
-    return this.salesReportsService.getDashboardStats(startDate, endDate, gender);
+    return this.salesReportsService.getDashboardStats(
+      startDate,
+      endDate,
+      gender,
+    );
   }
 
   @Roles('ADMIN')

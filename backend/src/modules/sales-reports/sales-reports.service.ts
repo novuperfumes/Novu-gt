@@ -20,13 +20,13 @@ export class SalesReportsService {
                     apellido: true,
                     correo: true,
                     telefono: true,
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -36,10 +36,10 @@ export class SalesReportsService {
       include: {
         ordenDetalle: {
           include: {
-            orden: true
-          }
-        }
-      }
+            orden: true,
+          },
+        },
+      },
     });
 
     if (!sale) {
@@ -51,7 +51,7 @@ export class SalesReportsService {
 
   async update(id: number, dto: UpdateSaleDto) {
     await this.findOne(id); // Ensure exists
-    
+
     return this.prisma.registroVentaAdmin.update({
       where: { id },
       data: dto,
@@ -72,13 +72,13 @@ export class SalesReportsService {
                     apellido: true,
                     correo: true,
                     telefono: true,
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -88,14 +88,16 @@ export class SalesReportsService {
       include: {
         ordenDetalle: {
           include: {
-            orden: true
-          }
-        }
-      }
+            orden: true,
+          },
+        },
+      },
     });
 
     if (!sale) {
-      throw new NotFoundException(`Registro de venta decant #${id} no encontrado.`);
+      throw new NotFoundException(
+        `Registro de venta decant #${id} no encontrado.`,
+      );
     }
 
     return sale;
@@ -103,7 +105,7 @@ export class SalesReportsService {
 
   async updateDecant(id: number, dto: UpdateSaleDto) {
     await this.findOneDecant(id); // Ensure exists
-    
+
     return this.prisma.registroVentaDecantAdmin.update({
       where: { id },
       data: dto,
@@ -120,26 +122,29 @@ export class SalesReportsService {
               include: {
                 ingresos: {
                   orderBy: { fecha_ingreso: 'desc' },
-                  take: 1
-                }
-              }
-            }
-          }
-        }
-      }
+                  take: 1,
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     // Obtener decants
     const decants = await this.prisma.registroVentaDecantAdmin.findMany({
       include: {
-        ordenDetalle: true
-      }
+        ordenDetalle: true,
+      },
     });
 
     // Mapear y combinar
-    const reportPerfumes = perfumes.map(p => {
+    const reportPerfumes = perfumes.map((p) => {
       let fechaIngreso: Date | null = null;
-      if (p.ordenDetalle?.presentacion?.ingresos && p.ordenDetalle.presentacion.ingresos.length > 0) {
+      if (
+        p.ordenDetalle?.presentacion?.ingresos &&
+        p.ordenDetalle.presentacion.ingresos.length > 0
+      ) {
         fechaIngreso = p.ordenDetalle.presentacion.ingresos[0].fecha_ingreso;
       }
       return {
@@ -154,12 +159,12 @@ export class SalesReportsService {
         costo_traida: Number(p.costo_traida),
         tipo_traida: p.tipo_traida,
         costo_total: Number(p.costo_total),
-        total_cliente: Number(p.total_cliente)
+        total_cliente: Number(p.total_cliente),
       };
     });
 
-    const reportDecants = decants.map(d => {
-      // Los decants no guardan la fecha de ingreso en un historial separado por ahora, 
+    const reportDecants = decants.map((d) => {
+      // Los decants no guardan la fecha de ingreso en un historial separado por ahora,
       // o se podría buscar la fecha de creación del decant si se requiere.
       // Por simplicidad para el reporte contable, usaremos la fecha de venta o null si no aplica.
       return {
@@ -170,25 +175,39 @@ export class SalesReportsService {
         genero: d.genero,
         perfume: d.perfume,
         tamano_presentacion: `Decant ${d.tamano_vendido || ''}`.trim(),
-        costo_compra: Number(d.tamano_vendido === '5 ml' || d.tamano_vendido === '5ml' ? d.costo_5ml : d.costo_10ml),
+        costo_compra: Number(
+          d.tamano_vendido === '5 ml' || d.tamano_vendido === '5ml'
+            ? d.costo_5ml
+            : d.costo_10ml,
+        ),
         costo_traida: 0, // No aplica
         tipo_traida: 'N/A',
-        costo_total: Number(d.tamano_vendido === '5 ml' || d.tamano_vendido === '5ml' ? d.costo_5ml : d.costo_10ml),
-        total_cliente: Number(d.total_cliente)
+        costo_total: Number(
+          d.tamano_vendido === '5 ml' || d.tamano_vendido === '5ml'
+            ? d.costo_5ml
+            : d.costo_10ml,
+        ),
+        total_cliente: Number(d.total_cliente),
       };
     });
 
     // Unir ambos arreglos y ordenar por fecha de venta descendente
     const combinado = [...reportPerfumes, ...reportDecants].sort((a, b) => {
-      return new Date(b.fecha_venta).getTime() - new Date(a.fecha_venta).getTime();
+      return (
+        new Date(b.fecha_venta).getTime() - new Date(a.fecha_venta).getTime()
+      );
     });
 
     return combinado;
   }
 
-  async getDashboardStats(startDate?: string, endDate?: string, genderFilter?: string) {
+  async getDashboardStats(
+    startDate?: string,
+    endDate?: string,
+    genderFilter?: string,
+  ) {
     const whereClause: any = {};
-    
+
     if (startDate || endDate) {
       whereClause.fecha_venta = {};
       if (startDate) {
@@ -202,13 +221,17 @@ export class SalesReportsService {
         whereClause.fecha_venta.lte = end;
       }
     }
-    
+
     if (genderFilter && genderFilter !== 'todos') {
       whereClause.genero = genderFilter;
     }
 
-    const ventasPerfumes = await this.prisma.registroVentaAdmin.findMany({ where: whereClause });
-    const ventasDecants = await this.prisma.registroVentaDecantAdmin.findMany({ where: whereClause });
+    const ventasPerfumes = await this.prisma.registroVentaAdmin.findMany({
+      where: whereClause,
+    });
+    const ventasDecants = await this.prisma.registroVentaDecantAdmin.findMany({
+      where: whereClause,
+    });
 
     let totalVendido = 0;
     let totalIngresos = 0;
@@ -225,7 +248,7 @@ export class SalesReportsService {
     const summaryByGender: Record<string, number> = {
       Hombre: 0,
       Mujer: 0,
-      Unisex: 0
+      Unisex: 0,
     };
 
     // Resumen por mes para las tablas
@@ -233,16 +256,25 @@ export class SalesReportsService {
 
     const procesarVenta = (v: any) => {
       const tipoLower = (v.tipo || 'Desconocido').toLowerCase();
-      const tipo = tipoLower.includes('arabe') || tipoLower.includes('árabe') ? 'Arabe' :
-                   tipoLower.includes('nicho') ? 'Nicho' : 
-                   tipoLower.includes('diseñador') || tipoLower.includes('disenador') ? 'Diseñador' : 'Otro';
+      const tipo =
+        tipoLower.includes('arabe') || tipoLower.includes('árabe')
+          ? 'Arabe'
+          : tipoLower.includes('nicho')
+            ? 'Nicho'
+            : tipoLower.includes('diseñador') || tipoLower.includes('disenador')
+              ? 'Diseñador'
+              : 'Otro';
 
       // Filtrar "Otro" para no ensuciar los gráficos A, D, N si no queremos, o incluirlo si es necesario.
       // Los screenshots solo muestran A, D, N. Si es otro lo ignoraremos de los contadores A,D,N.
 
       const generoLower = (v.genero || 'unisex').toLowerCase();
-      const gen = generoLower === 'el' || generoLower === 'hombre' ? 'Hombre' :
-                  generoLower === 'ella' || generoLower === 'mujer' ? 'Mujer' : 'Unisex';
+      const gen =
+        generoLower === 'el' || generoLower === 'hombre'
+          ? 'Hombre'
+          : generoLower === 'ella' || generoLower === 'mujer'
+            ? 'Mujer'
+            : 'Unisex';
 
       const ingresos = Number(v.total_cliente || 0);
       const costo = Number(v.costo_total || 0);
@@ -263,7 +295,7 @@ export class SalesReportsService {
 
       const dateObj = new Date(v.fecha_venta);
       const monthStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`; // YYYY-MM
-      
+
       if (!monthlyData[monthStr]) {
         monthlyData[monthStr] = {
           month: monthStr,
@@ -272,7 +304,7 @@ export class SalesReportsService {
             Diseñador: { cantidad: 0, ingresos: 0, ganancias: 0 },
             Nicho: { cantidad: 0, ingresos: 0, ganancias: 0 },
           },
-          generos: { Hombre: 0, Mujer: 0, Unisex: 0 }
+          generos: { Hombre: 0, Mujer: 0, Unisex: 0 },
         };
       }
 
@@ -320,18 +352,20 @@ export class SalesReportsService {
           tamanio: pres?.tamanio || '',
           totalVendido: row._sum.cantidad || 0,
         };
-      })
+      }),
     );
 
     return {
       kpis: {
         totalVendido,
         totalIngresos,
-        totalGanancias
+        totalGanancias,
       },
       summaryByCategory,
       summaryByGender,
-      monthlyData: Object.values(monthlyData).sort((a: any, b: any) => a.month.localeCompare(b.month)),
+      monthlyData: Object.values(monthlyData).sort((a: any, b: any) =>
+        a.month.localeCompare(b.month),
+      ),
       orderStatusCounts: {
         pendientes,
         procesadas,

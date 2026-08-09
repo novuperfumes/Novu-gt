@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Patch, Param, Body, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Body,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';

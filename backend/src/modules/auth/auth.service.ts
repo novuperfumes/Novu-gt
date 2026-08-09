@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
@@ -33,12 +37,12 @@ export class AuthService {
         create: [
           {
             codigo: 'GIFT-WELCOME-' + Math.floor(1000 + Math.random() * 9000),
-            monto: 50.00,
+            monto: 50.0,
             activa: true,
-            es_bienvenida: true
-          }
-        ]
-      }
+            es_bienvenida: true,
+          },
+        ],
+      },
     });
 
     const { contrasenia, ...result } = user;
@@ -51,7 +55,10 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas.');
     }
 
-    const validPassword = await bcrypt.compare(dto.contrasenia, user.contrasenia);
+    const validPassword = await bcrypt.compare(
+      dto.contrasenia,
+      user.contrasenia,
+    );
     if (!validPassword) {
       throw new UnauthorizedException('Credenciales inválidas.');
     }

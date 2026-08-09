@@ -35,8 +35,13 @@ export class CampaniasService {
     });
   }
 
-  async update(id: number, data: Partial<CreateCampaniaDto> & { activa?: boolean }) {
-    const existing = await this.prisma.campaniaDescuento.findUnique({ where: { id } });
+  async update(
+    id: number,
+    data: Partial<CreateCampaniaDto> & { activa?: boolean },
+  ) {
+    const existing = await this.prisma.campaniaDescuento.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException(`Campaña #${id} no encontrada`);
 
     // Permitir múltiples campañas activas, eliminamos el updateMany
@@ -48,17 +53,25 @@ export class CampaniasService {
         ...(data.tipo !== undefined && { tipo: data.tipo }),
         ...(data.descuento !== undefined && { descuento: data.descuento }),
         ...(data.categorias !== undefined && { categorias: data.categorias }),
-        ...(data.perfume_ids !== undefined && { perfume_ids: data.perfume_ids }),
+        ...(data.perfume_ids !== undefined && {
+          perfume_ids: data.perfume_ids,
+        }),
         ...(data.imagen !== undefined && { imagen: data.imagen }),
-        ...(data.fecha_inicio !== undefined && { fecha_inicio: data.fecha_inicio ? new Date(data.fecha_inicio) : null }),
-        ...(data.fecha_fin !== undefined && { fecha_fin: data.fecha_fin ? new Date(data.fecha_fin) : null }),
+        ...(data.fecha_inicio !== undefined && {
+          fecha_inicio: data.fecha_inicio ? new Date(data.fecha_inicio) : null,
+        }),
+        ...(data.fecha_fin !== undefined && {
+          fecha_fin: data.fecha_fin ? new Date(data.fecha_fin) : null,
+        }),
         ...(data.activa !== undefined && { activa: data.activa }),
       },
     });
   }
 
   async toggleActiva(id: number) {
-    const existing = await this.prisma.campaniaDescuento.findUnique({ where: { id } });
+    const existing = await this.prisma.campaniaDescuento.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException(`Campaña #${id} no encontrada`);
 
     // Permitir múltiples campañas activas, eliminamos el updateMany
@@ -70,7 +83,9 @@ export class CampaniasService {
   }
 
   async remove(id: number) {
-    const existing = await this.prisma.campaniaDescuento.findUnique({ where: { id } });
+    const existing = await this.prisma.campaniaDescuento.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException(`Campaña #${id} no encontrada`);
     return this.prisma.campaniaDescuento.delete({ where: { id } });
   }

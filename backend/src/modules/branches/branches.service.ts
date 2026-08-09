@@ -26,7 +26,11 @@ export class BranchesService {
     if (cached) return JSON.parse(cached);
 
     const branches = await this.prisma.sucursal.findMany();
-    await this.redisService.set(this.CACHE_KEY, JSON.stringify(branches), this.CACHE_TTL);
+    await this.redisService.set(
+      this.CACHE_KEY,
+      JSON.stringify(branches),
+      this.CACHE_TTL,
+    );
     return branches;
   }
 

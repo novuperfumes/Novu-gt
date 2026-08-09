@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AddItemDto } from './dto/add-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -57,11 +61,15 @@ export class CartsService {
     const cart = await this.getOrCreateCart(userId);
 
     if (!dto.id_presentacion && !dto.id_decant) {
-      throw new BadRequestException('Debe proporcionar id_presentacion o id_decant.');
+      throw new BadRequestException(
+        'Debe proporcionar id_presentacion o id_decant.',
+      );
     }
 
     if (dto.id_decant && !dto.tipo_decant) {
-      throw new BadRequestException('Debe especificar el tipo_decant para compras de decants.');
+      throw new BadRequestException(
+        'Debe especificar el tipo_decant para compras de decants.',
+      );
     }
 
     if (dto.id_presentacion) {
@@ -75,7 +83,9 @@ export class CartsService {
       }
 
       if (presentation.stock < dto.cantidad) {
-        throw new BadRequestException(`Stock insuficiente. Solo quedan ${presentation.stock} unidades de este tamaño.`);
+        throw new BadRequestException(
+          `Stock insuficiente. Solo quedan ${presentation.stock} unidades de este tamaño.`,
+        );
       }
 
       // Check if item already in cart
@@ -125,11 +135,15 @@ export class CartsService {
       } else if (tipo === '10 ml' || tipo === '10ml') {
         stock = decant.stock_10ml;
       } else {
-        throw new BadRequestException('El tipo de decant debe ser "5 ml" o "10 ml".');
+        throw new BadRequestException(
+          'El tipo de decant debe ser "5 ml" o "10 ml".',
+        );
       }
 
       if (stock < dto.cantidad) {
-        throw new BadRequestException(`Stock insuficiente para decant. Solo quedan ${stock} unidades de este tamaño.`);
+        throw new BadRequestException(
+          `Stock insuficiente para decant. Solo quedan ${stock} unidades de este tamaño.`,
+        );
       }
 
       // Check if item already in cart

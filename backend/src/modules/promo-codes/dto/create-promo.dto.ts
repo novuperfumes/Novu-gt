@@ -1,4 +1,11 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class CreatePromoDto {
   @IsString()
@@ -7,7 +14,9 @@ export class CreatePromoDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(['porcentaje', 'monto_fijo'], { message: 'El tipo de descuento debe ser porcentaje o monto_fijo' })
+  @IsEnum(['porcentaje', 'monto_fijo'], {
+    message: 'El tipo de descuento debe ser porcentaje o monto_fijo',
+  })
   tipo_descuento: string;
 
   @IsNumber()

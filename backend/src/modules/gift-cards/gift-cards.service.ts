@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -7,7 +11,9 @@ export class GiftCardsService {
   constructor(private prisma: PrismaService) {}
 
   async createManual(data: { id_usuario: number; monto: number }) {
-    const user = await this.prisma.usuario.findUnique({ where: { id: data.id_usuario } });
+    const user = await this.prisma.usuario.findUnique({
+      where: { id: data.id_usuario },
+    });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
@@ -22,7 +28,7 @@ export class GiftCardsService {
         monto: new Prisma.Decimal(data.monto),
         activa: true,
         es_bienvenida: false,
-      }
+      },
     });
   }
 
@@ -35,16 +41,16 @@ export class GiftCardsService {
             nombre: true,
             apellido: true,
             correo: true,
-          }
-        }
+          },
+        },
       },
-      orderBy: { id: 'desc' }
+      orderBy: { id: 'desc' },
     });
   }
 
   async validate(codigo: string, userId: number) {
     const giftCard = await this.prisma.giftCard.findUnique({
-      where: { codigo }
+      where: { codigo },
     });
 
     if (!giftCard) {
@@ -52,7 +58,9 @@ export class GiftCardsService {
     }
 
     if (!giftCard.activa) {
-      throw new BadRequestException('Esta Gift Card ya fue utilizada o está inactiva.');
+      throw new BadRequestException(
+        'Esta Gift Card ya fue utilizada o está inactiva.',
+      );
     }
 
     if (giftCard.id_usuario !== userId) {

@@ -12,7 +12,8 @@ import { AuthController } from './auth.controller';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') ?? 'cookie_secret_fallback',
+        secret:
+          configService.get<string>('JWT_SECRET') ?? 'cookie_secret_fallback',
         signOptions: {
           expiresIn: configService.get<any>('JWT_EXPIRATION') ?? '24h',
         },

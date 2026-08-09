@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateDecantDto } from './dto/create-decant.dto';
 import { UpdateDecantDto } from './dto/update-decant.dto';
@@ -23,7 +27,9 @@ export class DecantsService {
     });
 
     if (existing) {
-      throw new BadRequestException('Ya existe una configuración de decants para este perfume.');
+      throw new BadRequestException(
+        'Ya existe una configuración de decants para este perfume.',
+      );
     }
 
     // 3. Create the decant
@@ -74,7 +80,9 @@ export class DecantsService {
     });
 
     if (!decant) {
-      throw new NotFoundException('Configuración de decant no encontrada para este perfume.');
+      throw new NotFoundException(
+        'Configuración de decant no encontrada para este perfume.',
+      );
     }
 
     return decant;

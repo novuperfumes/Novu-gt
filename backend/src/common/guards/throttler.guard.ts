@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../cache/redis.service';
 
@@ -11,7 +17,7 @@ export class RedisThrottlerGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    
+
     // In Fastify, client IP is accessible through request.ip
     const ip = request.ip || request.headers['x-forwarded-for'] || '127.0.0.1';
     const path = request.routerPath || request.url;
@@ -27,12 +33,12 @@ export class RedisThrottlerGuard implements CanActivate {
     const ttlSeconds = 60; // per 1 minute window
 
     const redis = this.redisService.getClient();
-    
+
     // Execute atomic operations to prevent race conditions under load
     const pipeline = redis.pipeline();
     pipeline.incr(key);
     pipeline.ttl(key);
-    
+
     const results = await pipeline.exec();
     if (!results) return true;
 
@@ -50,7 +56,8 @@ export class RedisThrottlerGuard implements CanActivate {
         {
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
           error: 'Too Many Requests',
-          message: 'Has realizado demasiadas solicitudes en poco tiempo. Por favor, espera un minuto.',
+          message:
+            'Has realizado demasiadas solicitudes en poco tiempo. Por favor, espera un minuto.',
         },
         HttpStatus.TOO_MANY_REQUESTS,
       );

@@ -6,7 +6,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Iniciando migración de ventas pasadas...');
-  
+
   // Obtener todos los detalles de órdenes pasadas
   const detalles = await prisma.ordenDetalle.findMany({
     include: {
@@ -18,19 +18,21 @@ async function main() {
           perfume: true,
           ingresos: {
             orderBy: { fecha_ingreso: 'desc' },
-            take: 1
-          }
-        }
+            take: 1,
+          },
+        },
       },
       decant: {
         include: {
-          perfume: true
-        }
-      }
-    }
+          perfume: true,
+        },
+      },
+    },
   });
 
-  console.log(`Se encontraron ${detalles.length} items vendidos en el historial.`);
+  console.log(
+    `Se encontraron ${detalles.length} items vendidos en el historial.`,
+  );
   let creados = 0;
 
   for (const item of detalles) {
@@ -47,8 +49,11 @@ async function main() {
         let costoTraida = 0;
         let tipoTraida = 'N/A';
         let costoTotal = 0;
-        
-        if (item.presentacion.ingresos && item.presentacion.ingresos.length > 0) {
+
+        if (
+          item.presentacion.ingresos &&
+          item.presentacion.ingresos.length > 0
+        ) {
           const ingreso = item.presentacion.ingresos[0];
           costoCompra = Number(ingreso.costo_compra);
           costoTraida = Number(ingreso.costo_traida);
@@ -69,14 +74,16 @@ async function main() {
             total_cliente: Number(item.precio_unitario),
             pago: item.orden.metodo_de_pago,
             entregado: true, // Asumimos true porque son ventas viejas
-            fecha_venta: item.orden.fecha
-          }
+            fecha_venta: item.orden.fecha,
+          },
         });
         creados++;
       } else if (item.id_decant && item.decant) {
         // DECANT
-        const is5ml = item.tipo_decant?.toLowerCase().trim() === '5 ml' || item.tipo_decant?.toLowerCase().trim() === '5ml';
-        
+        const is5ml =
+          item.tipo_decant?.toLowerCase().trim() === '5 ml' ||
+          item.tipo_decant?.toLowerCase().trim() === '5ml';
+
         await prisma.registroVentaDecantAdmin.create({
           data: {
             id_orden_detalle: i === 0 ? item.id : null,
@@ -94,15 +101,17 @@ async function main() {
             total_cliente: Number(item.precio_unitario),
             pago: item.orden.metodo_de_pago,
             entregado: true,
-            fecha_venta: item.orden.fecha
-          }
+            fecha_venta: item.orden.fecha,
+          },
         });
         creados++;
       }
     }
   }
 
-  console.log(`Migración completada. Se crearon ${creados} nuevos registros contables a partir de las órdenes pasadas.`);
+  console.log(
+    `Migración completada. Se crearon ${creados} nuevos registros contables a partir de las órdenes pasadas.`,
+  );
 }
 
 main()

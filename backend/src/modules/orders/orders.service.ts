@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Prisma } from '@prisma/client';
@@ -15,13 +19,13 @@ export class OrdersService {
         detalles: {
           include: {
             presentacion: {
-              include: { 
+              include: {
                 perfume: true,
-                ingresos: { orderBy: { fecha_ingreso: 'desc' }, take: 1 } 
-              }
+                ingresos: { orderBy: { fecha_ingreso: 'desc' }, take: 1 },
+              },
             },
             decant: {
-              include: { perfume: true }
+              include: { perfume: true },
             },
           },
         },
@@ -35,16 +39,31 @@ export class OrdersService {
     // 2. Validate delivery type and details
     if (dto.tipo_entrega === 'sucursal') {
       if (!dto.id_sucursal) {
-        throw new BadRequestException('Debe seleccionar una sucursal para el retiro en tienda.');
+        throw new BadRequestException(
+          'Debe seleccionar una sucursal para el retiro en tienda.',
+        );
       }
-      const sucursalExists = await this.prisma.sucursal.findUnique({ where: { id: dto.id_sucursal } });
-      if (!sucursalExists) throw new NotFoundException('La sucursal seleccionada no existe.');
+      const sucursalExists = await this.prisma.sucursal.findUnique({
+        where: { id: dto.id_sucursal },
+      });
+      if (!sucursalExists)
+        throw new NotFoundException('La sucursal seleccionada no existe.');
     } else if (dto.tipo_entrega === 'domicilio') {
-      if (!dto.direccion_entrega || !dto.departamento_entrega || !dto.municipio_entrega || !dto.nombre_recibe || !dto.telefono_contacto) {
-        throw new BadRequestException('Faltan campos obligatorios para el envío a domicilio.');
+      if (
+        !dto.direccion_entrega ||
+        !dto.departamento_entrega ||
+        !dto.municipio_entrega ||
+        !dto.nombre_recibe ||
+        !dto.telefono_contacto
+      ) {
+        throw new BadRequestException(
+          'Faltan campos obligatorios para el envío a domicilio.',
+        );
       }
     } else {
-      throw new BadRequestException('Tipo de entrega no válido. Debe ser "domicilio" o "sucursal".');
+      throw new BadRequestException(
+        'Tipo de entrega no válido. Debe ser "domicilio" o "sucursal".',
+      );
     }
 
     // 3. Execute transactional order placement and stock deduction
@@ -60,7 +79,9 @@ export class OrdersService {
           });
 
           if (!presentation) {
-            throw new NotFoundException(`La presentación de perfume ID ${item.id_presentacion} ya no existe.`);
+            throw new NotFoundException(
+              `La presentación de perfume ID ${item.id_presentacion} ya no existe.`,
+            );
           }
 
           if (presentation.stock < item.cantidad) {
@@ -77,7 +98,9 @@ export class OrdersService {
           });
 
           if (!decant) {
-            throw new NotFoundException(`El decant ID ${item.id_decant} ya no existe.`);
+            throw new NotFoundException(
+              `El decant ID ${item.id_decant} ya no existe.`,
+            );
           }
 
           const tipo = item.tipo_decant.toLowerCase().trim();
@@ -91,7 +114,9 @@ export class OrdersService {
             stock = decant.stock_10ml;
             precio = Number(decant.precio_10ml);
           } else {
-            throw new BadRequestException(`Tipo de decant no válido: ${item.tipo_decant}`);
+            throw new BadRequestException(
+              `Tipo de decant no válido: ${item.tipo_decant}`,
+            );
           }
 
           if (stock < item.cantidad) {
@@ -112,36 +137,55 @@ export class OrdersService {
 
       if (dto.codigo_descuento) {
         // Primero buscar si es Gift Card
-        const giftCard = await tx.giftCard.findUnique({ where: { codigo: dto.codigo_descuento } });
+        const giftCard = await tx.giftCard.findUnique({
+          where: { codigo: dto.codigo_descuento },
+        });
         if (giftCard) {
-          if (!giftCard.activa) throw new BadRequestException('Esta Gift Card ya fue utilizada.');
-          if (giftCard.id_usuario !== userId) throw new BadRequestException('Esta Gift Card pertenece a otro usuario.');
-          
+          if (!giftCard.activa)
+            throw new BadRequestException('Esta Gift Card ya fue utilizada.');
+          if (giftCard.id_usuario !== userId)
+            throw new BadRequestException(
+              'Esta Gift Card pertenece a otro usuario.',
+            );
+
           discountAmount = Number(giftCard.monto);
           appliedGiftCardId = giftCard.id;
 
           // Marcar como usada
           await tx.giftCard.update({
             where: { id: giftCard.id },
-            data: { activa: false }
+            data: { activa: false },
           });
         } else {
           // Buscar como codigo de promocion
-          const promo = await tx.codigoPromocion.findUnique({ where: { codigo: dto.codigo_descuento } });
+          const promo = await tx.codigoPromocion.findUnique({
+            where: { codigo: dto.codigo_descuento },
+          });
           if (!promo || promo.estado !== 'ACTIVO') {
-            throw new BadRequestException('El código de descuento no es válido o está inactivo.');
+            throw new BadRequestException(
+              'El código de descuento no es válido o está inactivo.',
+            );
           }
           const now = new Date();
           if (now < promo.fecha_inicio || now > promo.fecha_fin) {
-            throw new BadRequestException('El cupón de descuento ha expirado o aún no está vigente.');
+            throw new BadRequestException(
+              'El cupón de descuento ha expirado o aún no está vigente.',
+            );
           }
 
           // Check if this user already used this promo code
           const existingUse = await tx.usoPromocion.findUnique({
-            where: { id_usuario_id_codigo_promocion: { id_usuario: userId, id_codigo_promocion: promo.id } }
+            where: {
+              id_usuario_id_codigo_promocion: {
+                id_usuario: userId,
+                id_codigo_promocion: promo.id,
+              },
+            },
           });
           if (existingUse) {
-            throw new BadRequestException('Ya has utilizado este código promocional anteriormente.');
+            throw new BadRequestException(
+              'Ya has utilizado este código promocional anteriormente.',
+            );
           }
 
           if (promo.tipo_descuento === 'porcentaje') {
@@ -153,7 +197,7 @@ export class OrdersService {
 
           // Record usage
           await tx.usoPromocion.create({
-            data: { id_usuario: userId, id_codigo_promocion: promo.id }
+            data: { id_usuario: userId, id_codigo_promocion: promo.id },
           });
         }
       } else if (dto.id_codigo_promocion) {
@@ -163,12 +207,16 @@ export class OrdersService {
         });
 
         if (!promo || promo.estado !== 'ACTIVO') {
-          throw new BadRequestException('El cupón de descuento no es válido o está inactivo.');
+          throw new BadRequestException(
+            'El cupón de descuento no es válido o está inactivo.',
+          );
         }
 
         const now = new Date();
         if (now < promo.fecha_inicio || now > promo.fecha_fin) {
-          throw new BadRequestException('El cupón de descuento ha expirado o aún no está vigente.');
+          throw new BadRequestException(
+            'El cupón de descuento ha expirado o aún no está vigente.',
+          );
         }
 
         if (promo.tipo_descuento === 'porcentaje') {
@@ -199,26 +247,37 @@ export class OrdersService {
           id_sucursal: dto.tipo_entrega === 'sucursal' ? dto.id_sucursal : null,
           id_codigo_promocion: appliedPromoId,
           id_gift_card: appliedGiftCardId,
-          
+
           // Shipping snapshotted address data
-          nombre_recibe: dto.tipo_entrega === 'domicilio' ? dto.nombre_recibe! : 'Retiro en sucursal',
-          telefono_contacto: dto.tipo_entrega === 'domicilio' ? dto.telefono_contacto! : '',
-          direccion_entrega: dto.tipo_entrega === 'domicilio' ? dto.direccion_entrega! : 'Retiro en sucursal',
-          departamento_entrega: dto.tipo_entrega === 'domicilio' ? dto.departamento_entrega! : '',
-          municipio_entrega: dto.tipo_entrega === 'domicilio' ? dto.municipio_entrega! : '',
-          referencias_entrega: dto.tipo_entrega === 'domicilio' ? dto.referencias_entrega : null,
-          codigo_postal_entrega: dto.tipo_entrega === 'domicilio' ? dto.codigo_postal_entrega : null,
+          nombre_recibe:
+            dto.tipo_entrega === 'domicilio'
+              ? dto.nombre_recibe!
+              : 'Retiro en sucursal',
+          telefono_contacto:
+            dto.tipo_entrega === 'domicilio' ? dto.telefono_contacto! : '',
+          direccion_entrega:
+            dto.tipo_entrega === 'domicilio'
+              ? dto.direccion_entrega!
+              : 'Retiro en sucursal',
+          departamento_entrega:
+            dto.tipo_entrega === 'domicilio' ? dto.departamento_entrega! : '',
+          municipio_entrega:
+            dto.tipo_entrega === 'domicilio' ? dto.municipio_entrega! : '',
+          referencias_entrega:
+            dto.tipo_entrega === 'domicilio' ? dto.referencias_entrega : null,
+          codigo_postal_entrega:
+            dto.tipo_entrega === 'domicilio' ? dto.codigo_postal_entrega : null,
         },
       });
 
       // 6. Create Order Details freezing current prices and logging admin sales
       for (const item of cart.detalles) {
         let precioUnitario = 0;
-        
+
         let perfumeNombre = '';
         let perfumeTipo = '';
         let perfumeGenero = '';
-        
+
         let costoCompra = 0;
         let costoTraida = 0;
         let tipoTraida = '';
@@ -229,8 +288,11 @@ export class OrdersService {
           perfumeNombre = item.presentacion.perfume?.nombre || '';
           perfumeTipo = item.presentacion.perfume?.tipo || '';
           perfumeGenero = item.presentacion.perfume?.genero || '';
-          
-          if (item.presentacion.ingresos && item.presentacion.ingresos.length > 0) {
+
+          if (
+            item.presentacion.ingresos &&
+            item.presentacion.ingresos.length > 0
+          ) {
             const lastIngreso = item.presentacion.ingresos[0];
             costoCompra = Number(lastIngreso.costo_compra);
             costoTraida = Number(lastIngreso.costo_traida);
@@ -241,12 +303,12 @@ export class OrdersService {
           perfumeNombre = `${item.decant.perfume?.nombre || ''} (Decant ${item.tipo_decant})`;
           perfumeTipo = item.decant.perfume?.tipo || '';
           perfumeGenero = item.decant.perfume?.genero || '';
-          
+
           // Costos para decant
           costoTraida = 0;
           tipoTraida = 'N/A';
           const tipo = item.tipo_decant.toLowerCase().trim();
-          
+
           if (tipo === '5 ml' || tipo === '5ml') {
             precioUnitario = Number(item.decant.precio_5ml);
             costoCompra = Number(item.decant.costo_5ml);
@@ -267,7 +329,7 @@ export class OrdersService {
             precio_unitario: new Prisma.Decimal(precioUnitario),
           },
         });
-        
+
         // Loop for quantity to create individual sales records (1 fila = 1 perfume vendido)
         for (let i = 0; i < item.cantidad; i++) {
           if (item.id_presentacion) {
@@ -284,11 +346,13 @@ export class OrdersService {
                 total_cliente: new Prisma.Decimal(precioUnitario),
                 pago: order.metodo_de_pago,
                 entregado: false,
-              }
+              },
             });
           } else if (item.id_decant && item.decant) {
-            const is5ml = item.tipo_decant?.toLowerCase().trim() === '5 ml' || item.tipo_decant?.toLowerCase().trim() === '5ml';
-            
+            const is5ml =
+              item.tipo_decant?.toLowerCase().trim() === '5 ml' ||
+              item.tipo_decant?.toLowerCase().trim() === '5ml';
+
             await tx.registroVentaDecantAdmin.create({
               data: {
                 id_orden_detalle: i === 0 ? detalle.id : null,
@@ -296,17 +360,23 @@ export class OrdersService {
                 tipo: perfumeTipo,
                 genero: perfumeGenero,
                 ml_origen: item.decant.ml_origen,
-                costo_original: new Prisma.Decimal(Number(item.decant.costo_original)),
+                costo_original: new Prisma.Decimal(
+                  Number(item.decant.costo_original),
+                ),
                 costo_5ml: new Prisma.Decimal(Number(item.decant.costo_5ml)),
                 costo_10ml: new Prisma.Decimal(Number(item.decant.costo_10ml)),
-                precio_original: new Prisma.Decimal(Number(item.decant.precio_original)),
+                precio_original: new Prisma.Decimal(
+                  Number(item.decant.precio_original),
+                ),
                 precio_5ml: new Prisma.Decimal(Number(item.decant.precio_5ml)),
-                precio_10ml: new Prisma.Decimal(Number(item.decant.precio_10ml)),
+                precio_10ml: new Prisma.Decimal(
+                  Number(item.decant.precio_10ml),
+                ),
                 tamano_vendido: is5ml ? '5 ml' : '10 ml',
                 total_cliente: new Prisma.Decimal(precioUnitario),
                 pago: order.metodo_de_pago,
                 entregado: false,
-              }
+              },
             });
           }
         }
@@ -411,60 +481,87 @@ export class OrdersService {
   }
 
   async updateStatus(orderId: number, estado: string, costo_envio?: number) {
-    const order = await this.prisma.ordenCompra.findUnique({ 
+    const order = await this.prisma.ordenCompra.findUnique({
       where: { id: orderId },
-      include: { detalles: true }
+      include: { detalles: true },
     });
     if (!order) throw new NotFoundException('Orden no encontrada');
 
     // Deduct stock if status changes to PROCESADO (confirmed by admin)
-    if (estado === 'PROCESADO' && order.estado !== 'PROCESADO' && order.estado !== 'ENTREGADO') {
+    if (
+      estado === 'PROCESADO' &&
+      order.estado !== 'PROCESADO' &&
+      order.estado !== 'ENTREGADO'
+    ) {
       await this.prisma.$transaction(async (tx) => {
         for (const item of order.detalles) {
           if (item.id_presentacion) {
-            const presentation = await tx.presentacionPerfume.findUnique({ where: { id: item.id_presentacion } });
-            if (!presentation) throw new NotFoundException(`Presentación ${item.id_presentacion} no encontrada`);
+            const presentation = await tx.presentacionPerfume.findUnique({
+              where: { id: item.id_presentacion },
+            });
+            if (!presentation)
+              throw new NotFoundException(
+                `Presentación ${item.id_presentacion} no encontrada`,
+              );
             if (presentation.stock < item.cantidad) {
-              throw new BadRequestException(`No hay suficiente stock para la presentación ID ${item.id_presentacion}`);
+              throw new BadRequestException(
+                `No hay suficiente stock para la presentación ID ${item.id_presentacion}`,
+              );
             }
             await tx.presentacionPerfume.update({
               where: { id: item.id_presentacion },
-              data: { stock: { decrement: item.cantidad } }
+              data: { stock: { decrement: item.cantidad } },
             });
           } else if (item.id_decant && item.tipo_decant) {
-            const decant = await tx.decant.findUnique({ where: { id: item.id_decant } });
-            if (!decant) throw new NotFoundException(`Decant ${item.id_decant} no encontrado`);
-            
+            const decant = await tx.decant.findUnique({
+              where: { id: item.id_decant },
+            });
+            if (!decant)
+              throw new NotFoundException(
+                `Decant ${item.id_decant} no encontrado`,
+              );
+
             const tipo = item.tipo_decant.toLowerCase().trim();
-            const stock = tipo.includes('5 ml') || tipo.includes('5ml') ? decant.stock_5ml : decant.stock_10ml;
-            
+            const stock =
+              tipo.includes('5 ml') || tipo.includes('5ml')
+                ? decant.stock_5ml
+                : decant.stock_10ml;
+
             if (stock < item.cantidad) {
-              throw new BadRequestException(`No hay suficiente stock para el decant ${item.tipo_decant}`);
+              throw new BadRequestException(
+                `No hay suficiente stock para el decant ${item.tipo_decant}`,
+              );
             }
-            
+
             const dataToUpdate: any = {};
             if (tipo.includes('5 ml') || tipo.includes('5ml')) {
               dataToUpdate.stock_5ml = { decrement: item.cantidad };
             } else {
               dataToUpdate.stock_10ml = { decrement: item.cantidad };
             }
-            await tx.decant.update({ where: { id: item.id_decant }, data: dataToUpdate });
+            await tx.decant.update({
+              where: { id: item.id_decant },
+              data: dataToUpdate,
+            });
           }
         }
-        
+
         // --- Virtual Stamp Loyalty Card System ---
         // Rule: 1 item (perfume or decant) = 1 stamp. Every 6 stamps = Q250 gift card.
         // New users start with 1 stamp (welcome stamp) via auth.service.ts registration.
-        const totalItemsPurchased = order.detalles.reduce((sum, d) => sum + d.cantidad, 0);
-        
+        const totalItemsPurchased = order.detalles.reduce(
+          (sum, d) => sum + d.cantidad,
+          0,
+        );
+
         if (totalItemsPurchased > 0) {
           const userId = order.id_usuario;
           const user = await tx.usuario.findUnique({ where: { id: userId } });
           const currentStamps = user?.sellos || 0;
-  
+
           // Add earned stamps (1 per item, perfumes and decants both count)
           const newStampsCount = currentStamps + totalItemsPurchased;
-          
+
           // Log stamps earning transaction
           await tx.historialSellos.create({
             data: {
@@ -474,13 +571,13 @@ export class OrdersService {
               cantidad_sellos: totalItemsPurchased,
             },
           });
-  
+
           // Every 6 stamps = 1 loyalty gift card (Q250). Reset remainder.
           let finalStamps = newStampsCount;
           const redemptions = Math.floor(newStampsCount / 6);
           if (redemptions >= 1) {
             finalStamps = newStampsCount % 6;
-  
+
             // Log stamps redemption transaction
             await tx.historialSellos.create({
               data: {
@@ -490,7 +587,7 @@ export class OrdersService {
                 cantidad_sellos: -(redemptions * 6),
               },
             });
-  
+
             // Create one unique gift card per card completed
             // Code format: NOVU-{userId}-{timestamp}-{random} — guaranteed unique per user
             for (let i = 0; i < redemptions; i++) {
@@ -499,14 +596,14 @@ export class OrdersService {
                 data: {
                   id_usuario: userId,
                   codigo: uniqueCode,
-                  monto: 250.00,
+                  monto: 250.0,
                   activa: true,
                   es_bienvenida: false,
-                }
+                },
               });
             }
           }
-  
+
           // Update the user stamps count
           await tx.usuario.update({
             where: { id: userId },
@@ -522,7 +619,9 @@ export class OrdersService {
       const currentEnvio = Number(order.costo_envio || 0);
       const originalTotal = Number(order.total) - currentEnvio;
       updateData.costo_envio = new Prisma.Decimal(costo_envio);
-      updateData.total = new Prisma.Decimal(originalTotal + Number(costo_envio));
+      updateData.total = new Prisma.Decimal(
+        originalTotal + Number(costo_envio),
+      );
     }
 
     return this.prisma.ordenCompra.update({

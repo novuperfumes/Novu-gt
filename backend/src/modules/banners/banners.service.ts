@@ -13,7 +13,7 @@ export class BannersService {
     if (!includeInactive) {
       where.activo = true;
     }
-    
+
     return this.prisma.banner.findMany({
       where,
       orderBy: { orden: 'asc' },
@@ -32,7 +32,7 @@ export class BannersService {
         btnText: data.btnText,
         activo: data.activo ?? true,
         orden: data.orden ? Number(data.orden) : 0,
-      }
+      },
     });
   }
 
@@ -45,7 +45,7 @@ export class BannersService {
       data: {
         ...data,
         orden: data.orden !== undefined ? Number(data.orden) : undefined,
-      }
+      },
     });
   }
 

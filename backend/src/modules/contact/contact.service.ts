@@ -19,7 +19,9 @@ export class ContactService {
   }
 
   async markAsRead(id: number) {
-    const existing = await this.prisma.mensajeContacto.findUnique({ where: { id } });
+    const existing = await this.prisma.mensajeContacto.findUnique({
+      where: { id },
+    });
     if (!existing) throw new NotFoundException('Mensaje no encontrado.');
 
     return this.prisma.mensajeContacto.update({

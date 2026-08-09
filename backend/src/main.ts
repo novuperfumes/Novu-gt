@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
@@ -23,8 +26,15 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
 
   // Security check for production JWT secret
-  if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('fallback') || process.env.JWT_SECRET.includes('change_in_production'))) {
-    console.error('FATAL SECURITY ERROR: JWT_SECRET must be explicitly set to a strong secret in production mode.');
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (!process.env.JWT_SECRET ||
+      process.env.JWT_SECRET.includes('fallback') ||
+      process.env.JWT_SECRET.includes('change_in_production'))
+  ) {
+    console.error(
+      'FATAL SECURITY ERROR: JWT_SECRET must be explicitly set to a strong secret in production mode.',
+    );
     process.exit(1);
   }
 
@@ -66,13 +76,13 @@ async function bootstrap() {
   });
 
   // Register CSRF Protection
-  await app.register(fastifyCsrfProtection, { 
-    cookieOpts: { 
+  await app.register(fastifyCsrfProtection, {
+    cookieOpts: {
       signed: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
-      path: '/'
-    } 
+      path: '/',
+    },
   });
 
   // Add global CSRF hook
@@ -86,7 +96,7 @@ async function bootstrap() {
       //   These are safe because the JWT cookie already prevents cross-site attacks.
       const excludedPrefixes = [
         '/auth/login',
-        '/auth/register', 
+        '/auth/register',
         '/uploads/',
         '/banners',
         '/campanias',
@@ -102,7 +112,7 @@ async function bootstrap() {
         '/whatsapp-orders',
         '/sales-reports',
       ];
-      if (!excludedPrefixes.some(prefix => req.url.startsWith(prefix))) {
+      if (!excludedPrefixes.some((prefix) => req.url.startsWith(prefix))) {
         await new Promise((resolve, reject) => {
           fastifyInstance.csrfProtection(req, reply, (err: any) => {
             if (err) reject(err);

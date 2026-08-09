@@ -12,7 +12,8 @@ export class UsersService implements OnModuleInit {
     const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@novugt.com';
     const exists = await this.findOneByCorreo(adminEmail);
     if (!exists) {
-      const defaultPassword = process.env.INITIAL_ADMIN_PASSWORD || 'NovuAdmin2026!SecurePass';
+      const defaultPassword =
+        process.env.INITIAL_ADMIN_PASSWORD || 'NovuAdmin2026!SecurePass';
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(defaultPassword, salt);
       await this.prisma.usuario.create({
@@ -22,7 +23,7 @@ export class UsersService implements OnModuleInit {
           nombre: 'Administrador',
           apellido: 'Sistema',
           rol: 'ADMIN',
-        }
+        },
       });
       console.log('Usuario Administrador inicial creado de forma segura');
     }
@@ -45,9 +46,9 @@ export class UsersService implements OnModuleInit {
       where: { id },
       include: {
         giftCards: {
-          where: { activa: true }
-        }
-      }
+          where: { activa: true },
+        },
+      },
     });
     if (user) {
       const { contrasenia, ...result } = user;
@@ -56,18 +57,21 @@ export class UsersService implements OnModuleInit {
     return null;
   }
 
-  async updateProfile(id: number, data: Prisma.UsuarioUpdateInput): Promise<Omit<Usuario, 'contrasenia'>> {
+  async updateProfile(
+    id: number,
+    data: Prisma.UsuarioUpdateInput,
+  ): Promise<Omit<Usuario, 'contrasenia'>> {
     const user = await this.prisma.usuario.update({
       where: { id },
       data,
     });
     const { contrasenia, ...result } = user;
-    return result as Omit<Usuario, 'contrasenia'>;
+    return result;
   }
 
   async searchUsers(query: string) {
     const isNumber = !isNaN(Number(query));
-    
+
     const users = await this.prisma.usuario.findMany({
       where: {
         OR: [
@@ -75,21 +79,21 @@ export class UsersService implements OnModuleInit {
           { nombre: { contains: query } },
           { apellido: { contains: query } },
           isNumber ? { id: Number(query) } : undefined,
-          { 
+          {
             giftCards: {
               some: {
-                codigo: { contains: query }
-              }
-            }
-          }
-        ].filter(Boolean) as any[]
+                codigo: { contains: query },
+              },
+            },
+          },
+        ].filter(Boolean) as any[],
       },
       include: {
-        giftCards: true
-      }
+        giftCards: true,
+      },
     });
-    
-    return users.map(user => {
+
+    return users.map((user) => {
       const { contrasenia, ...result } = user;
       return result;
     });
@@ -114,16 +118,17 @@ export class UsersService implements OnModuleInit {
       });
 
       // Create Gift Card
-      for(let i = 0; i < redemptions; i++) {
-        const codigo = 'GIFT-250-' + Math.floor(100000 + Math.random() * 900000);
+      for (let i = 0; i < redemptions; i++) {
+        const codigo =
+          'GIFT-250-' + Math.floor(100000 + Math.random() * 900000);
         giftCardCreated = await this.prisma.giftCard.create({
           data: {
             id_usuario: id,
             codigo,
-            monto: 250.00,
+            monto: 250.0,
             activa: true,
-            es_bienvenida: false
-          }
+            es_bienvenida: false,
+          },
         });
       }
     }
@@ -131,7 +136,7 @@ export class UsersService implements OnModuleInit {
     const user = await this.prisma.usuario.update({
       where: { id },
       data: { sellos: finalSellos },
-      include: { giftCards: true }
+      include: { giftCards: true },
     });
     const { contrasenia, ...result } = user;
     return { user: result, giftCardCreated };
@@ -139,25 +144,25 @@ export class UsersService implements OnModuleInit {
 
   async getAdminMetrics() {
     const totalUsers = await this.prisma.usuario.count({
-      where: { rol: 'CLIENTE' }
+      where: { rol: 'CLIENTE' },
     });
-    
+
     const totalOrders = await this.prisma.ordenCompra.count();
-    
+
     const salesAggregate = await this.prisma.ordenCompra.aggregate({
       _sum: { total: true },
-      where: { estado: { not: 'CANCELADO' } }
+      where: { estado: { not: 'CANCELADO' } },
     });
-    
+
     const totalPerfumes = await this.prisma.perfume.count({
-      where: { activo: true }
+      where: { activo: true },
     });
-    
+
     return {
       totalUsers,
       totalOrders,
       totalSales: salesAggregate._sum.total || 0,
-      totalPerfumes
+      totalPerfumes,
     };
   }
 }

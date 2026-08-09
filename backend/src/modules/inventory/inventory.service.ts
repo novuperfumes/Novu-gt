@@ -79,7 +79,8 @@ export class InventoryService {
     let totalInversion = 0;
     let totalCostoCompra = 0;
     let totalCostoTraida = 0;
-    const traidaStats: Record<string, { cantidad: number; inversion: number }> = {};
+    const traidaStats: Record<string, { cantidad: number; inversion: number }> =
+      {};
 
     for (const ing of ingresos) {
       const cantidad = ing.cantidad;
@@ -107,7 +108,8 @@ export class InventoryService {
         inversion_total: totalInversion,
         inversion_solo_perfumes: totalCostoCompra,
         inversion_solo_traidas: totalCostoTraida,
-        costo_promedio_unidad: totalCantidad > 0 ? totalInversion / totalCantidad : 0,
+        costo_promedio_unidad:
+          totalCantidad > 0 ? totalInversion / totalCantidad : 0,
       },
       por_tipo_traida: Object.keys(traidaStats).map((tipo) => ({
         tipo_traida: tipo,

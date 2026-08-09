@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
@@ -48,7 +52,8 @@ export class WhatsappOrdersService {
           continue;
         }
 
-        const isDecant = item.size && item.size.toLowerCase().includes('decant');
+        const isDecant =
+          item.size && item.size.toLowerCase().includes('decant');
         let costoTotal = 0;
         let costoCompra = 0;
         let costoTraida = 0;
@@ -62,13 +67,13 @@ export class WhatsappOrdersService {
             if (is5ml) {
               await tx.decant.update({
                 where: { id: decant.id },
-                data: { stock_5ml: { decrement: item.quantity } }
+                data: { stock_5ml: { decrement: item.quantity } },
               });
               costoCompra = Number(decant.costo_5ml);
             } else {
               await tx.decant.update({
                 where: { id: decant.id },
-                data: { stock_10ml: { decrement: item.quantity } }
+                data: { stock_10ml: { decrement: item.quantity } },
               });
               costoCompra = Number(decant.costo_10ml);
             }
@@ -91,7 +96,7 @@ export class WhatsappOrdersService {
                   tamano_vendido: is5ml ? '5 ml' : '10 ml',
                   total_cliente: item.price,
                   entregado: false,
-                }
+                },
               });
             }
           }
@@ -101,14 +106,14 @@ export class WhatsappOrdersService {
           if (presentacion) {
             await tx.presentacionPerfume.update({
               where: { id: presentacion.id },
-              data: { stock: { decrement: item.quantity } }
+              data: { stock: { decrement: item.quantity } },
             });
 
             // Buscar costo
             const ingresos = await tx.ingresoInventario.findMany({
               where: { id_presentacion: presentacion.id },
               orderBy: { fecha_ingreso: 'desc' },
-              take: 1
+              take: 1,
             });
             if (ingresos.length > 0) {
               costoCompra = Number(ingresos[0].costo_compra);
@@ -116,7 +121,7 @@ export class WhatsappOrdersService {
               tipoTraida = ingresos[0].tipo_traida;
             } else {
               // fallback cost
-              costoCompra = Number(presentacion.precio) * 0.5; 
+              costoCompra = Number(presentacion.precio) * 0.5;
             }
             costoTotal = costoCompra + costoTraida;
 
@@ -134,7 +139,7 @@ export class WhatsappOrdersService {
                   total_cliente: item.price,
                   pago: 'WhatsApp (Por Confirmar)',
                   entregado: false,
-                }
+                },
               });
             }
           }

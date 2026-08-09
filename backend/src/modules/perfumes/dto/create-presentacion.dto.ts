@@ -1,11 +1,21 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreatePresentacionDto {
   @IsString()
   @IsNotEmpty({ message: 'El tamaño es requerido' })
   tamanio: string; // ej. "100 ml", "50 ml"
 
-  @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El precio debe ser un número decimal' })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El precio debe ser un número decimal' },
+  )
   @IsPositive({ message: 'El precio debe ser mayor a cero' })
   precio: number;
 

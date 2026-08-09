@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreatePromoDto } from './dto/create-promo.dto';
 
@@ -38,7 +42,9 @@ export class PromoCodesService {
 
     const now = new Date();
     if (now < promo.fecha_inicio || now > promo.fecha_fin) {
-      throw new BadRequestException('El cupón de descuento ha expirado o no está vigente.');
+      throw new BadRequestException(
+        'El cupón de descuento ha expirado o no está vigente.',
+      );
     }
 
     return promo;
@@ -49,14 +55,16 @@ export class PromoCodesService {
   }
 
   async toggleStatus(id: number) {
-    const promo = await this.prisma.codigoPromocion.findUnique({ where: { id } });
+    const promo = await this.prisma.codigoPromocion.findUnique({
+      where: { id },
+    });
     if (!promo) throw new NotFoundException('Código no encontrado');
-    
+
     const newStatus = promo.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
-    
+
     return this.prisma.codigoPromocion.update({
       where: { id },
-      data: { estado: newStatus }
+      data: { estado: newStatus },
     });
   }
 }

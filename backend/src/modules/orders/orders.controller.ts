@@ -1,4 +1,14 @@
-import { Controller, Post, Get, Param, Body, UseGuards, Req, ParseIntPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  UseGuards,
+  Req,
+  ParseIntPipe,
+  Patch,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -34,7 +44,7 @@ export class OrdersController {
   @Roles('ADMIN')
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { estado: string; costo_envio?: number }
+    @Body() body: { estado: string; costo_envio?: number },
   ) {
     return this.ordersService.updateStatus(id, body.estado, body.costo_envio);
   }

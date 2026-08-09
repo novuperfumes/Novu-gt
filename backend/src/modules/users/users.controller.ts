@@ -1,4 +1,14 @@
-import { Controller, Get, Patch, Body, UseGuards, Req, NotFoundException, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+  NotFoundException,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -43,7 +53,10 @@ export class UsersController {
   @Patch(':id/sellos')
   @UseGuards(RolesGuard)
   @Roles('ADMIN')
-  async updateSellos(@Param('id') id: string, @Body() body: { sellos: number }) {
+  async updateSellos(
+    @Param('id') id: string,
+    @Body() body: { sellos: number },
+  ) {
     return this.usersService.updateSellos(Number(id), body.sellos);
   }
 }

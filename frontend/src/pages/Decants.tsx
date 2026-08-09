@@ -5,7 +5,7 @@ import { usePerfumes } from '../hooks/usePerfumes';
 import { useCampania } from '../hooks/useCampania';
 import { GuestBanner } from '../components/layout/GuestBanner';
 import { useBanners } from '../hooks/useBanners';
-import '../assets/styles/decants.css';
+
 
 export function Decants() {
   const { addToCart } = useCart();

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 
@@ -13,7 +18,10 @@ export class ReviewsService {
   async canReview(userId: number, perfumeId: number) {
     const perfume = await this.prisma.perfume.findUnique({
       where: { id: perfumeId },
-      include: { presentaciones: { select: { id: true } }, decant: { select: { id: true } } },
+      include: {
+        presentaciones: { select: { id: true } },
+        decant: { select: { id: true } },
+      },
     });
     if (!perfume) throw new NotFoundException('Perfume no encontrado');
 
@@ -29,7 +37,9 @@ export class ReviewsService {
         detalles: {
           some: {
             OR: [
-              ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+              ...(presIds.length > 0
+                ? [{ id_presentacion: { in: presIds } }]
+                : []),
               ...(decantId ? [{ id_decant: decantId }] : []),
             ],
           },
@@ -39,7 +49,9 @@ export class ReviewsService {
         detalles: {
           where: {
             OR: [
-              ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+              ...(presIds.length > 0
+                ? [{ id_presentacion: { in: presIds } }]
+                : []),
               ...(decantId ? [{ id_decant: decantId }] : []),
             ],
           },
@@ -53,7 +65,9 @@ export class ReviewsService {
 
     // Check if user already has a review for this perfume
     const existing = await this.prisma.reseniaPerfume.findUnique({
-      where: { id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId } },
+      where: {
+        id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId },
+      },
     });
 
     return {
@@ -68,7 +82,9 @@ export class ReviewsService {
     const detalle = order.detalles[0];
     if (detalle.presentacion) {
       const tamanio = detalle.presentacion.tamanio;
-      const label = tamanio.toLowerCase().includes('ml') ? tamanio : `${tamanio} ml`;
+      const label = tamanio.toLowerCase().includes('ml')
+        ? tamanio
+        : `${tamanio} ml`;
       return `Botella ${label}`;
     }
     if (detalle.id_decant && detalle.tipo_decant) {
@@ -83,7 +99,10 @@ export class ReviewsService {
   async upsert(userId: number, perfumeId: number, dto: CreateReviewDto) {
     const perfume = await this.prisma.perfume.findUnique({
       where: { id: perfumeId },
-      include: { presentaciones: { select: { id: true } }, decant: { select: { id: true } } },
+      include: {
+        presentaciones: { select: { id: true } },
+        decant: { select: { id: true } },
+      },
     });
     if (!perfume) throw new NotFoundException('Perfume no encontrado');
 
@@ -98,7 +117,9 @@ export class ReviewsService {
         detalles: {
           some: {
             OR: [
-              ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+              ...(presIds.length > 0
+                ? [{ id_presentacion: { in: presIds } }]
+                : []),
               ...(decantId ? [{ id_decant: decantId }] : []),
             ],
           },
@@ -108,7 +129,9 @@ export class ReviewsService {
         detalles: {
           where: {
             OR: [
-              ...(presIds.length > 0 ? [{ id_presentacion: { in: presIds } }] : []),
+              ...(presIds.length > 0
+                ? [{ id_presentacion: { in: presIds } }]
+                : []),
               ...(decantId ? [{ id_decant: decantId }] : []),
             ],
           },
@@ -124,10 +147,13 @@ export class ReviewsService {
       );
     }
 
-    const compra_label = dto.compra_label ?? this.buildCompraLabel(confirmedOrder);
+    const compra_label =
+      dto.compra_label ?? this.buildCompraLabel(confirmedOrder);
 
     return this.prisma.reseniaPerfume.upsert({
-      where: { id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId } },
+      where: {
+        id_usuario_id_perfume: { id_usuario: userId, id_perfume: perfumeId },
+      },
       create: {
         id_usuario: userId,
         id_perfume: perfumeId,
@@ -145,7 +171,9 @@ export class ReviewsService {
   }
 
   async findByPerfume(perfumeId: number) {
-    const perfume = await this.prisma.perfume.findUnique({ where: { id: perfumeId } });
+    const perfume = await this.prisma.perfume.findUnique({
+      where: { id: perfumeId },
+    });
     if (!perfume) throw new NotFoundException('Perfume no encontrado');
 
     const resenias = await this.prisma.reseniaPerfume.findMany({
@@ -161,14 +189,18 @@ export class ReviewsService {
     const total = resenias.length;
     const promedio =
       total > 0
-        ? Math.round((resenias.reduce((acc, r) => acc + r.calificacion, 0) / total) * 10) / 10
+        ? Math.round(
+            (resenias.reduce((acc, r) => acc + r.calificacion, 0) / total) * 10,
+          ) / 10
         : 0;
 
     return { resenias, promedio, total };
   }
 
   async remove(userId: number, reviewId: number) {
-    const review = await this.prisma.reseniaPerfume.findUnique({ where: { id: reviewId } });
+    const review = await this.prisma.reseniaPerfume.findUnique({
+      where: { id: reviewId },
+    });
     if (!review) throw new NotFoundException('Reseña no encontrada');
     if (review.id_usuario !== userId) {
       throw new ForbiddenException('No tienes permiso para borrar esta reseña');

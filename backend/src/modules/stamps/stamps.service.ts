@@ -8,7 +8,7 @@ export class StampsService {
   async getUserStamps(userId: number) {
     const user = await this.prisma.usuario.findUnique({
       where: { id: userId },
-      include: { giftCards: true }
+      include: { giftCards: true },
     });
 
     if (!user) {

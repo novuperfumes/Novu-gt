@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { BannersService } from './banners.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -9,13 +19,10 @@ export class BannersController {
   constructor(private readonly bannersService: BannersService) {}
 
   @Get()
-  async findAll(
-    @Query('page') page?: string, 
-    @Query('admin') admin?: string
-  ) {
-    // If admin=true is passed, fetch all including inactive. 
+  async findAll(@Query('page') page?: string, @Query('admin') admin?: string) {
+    // If admin=true is passed, fetch all including inactive.
     // In a real app, you might want to protect this with an Admin guard.
-    const includeInactive = admin === 'true'; 
+    const includeInactive = admin === 'true';
     return this.bannersService.findAll(page, includeInactive);
   }
 
