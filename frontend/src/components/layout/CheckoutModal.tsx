@@ -145,20 +145,16 @@ export function CheckoutModal() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // === STEP 1: Build and open WhatsApp immediately (Synchronous) ===
-    let orderDetailsText = '';
-    cart.forEach((item, idx) => {
-        orderDetailsText += `${idx + 1}. *${item.brand}* - ${item.name} x${item.quantity} - Q ${(item.price * item.quantity).toFixed(2)}\n`;
-    });
-    
+      // === STEP 1: Build and open WhatsApp immediately (Synchronous) ===
+    // Build WhatsApp Message
+    const orderDetailsText = cart.map(item => `- ${item.quantity}x ${item.name} (Talla: ${item.size || 'N/A'}) - Q ${(item.price * item.quantity).toFixed(2)}`).join('\n');
     const whatsappMessage = `¡Hola NOVU! Me gustaría realizar el siguiente pedido:\n\n*DATOS DE ENVÍO Y FACTURACIÓN:*\n- *Nombre:* ${formData.name}\n- *NIT:* ${formData.nit.trim() || 'CF'}\n- *Teléfono:* +502 ${formData.phone}\n- *Dirección:* ${formData.address}\n${formData.references ? `- *Referencias:* ${formData.references}\n` : ''}- *Municipio/Ciudad:* ${formData.city}\n- *Departamento:* ${formData.dept}\n- *Correo:* ${formData.email}\n\n*DETALLE DEL PEDIDO:*\n${orderDetailsText}- *Subtotal:* Q ${cartTotal.toFixed(2)}\n${appliedDiscount ? `- *Descuento (${appliedDiscount.code}):* - Q ${appliedDiscount.amount.toFixed(2)}\n` : ''}- *Envío (${formData.dept}):* Q ${shippingCost.toFixed(2)}\n*TOTAL A PAGAR:* Q ${total.toFixed(2)}`;
 
     const encodedText = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/50232316390?text=${encodedText}`;
+    const whatsappUrl = `https://wa.me/50252050020?text=${encodedText}`;
     setWhatsappLink(whatsappUrl);
-    
-    // Using a direct link click hack which is often faster/more reliable on mobile devices than window.open
+
+    // Create a hidden link and click it synchronously
     const link = document.createElement('a');
     link.href = whatsappUrl;
     link.target = '_blank';

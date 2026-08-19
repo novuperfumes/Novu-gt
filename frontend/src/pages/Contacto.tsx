@@ -55,7 +55,7 @@ export function Contacto() {
                   </svg>
                   <div className="info-item-content">
                     <h4>Llámanos o Escríbenos</h4>
-                    <p>Teléfono: +502 2345-6789<br />WhatsApp: +502 5544-3322</p>
+                    <p>Teléfono: +502 5205-0020<br />WhatsApp: +502 5205-0020</p>
                   </div>
                 </div>
 
